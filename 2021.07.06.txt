@@ -1,0 +1,480 @@
+2021.07.06
+
+<이론>
+review
+키가 필요한 이유 : 데이터를 구별하기 위하여 / 키항목 : 다른 데이터와 구별할 수 있는 값을 가지고 있는 항목
+기본키 + 대체키 = 후보키
+외래키는 내가 사용하는 다른 테이블의 기본키
+
+//
+
+복합키 (composite key)
+하나의 컬럼이 후부키의 역할을 하지 못하고 두 개 이상의 컬럼이 합쳐져야 후보키의 역할을 하는 경우
+
+복합키는 여러 문제가 발생할 수 있음 제2정규화에서 부분종속 문제 발생가능
+-> 새 테이블을 만들어야 함
+
+다대다는 관계형 데이터베이스에서는 허락하지 않음
+중간에 테이블을 더 만들어야 함
+
+다대다 관계의 예)
+쇼핑몰에서 고객과 상품의 관계 한 상품을 여러 고객이 살수 있음 / 한 고객이 여러 상품을 살 수 있음
+-> 그래서 주문테이블이 생김
+
+뷰는 가상의 테이블
+
+SQL: 비절차적 언어 (절차적 언어의 특징 : 분기문, 반복문) [주의 non-conditional code쓰면 스파게티코드 goto]
+
+대화식 SQL: develope창 내에서 실행해볼 수 있고 실험가능한 것	sql디벨로퍼/ 테스트서버 역할
+내장 SQL: 고급언어 안에서 sql이 포함되어서 사용되는 방식	이클립스/ 본 서버 역할
+
+요구사항 분석 매우 중요
+따로 공학이 생김 - 요구사항 분석론
+개념적 설계에서 필요 ER-diagram
+사각형은 엔터티, 원은 어트리뷰트(컬럼), 마름모는 관계
+개념 모델까지는 다대다가 허용되나 구현시에는 절대로 불가함
+
+연결방법 크게 두가지
+1. 식별자방식
+부모테이블의 기본키가 자식테이블의 기본키가 되는 방식
+-자식이 부모테이블에 의해 존속기간이 결정됨
+=부모가 자식테이블의 존속기간을 결정함
+예) 주문테이블이 없어지면 결재테이블도 없어짐 / 나와 내 팔의 관계
+2. 비식별자 방식
+부모테이블의 기본키가 아닌 키를 자식이 기본키가 되는 방식
+-부모와 자식 테이블의 존속기간은 관계가 없음
+LERD(logical entity relationship diagram)
+
+===============================================================
+
+패키지 : 클래스의 위치, 반드시 필요
+클래스 : 데이터와 기능의 집합
+메서드 : 	명령문의 집합, 메서드 뒤에 괄호가 붙음
+	명령문은 항상 메서드 안에서만 작성해야 함
+	main메서드 : 프로그램의 시작과 끝
+주석 : 프로그램 코드로 인식되지 않는 문장(주로 코드를 설명하는데 사용), ctrl + shift + c : 한줄 주석
+	슬래쉬부터 그 줄의 끝까지 주석처리함
+	ctrl + shift + /(해제 : \) :범위주석
+
+기본형은 메모리가 저장될 공간을 만들고 그 공간에 저장하고자 하는 데이터를 저장함
+참조형은 자신이 만든 공간에 자신의 데이터를 저장하는 것이 아니라 위치(주소)를 저장함
+
+컴퓨터는 메모리에 뭔가가 올라와 있어야 처리가능
+변수 <- 두가지 구성요소 1. 데이터의 종류 2. 데이터의 이름
+float와 double은 정확하게 표현할 수 있는 자리수가 다름
+float는 4바이트를 사용하여 7자리수, double은 8바이트를 사용하여 15자리수 사용
+예약어 : 자바에서 이미 사용하고 있는 단어
+
+자바에서 입력받는 법:
+먼저 java.util.Scanner를 import한다 <- 내가 사용하고 있는 클래스는 자신이 속한 패키지에 있는 클래스 메서드만
+사용할 수 있음. 다른 곳에 위치한 메서드를 사용하기 위해서는 사용할 패키지의 위치를 알려줘야 함
+>import java.util.Scanner
+
+이후 코드에서 Scanner 객체를 생성하고
+Scanner sc = new Scanner(System.in);
+입력을 받는 메서드를 실행하여 목적하는 변수에 저장한다.
+String myString = sc.nextLine();
+이후에 목적에 맞게 사용하면 된다.
+단, 내가 정수 혹은 실수를 입력받고 싶다면 Double(Integer)클래스에 속한 메서드를 사용하면 된다.
+Double myNumber = Double.parseDouble(sc.nextLine());
+System.out.println(myNumber);
+
+<실습>
+system 계정 : 사용자계정을 만들 수 있음
+시스템 효율성 상승 작업 가능
+
+사용자도 객체 / 
+DROP : 	객체삭제 명령
+CREATE :	객체생성 명령
+
+2021-0706-01)사용자 생성
+ - CRATE USER 명령으로 수행
+ - 권한 부여 : GRANT 명령 사용
+
+(생성명령)
+  CREATE USER 계정명  IDENTIFIED BY 암호;
+(권한부여)
+  GRANT 권한명[, 권한명,...] TO 계정명;
+(테이블 삭제명령)
+  DROP TABLE 테이블명;
+주의: 이건 롤백으로도 못살림!!!
+(내용 삭제명령)
+  DELETE 테이블명; (?)
+이건 롤백으로 살릴 수 있음
+
+2021-0706-02)SQL 명령의 구분
+  1)Query
+   - 질의 및 조회
+   - SELECT 문
+  2)DML(Data Manipulation Language:데이터 조작어)
+   - INSERT, UPDATE, DELETE 문
+   
+  3)DCL(Data Control Language:데이터 제어어)
+   - COMMIT, ROLLBACK, SAVEPOINT, GRANT
+   
+  4)DDL(Data Definition Language:데이터 정의어)
+   - CREATE, DROP, ALTER
+	ALTER: 구조, 이름, 타입을 변경하는 명령어
+
+주의) ROLLBACK명령은 COMMIT하기 전의 상태로 돌려주는 것이지 실행취소가 아니다
+
+롤백과 커밋이 한 쌍이고	딜리트를 하면 메모리에서 지워지는 거지 하드디스크에서 지워지는게 아님
+세이브포인트와 셀렉트가 한 쌍임	세이브포인트는 한 상태를 지정하고 질의문으로 세이브포인트 접근가능
+
+디벨로퍼 옵션 : 사용자가 COMMIT하지 않고 종료하면 자동 COMMIT하도록 설정가능(DEFAULT옵션)
+
+ (1)CREATE
+ - 오라클 객체를 생성
+  (사용형식)
+  CREATE 객체타입 객체명;
+  - 객체타입 : 생성하려 하는 객체의 종류로 USER, VIEW, INDEX, SYNONYM, TABLE... etc
+  **테이블 생성명령
+  CREATE TABLE 테이블명(
+    컬럼명 테이터타입[(크기)] [NOT NULL] [DEFAULT 값][,]
+                            :
+    컬럼명 테이터타입[(크기)] [NOT NULL] [DEFAULT 값][,]
+    
+    [CONSTRAINT 기본키설정명 PRIMARY KEY(컬럼명[,컬럼명,...])[,]
+    [CONSTRAINT 외래키설정명 FOREIGN KEY(컬럼명[,컬럼명,...])
+      REFERENCES 테이블명(컬럼명)[,]
+                            :
+    [CONSTRAINT 외래키설정명 FOREIGN KEY(컬럼명[,컬럼명,...])
+      REFERENCES 테이블명(컬럼명)[,]
+      
+    - '데이터타입' : CHAR, VARCHAR2, DATE, NUMBER, CLOB{매우 큰 텍스트파일}, BLOB{매우 큰 이미지파일} 등 사용
+    - 'DEFAULT 값': 사용자가 데이터 입력시(INSERT문) 데이터를 기술하지 않은 경우 저장되는 값
+    - '기본키설정명', '외래키설정명' : 기본키 및 외래키 설정을 구별하기 위해 부여된 인덱스명으로 고유한 식별자이어야 함
+    -'REFERENCES 테이블명(컬럼명)' : 원본테이블명(부모테이블명)과 그곳에서 사용된 컬럼명
+    
+    주의)
+    -원본테이블명을 알수 있게 이름 작성, 여러 테이블을 끌어온다면 각 테이블명 적어주기, 테이블이 너무 일반적 명사거나 마땅한 명칭이 없으면
+    TBL_어쩌구로 하면 된다.
+    -테이블은 하나 이상의 열을 가지고 있어야 한다. 행은 없어도 됨
+    -NOT NULL을 쓰면 INSERT할 때 차이가 생김, 반드시 지정해야 함.
+    -,가 없으면 이어진 것으로 인식함, 오류 행번호는 믿을 게 못됨.
+    -기본키설정명과 외래키설정명은 중복되지 않음. 이유? 이걸 인덱스로 쓸거거든 / 기본키설정명은 보통 pk_어쩌구, 외래키설정명은 보통
+    현재 테이블명_참조테이블명
+    -인덱스가 필요한 이유: 빠른 서치, 중복되지 않기 위해
+    -타이핑미스 REFERENCES S 붙는다!
+    [CONSTRAINT 외래키설정명 FOREIGN KEY(컬럼명<- 자식테이블인 내가 쓰고 있는 컬럼명[,컬럼명,...])
+    REFERENCES 테이블명(컬럼명)<- 부모테이블에서 사용하고 있는 컬럼명[,]
+    );
+사용예) 공유폴더의 강의자료 97쪽 논리 ERD를 참조하여 사원, 사업장, 사업장자재, 근무 테이블을 생성하시오
+        [사원테이블]
+        1)테이블명 : EMPLOYEE
+        2)컬럼
+        -----------------------------------------
+        컬럼명          데이터타입(크기)    N.N     PK/FK
+        -----------------------------------------
+        EMP_ID         CHAR(4)           N.N     PK
+        EMP_NAME       VARCHAR2(30)      N.N
+        E_ADDR         VARCHAR2(80)
+        E_TEL          VARCHAR2(20)
+        E_PISITION     VARCHAR2(30)
+        E_DEPT         VARCHAR2(50)
+        
+CREATE TABLE EMPLOYEE(
+        EMP_ID         CHAR(4)           NOT NULL,    
+        EMP_NAME       VARCHAR2(30)      NOT NULL,
+        E_ADDR         VARCHAR2(80),
+        E_TEL          VARCHAR2(20),
+        E_PISITION     VARCHAR2(30),
+        E_DEPT         VARCHAR2(50),
+        
+        CONSTRAINT pk_employee PRIMARY KEY(EMP_ID)
+);
+commit;
+
+- '권한명'은 주로 CONNECT, RESOURCE, DBA 등에 사용
+[]대괄호 : 적어도 되고 안 적어도 된다
+..: 반복 되어질 수 있다.
+CREATE USER LKH96 IDENTIFIED BY java;
+
+오라클 한줄주석 : --
+자바 한줄주석 : //
+오라클은 대소문자 구별 안함
+단, 따옴표 안에는 대소문자 구별함
+
+단어와 단어 사이는 한칸 이상의 여백
+명령어 사용하는 곳과 목적이 고정되어 있는 것 = reserved word = 예약어
+
+포트 : 컴퓨터 내부에는 여러 프로그램이 식별할 수 있는 번호가 부여됨 http 8080 / 아파치 쓸 때는 8080이 충돌되서 바꿔야 함
+	오라클은 포트 1521 사용
+	SID = software id, 테스트버전이면 xe로 고정, 정식버전에는 orcl을 SID로 써야 함
+사용자단어 규칙
+영문자시작, 숫자는 2번째부터 시작
+가능한 특수문자 : $(시스템이 사용하는 기호니 사용하지 말자), _
+오라클에는 '-' 대쉬 못씀
+
+
+
+"쌍 따옴표"로 둘러싸인 문자는 string
+한글자를 표시하는 것은 char(acter)임 '홑따옴포'
+""<-White Space = 오라클에서는 Null
+NULLABLE : NO)데이터가 들어가야함 YES)데이터 없어도 됨
+DEFAULT: 디폴트값 사용자가 지정하지 않으면 자동으로 들어가는 값
+
+JAVA 디폴트값:
+문자는 공백한칸
+숫자는 0 또는 0.0
+
+오라클 디폴트값은 항상 NULL
+
+=============================================================
+
+자바 클래스 생성 단축키 : ctrl + n , 검색에서 pac(package), cl(class) 등
+패키지 : 클래스들의 묶음
+클래시 시작시 어느 패키지에 속한지 선언해줌
+빨간줄 : 컴파일에러, 번역을 할 수 없다
+
+package a_variable;	// 패키지 : 클래스의 위치, 반드시 필요
+
+import java.util.Scanner;
+
+//import : 다른 패키지에 있는 클래스의 위치를 알려주는 것, 위치는 반드시 패키지와 클래스 사이에 위치
+//Ctrl + Shift + o
+
+
+public class Variable { //클래스 : 데이터와 기능의 집합
+
+	public static void main(String[] args) { //메서드 : 명령문의 집합
+		//main메서드 : 프로그램의 시작과 끝
+		
+		//주석 : 프로그램 코드로 인식되지 않는 문장(주로 코드를 설명하는데 사용)
+		
+//		한줄주석 : ctrl + shift + c
+//		한줄주석
+//		한줄주석
+//		한줄주석
+//		한줄주석
+		
+		/*
+		 * 데이터
+		 * 
+		 * 1. 기본형
+		 * - 숫자
+		 * - 문자
+		 * - 논리
+		 * 
+		 * 2. 참조형(데이터가 위치한 주소를 저장)
+		 * - 배열(형태가 같은 여러개의 데이터를 묶어서 사용)
+		 * - 클래스(형태가 다른 여러개의 데이터와 기능을 묶어서 사용)
+		 *  
+		 */
+		
+		/*
+		 * 기본형 타입
+		 * - 정수 : byte(1), short(2), *int(4/약20억), long(8)
+		 * - 실수 : float(4/7자리), *double(8/15자리)
+		 * - 문자 : char(2)
+		 * - 논리 : boolean(1)
+		 * 		별표는 많이 사용 한다는 뜻
+		 * 참조형 타입
+		 * - 문자열 : String(4)
+		 * 
+		 * 명명규칙
+		 * - 영문자 대소문자, 한글, 숫자, 특수문자('_', '$')를 사용할 수 있다.
+		 * - 숫자로 시작할 수 없다.
+		 * - 예약어는 사용할 수 없다.
+		 * - [낙타식 표기법을 사용한다.(mySimpleVariable)]
+		 * - [클래스명의 첫글자는 대문자로 한다.(MySimpleClass)]
+		 * 		단어가 바뀔 때 대문자를 사용하는 표기법 = 낙타식 표기법 / 기본은 소문자 사용
+		 * 		이렇게 하지 않아도 개발은 됨
+		 */
+		//변수 선언(값을 저장할 공간을 만드는 것) 데이터형(타입) 변수이름 [초기화];
+		//중괄호 안에서 변수의 이름은 중복되지 않아야 함
+		int x; //;(세미콜론) : 문장의 마침표
+		long y;
+		float z;
+		char abc;
+		boolean boolean$;
+		String name123;
+		
+		//9가지 타입을 모두 사용해 9개의 변수를 선언해주세요.
+		byte constrainedInteger;
+		short integer;
+		int generalInteger;
+		long largeInteger;
+		float realNumber;
+		double generalRealNumber;
+		char containsOneCharacter;
+		boolean trueOrFalse;
+		String containsMultipleCharacters;
+		
+		//초기화(변수에 처음으로 값을 저장하는 것)
+		//=(대입연산자) : 오른쪽의 값을 왼쪽의 변수에 저장한다.
+		//변수를 선언한 이후에는 변수의 이름을 가직 변수를 사용한다.
+		x = 10; //타입에 맞는 값을 저장해야 한다.
+		y = 20L; //접미사 L을 붙여야 long타입이 된다.
+		z = 3.14f; //접미사 f를 붙여야 float타입이 된다. 실수를 그냥 쓰면 double타입임
+		abc = '가'; //따옴표 안에 반드시 한 글자를 넣어야 한다.
+		boolean$ = true; //true, false중 하나의 값으로 설정해야 한다.
+		name123 = "가나다라 abcd 1234"; //쌍따옴표로 묹열을 표현한다.
+		
+		//위에서 선언한 9개의 변수들을 초기화 해주세요.
+
+		constrainedInteger = 1;
+		integer = 2;
+		generalInteger = 3;
+		largeInteger = 4L;
+		realNumber = 5.1f;
+		generalRealNumber = 6.2;
+		containsOneCharacter = 'a';
+		trueOrFalse = false;
+		containsMultipleCharacters = "asdf";
+		
+		int a = 10;
+		a = 20;
+		
+		//형변환(데이터의 타입을 다른 타입으로 변경하는 것)
+		int _int = 10;
+		long _long = 20L;
+		
+		_int = (int)_long;
+		_long = _int; //표현범위가 작은 타입에서 큰 타입으로의 형변환은 생략할 수 있다.
+		
+		_int = _int + (int)_long; //서로 다른 타입은 연산할 수 없다.
+		
+		//변수 3개를 선언해 변수의 타입과 다른 타입의 값으로 초기화 해주세요.
+		
+		byte ex1 = (byte)3L;		//long -> byte
+		short ex2 = (short)3.0f;	//float -> short
+		int ex3 = (int)3.49;		//double -> int
+		int ex4 = (int)3.51;		//double -> int
+		char ex5 = (char)_int;
+		// 기본형타입과 참조형 타입은 형변환이 안된다
+		// 기본형 타입중에서 boolean타입은 형변환이 안된다.
+		int ex6 = (int)0.5;
+		// 실수->정수로 바꿀 때 양수는 내림하고 음수는 올림하는듯?
+		
+		//출력(콘솔)
+		System.out.print("출력 후 줄바꿈을 안함");
+		System.out.print("출력 후 줄바꿈을 안함");	//출력후 줄바꾸지 않음
+		System.out.printf("출력 포맷 지정");		//포맷을 지정 출력명령
+		System.out.println(boolean$);			//출력후 마지막에 줄바꿈 문자 삽임
+		System.out.println(trueOrFalse);
+		//실행 단축키 : ctrl + f11
+		//탈출문자(Escape문자) : 원래 역할에서 탈출하게 해준다.
+		System.out.println("탭은 \t4칸에 맞춰 띄워줍니다.");
+		System.out.println("줄바꿈을 \n해줍니다.");
+		System.out.println("\"쌍따옴표를 넣어줍니다.\"");
+		System.out.println("\\역슬래쉬를 넣어줍니다.");
+		
+		//입력		입력하는데는 java.util.Scanner 패키지를 import해야 함
+		Scanner sc = new Scanner(System.in); //입력받기 위한 클래스, 컴파일에러 발생
+		//한 클래스 안에서 다른 클래스를 사용하려면 기본적으로는 자신이 속한 패키지의 클래스만 사용가능
+		//다른 패키지에 들어있는 클래스를 사용하려면 import 명령 필요
+		/*System.out.println("아무거나 입력해주세요>");
+		String str = sc.nextLine();	//sc에 문자열을 입력을 받는 명령어
+		System.out.println("입력받은 내용 : " + str);*/
+		
+		/*System.out.println("숫자를 입력해주세요>");
+		int nextInt = sc.nextInt();	//sc에 숫자를 입력을 받는 명령어, nextInt는 버그가 있어서 사용 않는게 좋음
+		System.out.println("입력받은 숫자 : " + nextInt);
+		System.out.println("문자열 다시 입력>");
+		String nextLine = sc.nextLine();
+		System.out.println("입력받은 문자열 : " + nextLine);
+		System.out.println("입력끝!!");
+		*/
+		//그렇다면 숫자는 어떻게 입력받느냐? 문자열 입력받은 후 형변환
+		/*System.out.println("숫자 입력>");
+		int number = Integer.parseInt(sc.nextLine());	//sc에 숫자를 입력을 받는 명령어, nextInt는 버그가 있어서 사용 않는게 좋음
+		//(String)->(int)는 참조형->기본형 형변환이 안되기 때문에 일반적인 방법으로 형변환 불가 그래서 메서드 사용
+		System.out.println("입력받은 숫자 : " + number);*/
+//		double d = Double.parseDouble(sc.nextLine());
+		
+		//자신의 이름을 저장할 변수를 선언하고 Scanner를 사용해 이름을 저장해주세요.
+		//자신의 나이를 저장할 변수를선언하고 Scanner를 사용해 나이를 저장해주세요.
+		//이름과 나이를 출력해주세요.
+		Scanner scProblem = new Scanner(System.in);
+		System.out.println("이름을 입력하세요>");
+		String myName = scProblem.nextLine();
+		System.out.println("나의 이름은 " + myName + "입니다.");
+		System.out.println("나이를 입력하세요>");
+		int myAge = Integer.parseInt(scProblem.nextLine());
+		System.out.println("나는 " + myAge + "살 입니다.");
+		
+	}
+
+}
+
+package a_variable;
+
+import java.util.Scanner;
+
+public class Join {
+
+	public static void main(String[] args) {
+		
+		/*
+		 * 다음과 같은 프로그램을 작성해주세요
+		 * 
+		 * ============ 회원가입 ============
+		 * 아이디>admin
+		 * 비밀번호(4자리숫자)>1234
+		 * 이름>홍길동
+		 * 나이>30
+		 * 키>185.5
+		 * ===============================
+		 * 회원가입 완료!!
+		 * ============ 내정보==============
+		 * 아이디 : admin
+		 * 비밀번호 : 1234
+		 * 이름 : 홍길동
+		 * 나이 : 30세
+		 * 키 : 185.5cm
+		 * ================================
+		 * */
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("============ 회원가입 ============");
+		System.out.println("아이디>");
+		String userId = sc.nextLine();
+		System.out.println("비밀번호>");
+		String userPw = sc.nextLine();
+		System.out.println("이름>");
+		String userName = sc.nextLine();
+		System.out.println("나이>");
+		int userAge = Integer.parseInt(sc.nextLine());
+		System.out.println("키>");
+		double userHeight = Double.parseDouble(sc.nextLine());
+		System.out.println("================================");
+		System.out.println("회원가입 완료!!");
+		System.out.println("============ 내 정보==============");
+		System.out.println("아이디 : " + userId);
+		System.out.println("비밀번호 : " + userPw);
+		System.out.println("이름 : " + userName);
+		System.out.println("나이 : " + userAge);
+		System.out.println("키 : " + userHeight);
+		System.out.println("================================");
+		
+	}
+
+}
+
+
+
+<TMI>
+1997/8년 밀레니엄 버그
+RR/MM/DD : 년도를 로마자로 표시하겠다
+오라클 명령 마지막에는 세미콜론 ;
+~: 틸드, 1의 보수를 구하는 연산자
+@: at sign
+&: 앰퍼샌드(ampersand)
+*: 에스트릭 / 오라클에서는 all로 읽음 애스터리스크(asterisk)
+|: 파이프기호  
+
+ASCII(american standard code for international interchange)
+한글은 3바이트, 전에는 조합형으로 사용했으나 현재는 완성형을 사용함
+
+레이건 우주왕복선 폭발사고
+칩 업데이트로 double이 flote로 바꿔야 되는 
+소프트웨어 위기론<명저>
+
+엔코어 - 데이터베이스 설계분야 탑
+da#
+
+==================================================================
+
+프로그래밍 : 컴퓨터에게 일을 시키는 것, 컴퓨터의 언어로/ 일에 대한 과정을 알려주면 됨
+내가 컴퓨터에게 알려주는 것 : 데이터와 조작을 알려줌

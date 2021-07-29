@@ -1,0 +1,523 @@
+2021.07.26
+
+<이론>
+서브쿼리
+  - SQL구문안에 또 다른 SQL구문이 포함된 형태
+  - 밖의 쿼리를 메인쿼리, 안쪽쿼리를 서브쿼리라 함
+  - 서브쿼리는 메인쿼리의 결과를 반환하기 위해 중간 결과로 사용
+  - 서브쿼리는 ()로 묶어 사용함(예외 INSERT문에 사용되는 서브쿼리는 '()'를 사용하지 않음)
+  - 서브쿼리는 사용되는 위치에 따라 일반서브쿼리(SELECT 절), 인라인서브쿼리(FROM 절), 중첩서브쿼리(WHERE 절)로 구분
+  - 변환하는 결과의 행/열의 개수에 따라 단일행/단일열, 단일행/다중열, 다중행/단일열, 다중행/다중열로 구분
+  - 메인쿼리와 서브쿼리에 사용되는 테이블 간의 조인 여부에 따라 관련성없는 서브쿼리/연관서브쿼리로 구분
+  - 알려지지 않은 조건에 근거하여 데이터를 검색하는 경우 유용
+
+   - 하나의 행만 결과로 반환
+   - 단일행 연산자는 관계연산자(=,<=,>=,<,>,<>,!=) 임
+
+인라인서브쿼리는 반드시 독립적으로 하나의 쿼리를 이루어야 함.
+중첩서브쿼리는 WHERE절에서 반드시 관계연산자 오른편에 와야 한다. EX: SALARY > (SELECT AVG(SALARY) FROM HR.EMPLOYEES)
+
+  2)다중행 서브쿼리
+   - 하나 이상의 행을 반환하는 서브쿼리
+   - 복수행 연산자 : IN, ANY, SOME, EXISTS
+
+사용예)사원테이블에서 직원의 수가 10명 이상이 되는 부서의 부서코드, 부서명을 출력
+     (메인쿼리 : 부서코드, 부서명을 출력)
+(결합: IN)     
+SELECT DEPARTMENT_ID AS "부서코드",
+       DEPARTMENT_NAME AS "부서명"
+  FROM HR.DEPARTMENTS
+ WHERE DEPARTMENT_ID IN (SELECT B.DID
+                           FROM (SELECT DEPARTMENT_ID AS DID,
+                                        COUNT(*)
+                                   FROM HR.EMPLOYEES
+                                  GROUP BY DEPARTMENT_ID
+                                 HAVING COUNT(*) >= 10) B);
+(결합: =ANY(=SOME))
+SELECT DEPARTMENT_ID AS "부서코드",
+       DEPARTMENT_NAME AS "부서명"
+  FROM HR.DEPARTMENTS
+ WHERE DEPARTMENT_ID = ANY(SELECT B.DID
+                             FROM (SELECT DEPARTMENT_ID AS DID,
+                                          COUNT(*)
+                                     FROM HR.EMPLOYEES
+                                    GROUP BY DEPARTMENT_ID
+                                   HAVING COUNT(*) >= 10) B);
+                                   
+(결합: EXISTS - 반드시 뒤에 서브쿼리가 온다)
+  - EXISTS 연산자 왼쪽의 표현식(식 OR 컬럼명)이 없음
+  - EXISTS 연산자 오른쪽은 반드시 서브쿼리
+  
+SELECT DEPARTMENT_ID AS "부서코드",
+       DEPARTMENT_NAME AS "부서명"
+  FROM HR.DEPARTMENTS A
+ WHERE EXISTS (SELECT C.DID
+--             SELECT 1
+                 FROM (SELECT DEPARTMENT_ID AS DID,
+                              COUNT(*)
+                         FROM HR.EMPLOYEES B
+                        GROUP BY DEPARTMENT_ID
+                       HAVING COUNT(*) >= 10) C
+                WHERE C.DID = A.DEPARTMENT_ID);
+
+  3)다중열
+   - 하나 이상의 열이 반환되는 서브쿼리
+   - PAIRWISE(쌍비교) 서브쿼리 또는 Nonpairwise (비쌍비교) 서브쿼리로 구현
+
+=============================================================================================
+
+상속
+- 기존의 클래스를 물려받아 새로운 클래스를 만드는 것이다.
+- class 자식클래스명 extends 부모클래스명{}
+- 부모 클래스의 생성자와 초기화블럭을 제외한 모든 멤버를 물려받는다.
+- 하나의 클래스만 상속받을 수 있다.
+- 상속받지 않는 모든 클래스는 Object 클래스를 상속받는다.
+- 자식 클래스는 부모 클래스의 멤버 외의 새로운 멤버를 가질수 있으므로 자식 클래스는 부모 클래스보다 크거나 같다.
+- 두개 이상의 클래스를 만드는데 공통된 멤버가 있는 경우 부모클래스로 만든다.
+
+//초기화 방법 3가지의 실행순서는 명시적 초기화 -> 초기화 블럭 -> 생성자이다.
+//가장 나중에 사용된 초기화의 값을 따라간다.
+
+	void childMethod(){
+		System.out.println(var);			//상속받은 변수
+		System.out.println(method(7,13));	//상속받은 메서드		
+	}
+	
+	//오버라이딩			상속받은 메서드의 내용을 바꾸는 것
+	//super, super()	this와 비슷, 부모클래스의 변수와 자식클래스의 변수의 이름이 같을 때
+	//다형성				객체와 변수의 타입이 다르게 생성할 수 있다. 자식을 생성하고 부모라고 우길수 있다는 건가 맞음
+	
+	//오버라이딩 : 상속받은 메서드의 내용을 재정의 하는 것 (오버라이드 첫 글자 대문자다) / 리턴타입, 메서드 이름, 파라미터가 모두 같아야 함
+	//어노테이션은 필수는 아니다. 코드 가독성과 정확한 의미 전달을 위해 쓴다 그러니까 쓰라는 말이다.
+	@Override//어노테이션 : 클래스, 변수, 메서드 등에 표시해 놓는 것. 오버라이딩 된 메서드가 아니면 컴파일 에러를 발생시켜준다.
+	int method(int a, int b){
+		return a * b;
+	}
+
+//super.는 부모 클래스의 주소로 접근하는 느낌이라고 생각하면 된다.
+System.out.println(super.method(10,20));	//부모클래스의 메서드
+//super : 부모 클래스의 멤버와 자식 클래스의 멤버의 이름이 중복될 때 둘을 구분하기 위해 사용한다.
+//부모클래스의 생성자 호출
+//자식클래스의 생성자 안에서는 반드시 부모클래스의 생성자를 호출해야 한다.
+//만약 부모클래스의 생성자가 디폴트 혹은 파라미터가 없고 이고 자식클래스의 생성자에서 부모클래스의 생성자를 호출하지 않았다면 컴파일러가 자동으로 부모클래스의 생성자를 넣어준다.
+//부모클래스의 생성자를 임의로 정의했다면 자식 클래스에서 부모클래스의 생성자를 반드시 호출하여야 한다. 아니면 컴파일에러
+//다형성 : 부모클래스의 타입으로 자식클래스 타입을 저장하는 것
+//객체와 객체를 저장할 변수의 타입이 서로 다른 경우
+//부모자식 간의 형변환이 가능하다.
+//자식타입 -> 부모타입 형변환은 생략할 수 있다.
+//부모타입 -> 자식타입으로의 형변환은 에러 발생 <- 컴파일러가 잡아주지 않음, 실행시 오류
+
+
+<실습>
+SELECT A.LPROD_ID AS "분류코드",
+       A.LPROD_NM AS "분류명",
+       NVL(SUM(C.BUY_QTY),0) AS "매입수량",
+       NVL(SUM(C.BUY_QTY * B.PROD_COST),0) AS "매입금액"
+  FROM LPROD A
+  LEFT OUTER JOIN PROD B ON(A.LPROD_GU = B.PROD_LGU)
+  LEFT OUTER JOIN BUYPROD C ON(B.PROD_ID = C.BUY_PROD
+       AND C.BUY_DATE BETWEEN TO_DATE('20050401') AND LAST_DAY(TO_DATE('20050601')))
+ GROUP BY A.LPROD_ID, A.LPROD_NM
+ ORDER BY 1;
+ 
+SELECT B.LPROD_ID AS "분류코드",
+       B.LPROD_NM AS "분류명",
+       NVL(A.QTY,0) AS "매입수량",
+       NVL(A.CST,0) AS "매입금액"
+  FROM (SELECT A.PROD_LGU AS PGU,
+               SUM(B.BUY_QTY) AS QTY,
+               SUM(B.BUY_QTY * A.PROD_COST) AS CST
+          FROM PROD A, BUYPROD B
+         WHERE B.BUY_PROD = A.PROD_ID
+               AND B.BUY_DATE BETWEEN  TO_DATE('20050401') AND LAST_DAY(TO_DATE('20050601'))
+               GROUP BY A.PROD_LGU) A, LPROD B
+ WHERE A.PGU(+) = B.LPROD_GU
+ ORDER BY 1;
+
+(일반외부조인<-서브쿼리 사용해야 함)
+SELECT B.LPROD_ID AS "분류코드",
+       B.LPROD_NM AS "분류명",
+       NVL(SUM(A.BUY_QTY),0) AS "매입수량",
+       NVL(SUM(A.BUY_QTY * C.PROD_COST),0) AS "매입금액"
+  FROM BUYPROD A, LPROD B, PROD C
+ WHERE A.BUY_PROD(+) = C.PROD_ID
+       AND C.PROD_LGU(+) = B.LPROD_GU
+       AND A.BUY_DATE BETWEEN TO_DATE('20050401') AND TO_DATE('20050630')
+ GROUP BY B.LPROD_ID, B.LPROD_NM
+ ORDER BY 1;
+
+SELECT D.LPROD_ID AS 분류코드,
+       D.LPROD_NM AS 분류명,
+       NVL(TBLA.BCNT,0) AS 매입수량,
+       NVL(TBLA.BAMT,0) AS 매입금액
+  FROM (SELECT B.LPROD_GU AS BID,
+               SUM(A.BUY_QTY) AS BCNT,
+               SUM(A.BUY_QTY * C.PROD_COST) AS BAMT
+          FROM BUYPROD A, LPROD B, PROD C
+         WHERE A.BUY_PROD(+) = C.PROD_ID
+               AND C.PROD_LGU(+) = B.LPROD_GU
+               AND A.BUY_DATE BETWEEN TO_DATE('20050401') AND TO_DATE('20050630')
+         GROUP BY B.LPROD_GU) TBLA,
+       LPROD D
+ WHERE D.LPROD_GU = TBLA.BID(+)
+ ORDER BY 1;
+
+(ANSI외부조인)       
+SELECT A.LPROD_ID AS "분류코드",
+       A.LPROD_NM AS "분류명",
+       NVL(SUM(C.BUY_QTY),0) AS "매입수량",
+       NVL(SUM(C.BUY_QTY * B.PROD_COST),0) AS "매입금액"
+  FROM BUYPROD C
+ RIGHT OUTER JOIN PROD B ON(B.PROD_ID = C.BUY_PROD
+       AND C.BUY_DATE BETWEEN TO_DATE('20050401') AND LAST_DAY(TO_DATE('20050601')))
+ RIGHT OUTER JOIN LPROD A ON(B.PROD_LGU = A.LPROD_GU)
+ GROUP BY A.LPROD_ID, A.LPROD_NM
+ ORDER BY 1;       
+
+사용예)2005년 4~6월 모든 분류별 매출현황을 죄회하시오
+      ALIAS는 분류코드, 분류명, 매출수량, 매출금액
+
+SELECT C.LPROD_ID AS "분류코드",
+       C.LPROD_NM AS "분류명",
+       NVL(SUM(A.CART_QTY),0) AS "매출수량",
+       NVL(SUM(A.CART_QTY * B.PROD_PRICE),0) AS "매출금액"
+  FROM CART A
+ RIGHT OUTER JOIN PROD B ON(A.CART_PROD = B.PROD_ID
+       AND SUBSTR(A.CART_NO,1,6) BETWEEN '200504' AND '200506')
+ RIGHT OUTER JOIN LPROD C ON(B.PROD_LGU = C.LPROD_GU)
+ GROUP BY C.LPROD_ID, C.LPROD_NM
+ ORDER BY 1;
+
+SELECT C.LPROD_ID AS "분류코드",
+       C.LPROD_NM AS "분류명",
+       NVL(TBLA.QTY,0) AS "매출수량",
+       NVL(TBLA.AMT,0) AS "매출금액"
+  FROM (SELECT B.PROD_LGU AS BID,
+               SUM(A.CART_QTY) AS QTY,
+               SUM(A.CART_QTY * B.PROD_PRICE) AS AMT
+          FROM CART A, PROD B
+         WHERE A.CART_PROD = B.PROD_ID
+               AND SUBSTR(A.CART_NO,1,6) BETWEEN '200504' AND '200506'
+         GROUP BY B.PROD_LGU) TBLA,
+       LPROD C
+ WHERE TBLA.BID(+)=C.LPROD_GU
+ ORDER BY 1;
+
+사용예)2005년 4~6월 모든 분류별 매입/매출현황을 조회하시오.
+      ALIAS는 분류코드, 분류명, 매입수량, 매입금액, 매출수량, 매출금액
+      
+SELECT C.LPROD_ID AS "분류코드",
+       C.LPROD_NM AS "분류명",
+       NVL(SUM(D.BUY_QTY),0) AS "매입수량",
+       NVL(SUM(D.BUY_QTY * B.PROD_COST),0) AS "매입금액",
+       NVL(SUM(A.CART_QTY),0) AS "매출수량",
+       NVL(SUM(A.CART_QTY * B.PROD_PRICE),0) AS "매출금액"
+  FROM CART A
+ RIGHT OUTER JOIN PROD B ON(A.CART_PROD = B.PROD_ID
+       AND SUBSTR(A.CART_NO,1,6) BETWEEN '200504' AND '200506')
+ RIGHT OUTER JOIN LPROD C ON(B.PROD_LGU = C.LPROD_GU)
+  LEFT OUTER JOIN BUYPROD D ON(B.PROD_ID = D.BUY_PROD
+       AND D.BUY_DATE BETWEEN TO_DATE('20050401') AND TO_DATE('20050630'))
+ GROUP BY C.LPROD_ID, C.LPROD_NM
+ ORDER BY 1;
+ 
+ 
+SELECT A.LPROD_ID AS "분류코드",
+       A.LPROD_NM AS "분류명",
+       NVL(SUM(C.BUY_QTY),0) AS "매입수량",
+       NVL(SUM(C.BUY_QTY * B.PROD_COST),0) AS "매입금액",
+       NVL(SUM(D.CART_QTY),0) AS "매출수량",
+       NVL(SUM(D.CART_QTY * B.PROD_PRICE),0) AS "매출금액"
+  FROM LPROD A
+  LEFT OUTER JOIN PROD B ON(A.LPROD_GU = B.PROD_LGU)
+  LEFT OUTER JOIN BUYPROD C ON(B.PROD_ID = C.BUY_PROD
+       AND C.BUY_DATE BETWEEN TO_DATE('20050401') AND TO_DATE('20050630'))
+  LEFT OUTER JOIN CART D ON(B.PROD_ID = D.CART_PROD
+       AND SUBSTR(D.CART_NO,1,6) BETWEEN '200504' AND '200506')
+ GROUP BY A.LPROD_ID, A.LPROD_NM
+ ORDER BY 1;
+
+SELECT B.LPROD_ID AS "분류코드",
+       B.LPROD_NM AS "분류명",
+       NVL(TBLA.CQTY,0) AS "매출수량",
+       TBLA.CAMT AS "매출금액",
+       TBLA.BQTY AS "매입수량",
+       TBLA.BAMT AS "매입금액"
+  FROM (SELECT B.PROD_LGU AS PGU,
+              SUM(A.CART_QTY) AS CQTY,
+              SUM(A.CART_QTY * B.PROD_PRICE) AS CAMT,
+              SUM(C.BUY_QTY) AS BQTY,
+              SUM(C.BUY_QTY * B.PROD_COST) AS BAMT
+         FROM CART A, PROD B, BUYPROD C
+        WHERE A.CART_PROD = B.PROD_ID
+              AND B.PROD_ID = C.BUY_PROD
+              AND SUBSTR(A.CART_NO,1,6) BETWEEN '200504' AND '200506'
+              AND C.BUY_DATE BETWEEN TO_DATE('20050401') AND TO_DATE('20050630')
+        GROUP BY B.PROD_LGU) TBLA,
+       LPROD B
+ WHERE TBLA.PGU(+) = B.LPROD_GU
+ ORDER BY 1;
+--해결하려면 서브쿼리를 각각 써야 함.
+
+사용예)2005년 4~6월 모든 상품별 매입현황/매출현황
+      ALIAS는 상품코드, 상품명, 매입수량, 매입금액, 매출수량, 매출금액
+      
+SELECT B.PROD_ID AS "상품코드",
+       B.PROD_NAME AS "상품명",
+       NVL(SUM(C.BUY_QTY),0) AS "매입수량",
+       NVL(SUM(C.BUY_QTY * B.PROD_COST),0) AS "매입합계",
+       NVL(SUM(A.CART_QTY),0) AS "매출수량",
+       NVL(SUM(A.CART_QTY * B.PROD_PRICE),0) AS "매출금액"
+  FROM CART A
+ RIGHT OUTER JOIN PROD B ON(A.CART_PROD = B.PROD_ID
+       AND SUBSTR(A.CART_NO,1,6) BETWEEN '200504' AND '200506')
+  LEFT OUTER JOIN BUYPROD C ON(C.BUY_PROD = B.PROD_ID
+       AND C.BUY_DATE BETWEEN TO_DATE('20050401') AND LAST_DAY(TO_DATE('20050601')))
+ GROUP BY B.PROD_ID, B.PROD_NAME
+ ORDER BY 1;
+       
+SELECT A.PROD_ID AS "상품코드",
+       A.PROD_NAME AS "상품명",
+       NVL(SUM(B.BUY_QTY),0) AS "매입수량",
+       NVL(SUM(B.BUY_QTY * A.PROD_COST),0) AS "매입합계"
+--       NVL(SUM(C.CART_QTY),0) AS "매출수량",
+--       NVL(SUM(C.CART_QTY * A.PROD_PRICE),0) AS "매출금액"
+  FROM PROD A
+--  LEFT OUTER JOIN CART C ON(C.CART_PROD = A.PROD_ID
+--       AND SUBSTR(C.CART_NO,1,6) BETWEEN '200504' AND '200506')
+  LEFT OUTER JOIN BUYPROD B ON(B.BUY_PROD = A.PROD_ID
+       AND B.BUY_DATE BETWEEN TO_DATE('20050401') AND LAST_DAY(TO_DATE('20050601')))
+ GROUP BY A.PROD_ID, A.PROD_NAME
+ ORDER BY 1; 
+
+--이것도 매입이 2배씩 나온다 / 내일 설명할 것임
+
+SELECT EMPLOYEE_ID, EMP_NAME
+  FROM HR.EMPLOYEES
+ WHERE (DEPARTMENT_ID, MANAGER_ID) = (SELECT DEPARTMENT_ID, MANAGER_ID
+                                        FROM HR.DEPARTMENTS
+                                        WHERE MANAGER_ID = 121);
+
+사용예)
+SELECT EMPLOYEE_ID, EMP_NAME
+  FROM HR.EMPLOYEES
+ WHERE (DEPARTMENT_ID, MANAGER_ID) = (SELECT DEPARTMENT_ID, MANAGER_ID
+                                        FROM HR.DEPARTMENTS
+                                        WHERE MANAGER_ID = 121);
+
+만약 중첩서브쿼리의 결과가 다중행 서브쿼리인 경우 IN을 사용한다
+비교연산시 비교대상이 되는 두 항의 개수는 반드시 같아야 한다.(아닐 시 in을 사용할 수 있음)
+위의 예에서 WHERE절의 왼편은 한 테이블을 따라가며 한번에 한 튜플의 정보를 읽어온다. / 오른편의 서브쿼리는 단 한번 실행된다.
+
+사용예)80번 부서에 급여가 부서 평균 이상인 사원을 조회하시오
+      ALIAS는 사원번호, 급여, 부서코드
+
+SELECT EMPLOYEE_ID AS "사원번호",
+       SALARY AS "급여",
+       DEPARTMENT_ID AS "부서코드"
+  FROM HR.EMPLOYEES
+ WHERE SALARY >= (SELECT AVG(SALARY)
+                    FROM HR.EMPLOYEES
+                   WHERE DEPARTMENT_ID = 80)
+       AND DEPARTMENT_ID = 80;
+       
+SELECT A.EMPLOYEE_ID AS "사원번호",
+       A.SALARY AS "급여",
+       A.DEPARTMENT_ID AS "부서코드"
+  FROM HR.EMPLOYEES A
+ WHERE (A.EMPLOYEE_ID, A.DEPARTMENT_ID) IN (SELECT B.EMPLOYEE_ID, DEPARTMENT_ID
+                                              FROM HR.EMPLOYEES B
+                                             WHERE B.SALARY > (SELECT AVG(C.SALARY)
+                                                                 FROM HR.EMPLOYEES C
+                                                                WHERE C.DEPARTMENT_ID = B.DEPARTMENT_ID)
+                                                   AND B.DEPARTMENT_ID = 80)
+ ORDER BY 3;
+
+=============================================================================================
+
+public class SampleParent {
+	String var;
+	
+	{
+		var = "초기화 블럭은 물려주지 않는다.";
+	}
+	
+	public SampleParent() {
+		var = "생성자도 물려주지 않는다.";
+	}
+	
+	int method(int a, int b){
+		return a + b;
+	}
+}
+
+public class SampleChild extends SampleParent{
+	
+	void childMethod(){
+		System.out.println(var);			//상속받은 변수
+		System.out.println(method(7,13));	//상속받은 메서드		
+	}
+	@Override//어노테이션 : 클래스, 변수, 메서드 등에 표시해 놓는 것. 오버라이딩 된 메서드가 아니면 컴파일 에러를 발생시켜준다.
+	int method(int a, int b){
+		return a * b;
+	}
+	
+	//super, super()
+	int var;
+	void test(double var){
+		System.out.println(var);
+		System.out.println(this.var);
+		System.out.println(super.var);
+		System.out.println(method(10,20));
+		System.out.println(super.method(10,20));	//부모클래스의 메서드
+	}
+	SampleChild(){
+		super();
+	}
+	public static void main(String[] args) {
+		SampleChild sc = new SampleChild();
+		SampleParent sp = new SampleChild();
+//		sc.test(0.1);
+		sc = (SampleChild)sp;
+		sp = sc;
+		SampleChild sc2 = (SampleChild) new SampleParent();
+	}
+}
+
+public class Store {
+
+	public static void main(String[] args) {
+		Desktop d1 = new Desktop("삼성 컴퓨터", 10000);
+		Desktop d2 = new Desktop("LG 컴퓨터", 10000);
+		
+		AirCon ac1 = new AirCon("삼성 에어컨", 20000);
+		AirCon ac2 = new AirCon("LG 에어컨", 20000);
+		
+		TV tv1 = new TV("삼성 TV",30000);
+		TV tv2 = new TV("LG TV",30000);
+		
+		Customer c = new Customer();
+		
+		c.buy(d1);
+		c.buy(ac2);
+		c.buy(tv2);
+		c.showItem();
+		
+		((Desktop)c.item[0]).programming();
+//		((AirCon)c.item[2]).setTemperature();
+		
+	}
+
+}
+
+class Product{
+	String name; //이름
+	int price; //가격
+	
+	Product(String name, int price){
+		this.name = name;
+		this.price = price;
+	}
+	
+	String getInfo(){
+		return name + "(" + price +  "원)";
+	}
+}
+
+class Desktop extends Product{
+	Desktop(String name, int price){
+		super(name, price);
+	}
+	
+	void programming(){
+		System.out.println("프로그램을 만듭니다.");
+	}
+	
+}
+
+class AirCon extends Product{
+	AirCon(String name, int price){
+		super(name, price);
+	}
+	void setTemperature(){
+		System.out.println("온도를 설정합니다.");
+	}
+}
+
+class TV extends Product{
+	TV(String name, int price){
+		super(name, price);
+	}
+	void setChannel(){
+		System.out.println("채널을 변경합니다.");
+	}
+}
+
+class Customer{
+	int money = 1000000;
+	
+	Product[] item = new Product[100];
+	
+	void buy(Product p){	// 다형성
+		if(money < p.price){
+			System.out.println("잔돈이 부족하다.");
+			return;
+		}
+		
+		money -= p.price;
+		
+		for(int i = 0; i < item.length; i++){
+			if(item[i] == null){
+				item[i] = p;
+				break;
+			}
+		}
+		System.out.println(p.name + "를 구매했다.");
+	}
+	
+	void showItem(){
+		System.out.println("============장바구니============");
+		for(int i = 0; i < item.length; i++){
+			if(item[i] == null){
+				break;
+			}else{
+				System.out.println(item[i].getInfo());
+			}
+		}
+		System.out.println("=============================");
+	}
+	
+}
+<TMI>
+
+시퀀스 : 차례대로 부여되는 숫자값을 한 테이블에 종속시키지 않고 다른 테이블에서 조회할 수 있는 객체, 테이블 밖에서 자동증가 가능
+다른 DBMS에는 시퀀스가 제공되지 않으나 AUTO INCREASEMENT를 YES로 해두면 기본키를 만드는데 유용함, 한 테이블에서만 사용가능
+BETWEEN이 문자열을 읽을 때는 문자열을 아스키코드로 변환하여서 범위를 구하므로, %는 쓰지 않는 것이 좋다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

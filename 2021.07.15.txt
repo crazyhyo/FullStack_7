@@ -1,0 +1,533 @@
+2021.07.15
+
+<이론>
+ 3) FLOOR(n), CEIL(n)
+  - n에 가까운 정수를 반환
+  - FLOOR : n과 같거나 작은 정수 중 가장 큰 정수
+  - CEIL : n과 같거나 큰 정수 중 가장 작은 정수
+  - 세금, 급여처럼 금액과 관련된 수식에 주로 사용
+
+ 4) MOD(n, i), REMAINDER(n, i)
+  - 나머지를 반환
+  - MOD : n을 i로 나눈 나머지 반환
+            나머지 = 피제수 - 제수 * FLOOR(피제수 / 제수)
+            MOD(15,6) = 3
+                      = 15 - 6 * FLOOR(15/6)
+                      = 15 - 6 * 2
+  - REMAINDER : n을 i로 나눈 나머지가 i의 절반 이하의 값이면 MOD와 같음.
+                나머지가 초과하면 다음 몫이 되기 위해 더해져야 할 수 반환
+            나머지 = 피제수 - 제수 * ROUND(피제수 / 제수)
+
+ 5) WIDTH_BUCKET(n, min, max, b)
+  - min에서 max까지를 b개의 구간으로 나누고 주어진 수 n이 그 구간 중 어느 구간에 속하는지 판별하여 구간의 인덱스를 반환
+  - n이 max이상이면 b + 1, min미만이면 0 반환[기본 로직은 이상-미만으로 구간을 나누기 때문]
+
+  3. 날짜함수
+   1) SYSDATE
+    - 시스템에서 제공하는 날짜정보(년,월,일,시,분,초) 반환
+    - '+', '-'연산의 대상                //  연산 '-'는 DATE - NUMBER 와 DATE - DATE 지원하나 연산 '+'는 DATE + NUMBER 만 지원한다
+    - 날짜 - 날짜 : 두 날짜 사이의 날수 (DAYS) 반환, NUMBER TYPE
+    
+   2) ADD_MONTHS(d, n)
+    - 날짜형식의 자료 d에 n만큼의 월을 더한 날짜 변환
+
+   3) NEXT_DAY(d, expr)
+    - 주어진 날자 d에서 다가올 가장 빠른 'expr'요일의 날짜 반환
+    - expr : 월,화,...,일, 월요일,화요일,...,일요일
+
+   4) LAST_DAY(d)
+    - 날짜자료 d가 포함된 달의 마지막 일을 반환          -- 주로 2월 조회에 사용 / 반환 형식은 날짜형식
+
+   5) MONTHS_BETWEEN(d1, d2)
+    - 두 날짜 자료 사이의 개월 수 반환                   --  리턴값은 NUMBER
+
+   6) EXTRACT(fmt FROM d)
+    - 날짜자료 d에서 'fmt'로 기술된 자료를 추출함
+    - 반환값의 형식은 숫자형식임
+    - 'fmt' : YEAR, MONTH, DAY, HOUR, MINUTE, SECOND
+    
+/*
+		 * 다차원 배열
+		 * - 배열안에 배열이 저장되어 있는 형태이다.
+		 */
+		
+		//2차원배열
+		
+		int[][] array2;
+		
+		//3차원배열
+		int[][][] array3;
+		
+		int[][] arr = new int[2][3];		//3개의 값을 저장할 수 있는 배열이 2개 존재
+		/*
+		 * 변수 = 100번지(주소)
+		 * 
+		 * 100번지	{200번지, 300번지}
+		 * 200번지	{0, 0, 0}
+		 * 300번지	{0, 0, 0}
+		 */
+		
+		int arr2[][] = new int[][]{{1,2,3},{4,5,6}};	//	이 경우에는 길이를 지정하면 안됨, 컴파일에러
+		int[] arr3[] = {	{1,2,3},
+							{4,5,6},
+							{7,8,9}	};					// 선언과 초기화를 동시에 하지 않으면 에러
+		
+		int[][] arr4 = new int[3][];	//가변배열, 배열을 3개 선언
+		arr4[0] = new int[3];
+		arr4[1] = new int[5];
+		arr4[2] = new int[10];
+		//								와, C에서는 이짓 하려고 malloc, calloc같은거 쓰고다니는데
+		
+		System.out.println(arr[0]);
+		
+//		arr[0] = 10; //값을 저장할 수 없다.
+		arr[0] = new int[5];	//배열을 저장해야한다.
+		arr[0][0] = 10;
+		arr[0][1] = 20;
+		arr[1][0] = 100;
+		
+		System.out.println(arr.length); 	//1차원 배열의 길이
+		System.out.println(arr[0].length);	//2차원 배열의 길이
+		System.out.println(arr[1].length);	//2차원 배열의 길이
+		
+		for(int i = 0; i < arr.length; i++){
+			for(int j = 0; j < arr[i].length; j++){
+				System.out.print(arr[i][j] + ", ");
+			}
+			System.out.println();
+		}
+
+
+
+<실습>
+사용예)
+    SELECT  FLOOR(12.5), CEIL(12.5), FLOOR(12), CEIL(12), FLOOR(-12.5), CEIL(-12.5)    FROM    DUAL;
+  
+FLOOR(-1.2) = -2, CEIL(-1.2) = -1
+오라클에서는 %연산자가 나머지를 구하는데 쓰이는 것이 아니라 문자열의 와일드카드로 사용됨. -> 나머지 구하는 연산자 없음
+-> MOD나 REMAINDER 함수를 이용하여 나머지 구함        /           자주 사용하지는 않음
+
+
+사용예)
+    SELECT  MOD(15,6), REMAINDER(16,6), MOD(15,7), REMAINDER(15,7), MOD(15,4), REMAINDER(15,4) FROM DUAL;
+사용예)임의의 년도를 입력 받아 윤년과 평년을 구별하시오.
+        윤년 : 4의 배수이면서 100의 배수가 아니거나 400의 배수인 년도
+        
+        
+        ACCEPT P_YEAR   PROMPT  '년도 입력'
+        DECLARE
+            V_YEAR NUMBER(4):= &P_YEAR;               --      입력받은 P_YEAR을 참조하기 위해 &사용, ''안에 묶어서 문자열로 변환
+                                                        --      이것을 NUMBER로 대입하면서 형변환 일어남(??)
+            V_RES VARCHAR2(100);
+        BEGIN
+            IF(MOD(V_YEAR,4) = 0 AND MOD(V_YEAR,100) != 0) OR (MOD(V_YEAR,400) = 0) THEN
+                V_RES:= V_YEAR || '년은 윤년입니다.';
+            ELSE
+                V_RES:= V_YEAR || '년은 평년입니다.';
+            END IF;     
+            DBMS_OUTPUT.PUT_LINE(V_RES);
+        END;
+        
+        SELECT  
+        (MOD(,4) = 0 AND MOD(,100) != 0)
+        OR      MOD(,400) = 0
+
+주의) ACCEPT 다음에는 세미콜론, 콜론, 콤마 모두 안들어감
+ACCEPT  변수명     PROMPT  '출력메시지'
+DECLARE
+    변수명 데이터형    :=  &변수명 <- 입력받은 변수로 받아오겠다
+BEGIN
+    IF  조건  THEN
+    ELSE
+    END IF;
+END;
+ 
+
+사용예)
+    SELECT  WIDTH_BUCKET(120, -1, 120, 20) FROM DUAL;
+사용예)회원테이블에서 회원들의 마일리지를 3개의 그룹으로 나누고 각 회원들의 마일리지가 속한 그룹을 조회하여
+      1그룹에 속한 회원은 '새싹회원', 2그룹에 속한 회원은 '정규 회원', 3그룹에 속한 회원은 'VIP 회원'으로 비고란에 출력하시오.
+      Alias는 회원번호, 회원명, 직업, 마일리지, 비고
+      
+      SELECT    MEM_ID                                                              AS  회원번호,
+                MEM_NAME                                                            AS  회원명,
+                MEM_JOB                                                             AS  직업,
+                MEM_MILEAGE                                                         AS  마일리지,
+                CASE    WHEN    WIDTH_BUCKET(MEM_MILEAGE, 500, 9000, 3) = 1 THEN
+                                '새싹 회원'
+                        WHEN    WIDTH_BUCKET(MEM_MILEAGE, 500, 9000, 3) = 2 THEN
+                                '정규 회원'
+                        ELSE    
+                                'VIP 회원'
+                END
+                                                                                    AS  비고
+      FROM      MEMBER;
+
+SELECT    MEM_ID                                                              AS  회원번호,
+                MEM_NAME                                                            AS  회원명,
+                MEM_JOB                                                             AS  직업,
+                MEM_MILEAGE                                                         AS  마일리지,
+                CASE    WHEN    WIDTH_BUCKET(MEM_MILEAGE,   (SELECT  MIN(MEM_MILEAGE)
+                                                            FROM    MEMBER),
+                                                            (SELECT  MAX(MEM_MILEAGE)
+                                                            FROM    MEMBER), 3) = 1 THEN
+                                '새싹 회원'
+                        WHEN    WIDTH_BUCKET(MEM_MILEAGE,   (SELECT  MIN(MEM_MILEAGE)
+                                                            FROM    MEMBER),
+                                                            (SELECT  MAX(MEM_MILEAGE)
+                                                            FROM    MEMBER), 3) = 2 THEN
+                                '정규 회원'
+                        ELSE    
+                                'VIP 회원'
+                END
+                                                                                    AS  비고
+      FROM      MEMBER;
+
+사용예)회원테이블에서 회원들의 마일리지를 5개의 그룹으로 나누고 등급을 비고란에 출력
+      Alias는 회원번호, 회원명, 직업, 마일리지, 비고이며, 등급은 마일리지가 많은 회원이 1등급이고,
+      제일 작은 회원이 5등급이다.
+      
+      SELECT    MEM_ID                                                                  AS  회원번호,
+                MEM_NAME                                                                AS  회원명,
+                MEM_JOB                                                                 AS  직업,
+                MEM_MILEAGE                                                             AS  마일리지,
+                WIDTH_BUCKET(-MEM_MILEAGE, -9000, -500, 5)                              AS  비고
+      FROM      MEMBER;
+
+      SELECT    MEM_ID                                                                  AS  회원번호,
+                MEM_NAME                                                                AS  회원명,
+                MEM_JOB                                                                 AS  직업,
+                MEM_MILEAGE                                                             AS  마일리지,
+                6 - WIDTH_BUCKET(MEM_MILEAGE, 500, 9000, 5)                             AS  비고
+      FROM      MEMBER;
+
+      SELECT    MEM_ID                                                                  AS  회원번호,
+                MEM_NAME                                                                AS  회원명,
+                MEM_JOB                                                                 AS  직업,
+                MEM_MILEAGE                                                             AS  마일리지,
+                CASE    WHEN    WIDTH_BUCKET(MEM_MILEAGE, 500, 9000, 5) = 1 THEN
+                                '5등급'
+                        WHEN    WIDTH_BUCKET(MEM_MILEAGE, 500, 9000, 5) = 2 THEN
+                                '4등급'
+                        WHEN    WIDTH_BUCKET(MEM_MILEAGE, 500, 9000, 5) = 3 THEN
+                                '3등급'
+                        WHEN    WIDTH_BUCKET(MEM_MILEAGE, 500, 9000, 5) = 4 THEN
+                                '2등급'
+                        ELSE    
+                                '1등급'
+                END
+                                                                                        AS  비고
+      FROM      MEMBER;
+
+    
+사용예)
+SELECT  SYSDATE -10,
+        TO_CHAR(SYSDATE, 'YYYY MM DD HH24:MI:SS'),
+        TRUNC(SYSDATE-TO_DATE('19900715','YYYY-MM-DD'))
+FROM    DUAL;
+
+년월일시분초를 사용자 정의 형태로 다루고 싶다면 년월일 / 시분초 중 누락된 것이 있으면 형 변환이 되지 않아 오류 발생
+날짜 포맷에 정확하게 맞추어서 입력해야 함. 기본 포맷은 년||'/'||월||'/'||일 의 형태로 사용 혹은 '-'로 슬래쉬나 대쉬기호만 취급
+날짜정보를 사용자가 지정해서 날짜로 변환하고자 한다면   -> 그래서 보통 문자열을 매개로 날짜 정보를 다룸. 날짜가 필요할 때 TO_DATE(C)
+저장할 때 문자열로 저장, 날짜타입이 필요하면 해석해서 사용
+TO_CHAR(D) <- 출력을 위한 형변환, 사용자 지정 날짜지원형식 지원      TO_DATE는 사용자지정 날짜지원 형식 지원안함
+
+사용예)사원의 정식 입사일은 수습 3개월이 지난 날짜이다. 각 사원이 이 회사ㅏ에 처음 수습으로 입사한 날짜를 구하시오
+      Alias는 사원번호, 사원명, 입사일, 수습입사일, 소속부서명
+
+SELECT      A.EMPLOYEE_ID                                           AS  사원번호,
+            A.EMP_NAME                                              AS  사원명,
+            A.HIRE_DATE                                             AS  입사일,
+            ADD_MONTHS(A.HIRE_DATE, -3)                             AS  수습입사일,
+            B.DEPARTMENT_NAME                                       AS  소속부서명
+FROM        HR.EMPLOYEES A, HR.DEPARTMENTS B
+WHERE       A.DEPARTMENT_ID = B.DEPARTMENT_ID
+ORDER BY    5;
+
+
+사용예)
+    SELECT  NEXT_DAY(SYSDATE, '월'),
+            NEXT_DAY(SYSDATE, '목'),
+            NEXT_DAY(SYSDATE, '화요일'),
+            NEXT_DAY(SYSDATE, '일요일'),
+            NEXT_DAY(SYSDATE, '금')
+    FROM    DUAL;
+
+여기서는 expr을 문자열로 '월', '화요일', ... 등으로 써줘야 함 <- NLS설정에서 한글로 설정했기 때문에
+오늘은 반환하지 않음     /       자주 사용하지는 않음
+
+사용예)매입테이블(BUY_PROD)에서 2월에 매입된 매입건수를 조회하시오.
+    SELECT  COUNT(*)    AS  매입건수
+    FROM    BUYPROD
+    WHERE   BUY_DATE    BETWEEN TO_DATE('20050201') AND     LAST_DAY(TO_DATE('20050201'));
+    
+테이블에 있는 데이터의 개수를 세는 함수 : COUNT
+COUNT(*)를 사용하지 못하는 경우 : 외부 조인을 사용할 때
+
+사용예)
+    SELECT      TRUNC(MONTHS_BETWEEN(SYSDATE, HIRE_DATE))  AS  근속개월수
+    FROM        HR.EMPLOYEES;
+    
+    SELECT      EMP_NAME,
+                HIRE_DATE,
+                TRUNC(MONTHS_BETWEEN(SYSDATE, HIRE_DATE)/12)||'년'||
+                MOD(TRUNC(MONTHS_BETWEEN(SYSDATE, HIRE_DATE)),12) ||'개월'   AS  근속기간
+    FROM        HR.EMPLOYEES;
+
+사용예)
+    SELECT  EMP_NAME,
+            TO_CHAR(HIRE_DATE,'YYYY-MM-DD HH:MM:SS'),
+--            EXTRACT(YEAR FROM HIRE_DATE),
+--            EXTRACT(MONTH FROM HIRE_DATE),
+--            EXTRACT(DAY FROM HIRE_DATE),
+--            EXTRACT(HOUR FROM TO_TIMESTAMP(HIRE_DATE)),
+            HIRE_DATE,
+            TO_TIMESTAMP(HIRE_DATE)
+    FROM    HR.EMPLOYEES;
+사용예)
+    SELECT  EXTRACT(HOUR FROM SYSDATE),
+            EXTRACT(MINUTE FROM SYSDATE),
+            EXTRACT(SECOND FROM SYSDATE)
+    FROM    DUAL;
+    
+사용빈도 : SYSDATE > EXTRACT > LAST_DAY    
+
+사용예)이번 달에 생일이 있는 회원정보를 조회하시오
+      Alias는 회원번호, 회원명, 생년월일이다.
+
+    SELECT  MEM_ID  AS  회원번호,
+            MEM_NAME    AS  회원명,
+            MEM_BIR     AS  생년월일
+    FROM    MEMBER
+    WHERE   EXTRACT(MONTH FROM  SYSDATE) = EXTRACT(MONTH FROM  MEM_BIR);
+
+HOUR, MINUTE, SECOND는 
+
+==========================================================================
+
+		int[][] scores = new int[3][5];				//int[학생수][과목수]
+		int[] sum  = new int[scores.length];		//합계
+		double[] avg  = new double[scores.length];	//평균
+		
+		for(int i = 0; i < scores.length; i++){
+			for(int j = 0; j < scores[i].length; j++){
+				scores[i][j] = (int)(Math.random() * 101);
+			}
+			System.out.println(Arrays.toString(scores[i]));
+		}
+		for(int i = 0; i < scores.length; i++){
+			for(int j = 0; j < scores[i].length; j++){
+				sum[i] += scores[i][j];
+			}
+			avg[i] = (double) sum[i] / scores[i].length;
+		}
+		System.out.println(Arrays.toString(sum));
+		System.out.println(Arrays.toString(avg));
+
+package d_array;
+
+import java.util.Arrays;
+
+public class Score {
+
+//	public static void Swap(int[] sumArr, int[] rankArr, double[] avgArr, String[] studentMembers, int idx1, int idx2)
+//	{
+//		int sumTemp = sumArr[idx1];
+//		int rankTemp = rankArr[idx1];
+//		double avgTemp = avgArr[idx1];
+//		String stuTemp = studentMembers[idx1];
+//		
+//		sumArr[idx1] = sumArr[idx2];
+//		rankArr[idx1] = rankArr[idx2];
+//		avgArr[idx1] = avgArr[idx2];
+//		studentMembers[idx1] = studentMembers[idx2];
+//		
+//		sumArr[idx1] = sumTemp;
+//		rankArr[idx1] = rankTemp;
+//		avgArr[idx1] = avgTemp;
+//		studentMembers[idx1] = stuTemp;
+//	}
+//	
+//	public static int partition(int[] sumArr, int[] rankArr, double[] avgArr, String[] studentMembers, int left, int right)
+//	{
+//		if(left == right)				return left;
+//		
+//		int temp = sumArr[left];
+//		int high = right;
+//		int low = left + 1;
+//		while(true){
+//			while(temp < sumArr[low] && low < right)			low++;
+//			while(temp > sumArr[high] && high > left)			high--;
+//			if(low < high){
+//				Swap(sumArr, rankArr, avgArr, studentMembers, low, high);
+//			}else{
+//				Swap(sumArr, rankArr, avgArr, studentMembers, left, high);
+//				break;
+//			}
+//		}
+//		return high;	
+//	}
+//	
+//	public static void quickSort(int[] sumArr, int[] rankArr, double[] avgArr, String[] studentMembers, int first, int last){
+//		if(first != last){
+//			int pivot = partition(sumArr, rankArr, avgArr, studentMembers, first, last);
+//			quickSort(sumArr, rankArr, avgArr, studentMembers, first, pivot - 1);
+//			quickSort(sumArr, rankArr, avgArr, studentMembers, pivot + 1, last);
+//		}
+//	}
+	
+	public static void main(String[] args) {
+		/*
+		 * 403호 모두의 국어, 영어, 수학, 사회, 과학, Oracle, Java 점수를
+		 * 0~100까지 랜덤으로 생성해 주시고, 아래와 같이 출력해주세요.
+		 * 
+		 * 이름		국어		영어		수학		사회		과학		Oracle	Java	합계		평균		석차
+		 * 홍길동		90		90		90		90		90		90		90		630		90.00	1
+		 * 
+		 * 
+		 * 과목합계	450		450		450		450		450		450		450
+		 * 과목평균	90.00	90.00	90.00	90.00	90.00	90.00	90.00
+		 */
+		
+		String[] studentMembers = {"이단비","김노을","정현욱","박소현","김수진","이희현","강건","이민영","하기재",
+				"이윤우","김미희","김혜윤","신승철","이광효","김진혁","마창수","양기욱","이동근",
+				"석기현","류인성","이미정","임나리","송민섭","김지윤","조명석"};
+		
+		String[] subjects = {"국어", "영어", "수학", "사회", "과학", "Oracle", "Java"};
+		
+		int[][] scoreArr = new int[studentMembers.length][subjects.length];
+		int[] sumArr = new int[studentMembers.length];
+		double[] avgArr = new double[studentMembers.length];
+		int[] rankArr = new int[studentMembers.length];
+		
+		
+		for(int i = 0; i < studentMembers.length; i++){
+			for(int j = 0; j < subjects.length; j++){
+				scoreArr[i][j] = (int)(Math.random() * 101);
+//				scoreArr[i][j] = 100;
+			}
+		}
+		
+		for(int i = 0; i < studentMembers.length; i++){
+			rankArr[i] = 1;
+			for(int j = 0; j < subjects.length; j++){
+				sumArr[i] += scoreArr[i][j];
+			}
+			avgArr[i] = (double) sumArr[i] / subjects.length;
+		}
+
+		for(int i = 0; i < sumArr.length; i++){
+			int target = sumArr[i];
+			for(int j = 0; j < sumArr.length; j++){
+				if(target < sumArr[j]){
+					rankArr[i]++;
+				}
+			}
+		}
+		
+//		System.out.println(Arrays.toString(sumArr));
+//		System.out.println(Arrays.toString(rankArr));
+		
+		{
+			int j = 0;
+			for(int i = 1; i < sumArr.length; i++){
+				int sumInsert = sumArr[i];
+				int rankInsert = rankArr[i];
+				double avgInsert = avgArr[i];
+				String stuInsert = studentMembers[i];
+				for(j = i - 1; j >= 0; j--){
+					if(sumInsert > sumArr[j]){
+						sumArr[j + 1] = sumArr[j];
+						rankArr[j + 1] = rankArr[j];
+						avgArr[j + 1] = avgArr[j];
+						studentMembers[j + 1] = studentMembers[j];
+					}else					break;
+				}
+				sumArr[j + 1] = sumInsert;
+				rankArr[j + 1] = rankInsert;
+				avgArr[j + 1] = avgInsert;
+				studentMembers[j + 1] = stuInsert;
+			}
+		}
+		
+//		quickSort(sumArr, rankArr, avgArr, studentMembers, 0, subjects.length -1);
+		
+		System.out.print("이름\t");
+		for(int i = 0; i < subjects.length; i++){
+			System.out.print(subjects[i] + "\t");
+		}
+		System.out.println("합계\t평균\t석차\t");
+		for(int i = 0; i < studentMembers.length; i++){
+			System.out.print(studentMembers[i] + "\t");
+			for(int j = 0; j < subjects.length; j++){
+				System.out.print(scoreArr[i][j] + "\t");
+			}
+			System.out.println(sumArr[i] + "\t" + Math.round(avgArr[i] * 100) / 100.0 + "\t" +rankArr[i]);
+		}
+		
+		System.out.print("과목합계\t");
+		for(int i = 0; i < subjects.length; i++){
+			int subjSum = 0;
+			for(int j = 0; j < studentMembers.length; j++){
+				subjSum +=  scoreArr[j][i];
+			}
+			System.out.print(subjSum + "\t");
+		}
+		System.out.println();
+		System.out.print("과목평균\t");
+		for(int i = 0; i < subjects.length; i++){
+			int subjSum = 0;
+			double subjAvg = 0;
+			for(int j = 0; j < studentMembers.length; j++){
+				subjSum +=  scoreArr[j][i];
+			}
+			subjAvg = (double) subjSum / studentMembers.length;
+			System.out.print(Math.round(subjAvg * 100) / 100.0 + "\t");
+		}
+		
+
+	}
+
+}
+
+
+<TMI>
+
+
+CASE WHEN은 SELECT 절에서만 사용 가능      
+
+[디코드라는 표현식]
+CASE 조건 WHEN 값 THEN
+CASE WHEN 
+PL/SQL
+
+조인시 생각할 점
+1. 관계가 맺어져있는가
+2. 어떤 테이블이 부모이고 어떤 테이블이 자식인가(부모자식관계)
+3. 중매 테이블이 있는가
+실무에서 테이블만 주어진다. 내가 필요한 것은 논리 ERD임. 그렇다면 테이블에서 논리 ERD를 그려낼 수 있는 기능이 있음.(역공학)     <-  이것을 통해 작업시작
+논리 ERD로 테이블을 만들수도 있다(순공학)
+ADD_MONTHS      S가 들어간게 정확한 함수명이다
+그냥 = 을 사용하는 경우는 내부조인, 조건에 맞는 데이터만 출력, 더 작은 테이블 기준으로 출력한다고 생각할 수 있음
+외부조인    조건에 맞지 않는 데이터도 더 큰 테이블에서 데이터를 모두 찾아서 출력
+
+
+테이블을 2개 이상 조회하는 경우에는 반드시 WHERE 절이 필요함   <-  반드시 조인이 발생되고 WHERE없이는 카르테시안 곱으로 데이터를 가져온다
+                                                            이거 하지마라. 그리고 똑같은 컬럼명을 쓰는 경우가 대부분이기 때문에
+                                                            별칭부여도 반드시 해야한다. 또한 SELECT에서 컬럼명을 사용하는 경우에도
+                                                            반드시 별칭을 부여하는 습관을 들이자
+조회문의 가장 대표적인 형식은 SELECT FROM    WHERE;
+
+데이터 변환함수
+TO_CHAR / TO_DATE   / TO_NUMBER
+데이터 타입에 따라서 초기값 설정이 다름.
+숫자는 0 / 0.0 문자는 ' ' 논리는 FALSE로 초기화 (IN JAVA)
+오라클은 어떤 타입이든 NULL로 초기화함 /   NULL과의 모든 연산결과는 NULL.   ->  오라클에서는 NULL처리 함수 사용
+(NULLIF,  NVL, NVL2,    ISNULL,  ISNOTNULL)
+
+집계함수의 90% 이상은 반드시 GROUP BY 필요
+이제 집계함수->JOIN 순으로 배울 것임
+
+===================================================================
+하드코딩 뜻 : 코드의 유연성이 없는 코드
+15:43
