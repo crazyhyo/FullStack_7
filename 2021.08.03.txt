@@ -1,0 +1,576 @@
+2021.08.03
+
+<이론>
+(2) CASE문
+     - 표준 SQL의 SELECT 절에 사용되는 CASE표현식과 동일
+     - 다중 분기 기능 제공
+     (사용형식 - 1)
+      CASE 변수|수식 WHEN 값1 THEN 명령1;
+                    WHEN 값2 THEN 명령2;
+                             :
+                    ELSE          명령n;
+      END CASE;
+      
+     (사용형식 - 2)
+      CASE WHEN 조건1 THEN 명령1;
+           WHEN 조건2 THEN 명령2;
+                  :
+           ELSE            명령n;
+      END CASE;
+
+IF보다 효율성이 우수함, SWITCH와 유사하나 BREAK필요 없음, PL/SQL의 CASE문은 END CASE로 끝남
+
+  2) 반복문
+   - 오라클의 반복문은 LOOP, WHILE, FOR문이 제공
+   (1) LOOP 문
+    - 반복문의 기본 구조
+     (사용형식)
+     LOOP
+        반복처리명령문[N];
+        [EXIT WHEN 조건;]
+     END LOOP;
+      - 기본적으로 무한루프
+      - 'EXIT WHEN 조건' : 조건이 참(TRUE)이면 반복을 벗어남(END LOOP 다음으로 제어 이동)
+
+오라클은 데이터베이스
+자료를 정확하게 저장하고 제공하는 것 // 사용자의 판단을 위한 자료 제공이 궁극적인 목표
+프로그래밍을 위한 기능들이 아님, 반복문은 CURSOR와 같이 쓰인다
+
+   (2) WHILE 문
+    - 개발언어의 WHILE문과 동일 기능 및 구조
+    (사용형식)
+     WHILE 조건 LOOP
+        반복처리명령문[n];
+     END LOOP; 
+      - '조건'이 참이면 반복 수행
+
+커서(CURSOR)
+  - 오라클 SQL명령에 의하여 영향받은 행들의 집합
+  - SELECT문에 의해 반환된 결과 집합의 행들을 차례대로 접근해야 하는 경우 사용
+  - 개발자가 결과를 수동적으로 제어할 필요가 있는 경우 사용
+  - IMPLICIT, EXPLICIT CURSOR
+  - 커서의 사용은 FOR문을 제외하고 생성 (선언) -> OPEN -> FETCH -> CLOSE 단계를 차례대로 실행
+  (1)익명커서(IMPLICIT CURSOR)
+   - 이름이 없는 커서
+   - SELECT문이 실행되면 결과(커서)가 자동으로 OPEN된 후 결과출력 직후 자동으로 CLOSE됨(참조 불가)
+   - 커서속성
+     SQL%ISOPEN : 커서가 OPEN 상태이면 참(TRUE) 반환 - 항상 거짓(FALSE)[익명커서이기 때문에]
+     SQL%NOTFOUND : 커서에 자료가 남아있지 않으면 참(TRUE) 반환
+     SQL%FOUND : 커서에 자료가 남아있으면 참(TRUE) 반환
+     SQL%ROWCOUNT : 커서에 존재하는 자료의 수
+     
+
+FOR문을 사용하면 OPEN, FETCH, CLOSE를 모두 생략 가능함(CURSOR는 보통 FOR문과 같이 쓴다)
+WHILE문은 SQL%FOUND, LOOP문은 EXIT WHEN SQL%NOTFOUND를 사용하는 것이 일반적
+
+  (2)명시적 커서(EXPLICIT CURSOR)
+   - 이름이 부여된 커서
+   (선언형식 - 선언부)
+    CURSOR 커서명[(변수 타입명[,변수 타입명,...])] IS
+    SELECT 문;
+    
+    (실행부)
+    OPEN 커서명[(매개변수[,매개변수,...])];
+    
+    FETCH 커서명 INTO 변수LIST;
+    
+    CLOSE 커서명;
+    
+SQL%NOTFOUND, SQL%FOUND는 FETCH문이 실행된 후에 정의됨
+
+=================================================================================
+
+Object put(Object key, Object value) : 지정된 키와 값을 저장한다.
+Object remove(Object key) : 지정된 키로 저장된 값을 제거한다.
+Object get(Object key) : 지정된 키의 값(없으면 null)을 반환한다.
+Set ketSet() : 저장된 모든 키를 Set으로 반한다.
+
+Map : 키와 값을 저장, 순서가 없음
+
+하나의 키는 하나의 값만 저장, 수정은 그냥 같은 키값으로 해결
+
+hashmap내부적으로 저장되어있는 순서대로 출력
+
+(String)value.charAt(0);
+.연산이 형변환 연산보다 먼저 수행된다.
+(String)value.charAt(0); 는 object type인 value에게 string 클래스의 메소드 charAt을 쓰라는 것, 그후에 형변환 \에러
+((String)value).charAt(0); 올바른 방법
+
+//향상된 for문, for each 문, iterable
+
+// Set이나 Map은 순서가 없기 때문에 내부적으로 저장된 순서에 따라서 for문이 수행된다
+
+HashMap과 ArrayList를 이용하여 Table을 구성하는 방법
+Table의 컬럼이름을 키로 인스턴스의 해당 키값을 value로 지정한 HashMap을 만든다
+이 HashMap은 Table의 컬럼 개수만큼의 키와 그만큼의 value를 가지고 있다.
+이 HashMap을 하나의 인스턴스로 취급하여 Table을 표현하는 ArrayList<HashMap>에 하나씩 add하면
+테이블을 표현하는 ArrayList 완성!
+
+<실습>
+사용예)10-110사이의 난수를 발생시켜 난수에 해당하는 부서에 속한 사원 중 첫번째 사원의 급여를 조회하여
+      5000이하이면 '저임금 사원', 10000이하이면 '평균임금 사원', 그 이상이면 '고임금 사원'을 
+      사원번호, 사원명, 부서명과 함께 출력하시오.
+      
+DECLARE
+    V_EID   HR.EMPLOYEES.EMPOLYEE_ID    %TYPE;
+    V_ENAME HR.EMPLOYEES.EMP_NAME       %TYPE;
+    V_DNAME HR.DEPARTMENTS.DEPARTMENT_ID%TYPE;
+    V_SAL   HR.EMPLOYEES.SALARY         %TYPE;
+    V_MESSAGE                           VARCHAR2(20);
+    V_DID   HR.DEPARTMENTS.DEPARTMENT_ID%TYPE;
+BEGIN
+    V_DID := TRUNC(SYS.DBMS_RANDOM.VALUE(10,110),-1);
+    
+    SELECT A.EMPLOYEE_ID, A.EMP_NAME, B.DEPARTMENT_NAME, A.SALARY,
+           CASE WHEN SALARY <= 5000     THEN '저임금 사원'
+                WHEN SALARY <= 10000    THEN '평균임금 사원'
+                ELSE                         '고임금 사원'
+           END
+      INTO V_EID, V_ENAME, V_DNAME, V_SAL, V_MESSAGE
+      FROM HR.EMPLOYEES A, HR.DEPARTMENTS B
+     WHERE A.DEPARTMENT_ID = B.DEPARTMENT_ID
+           AND A.DEPARTMENT_ID = V_DID;
+    DBMS_OUTPUT.PUT_LINE(V_EID || ' ' || V_ENAME || ' ' || V_DNAME || ' ' || V_SAL || ' ' V_MESSAGE);
+END;
+
+DECLARE
+    V_EID   HR.EMPLOYEES.EMPLOYEE_ID        %TYPE;
+    V_ENAME HR.EMPLOYEES.EMP_NAME           %TYPE;
+    V_DNAME HR.DEPARTMENTS.DEPARTMENT_NAME  %TYPE;
+    V_SAL   HR.EMPLOYEES.SALARY             %TYPE;
+    V_MESSAGE                               VARCHAR2(20);
+    V_DID   HR.DEPARTMENTS.DEPARTMENT_ID    %TYPE;
+BEGIN
+    V_DID := TRUNC(SYS.DBMS_RANDOM.VALUE(10,110),-1);
+    
+    DBMS_OUTPUT.PUT_LINE(V_DID);
+    
+    SELECT A.EMPLOYEE_ID, A.EMP_NAME, B.DEPARTMENT_NAME, A.SALARY
+      INTO V_EID, V_ENAME, V_DNAME, V_SAL
+      FROM HR.EMPLOYEES A, HR.DEPARTMENTS B
+     WHERE A.DEPARTMENT_ID = B.DEPARTMENT_ID
+           AND A.DEPARTMENT_ID = V_DID
+           AND ROWNUM = 1;
+           
+    CASE WHEN V_SAL <= 5000     THEN V_MESSAGE := '저임금 사원';
+         WHEN V_SAL <= 10000    THEN V_MESSAGE := '평균임금 사원';
+         ELSE                        V_MESSAGE := '고임금 사원';
+    END CASE;
+    DBMS_OUTPUT.PUT_LINE('부서명 : ' || V_DNAME);
+    DBMS_OUTPUT.PUT_LINE('사원번호 : ' || V_EID);
+    DBMS_OUTPUT.PUT_LINE('사원명 : ' || V_ENAME);
+    DBMS_OUTPUT.PUT_LINE('비고 : ' || V_MESSAGE);
+END;
+
+사용예) 구구단의 7단을 출력하는 블록을 작성하시오
+
+DECLARE
+    V_CNT NUMBER := 1;
+    V_RES NUMBER := 0;
+BEGIN
+    LOOP
+        V_RES := V_CNT * 7;
+        EXIT WHEN V_CNT > 9;
+        DBMS_OUTPUT.PUT_LINE(7 || ' * ' || V_CNT || ' = ' || V_RES);
+        V_CNT := V_CNT + 1;
+    END LOOP;
+END;
+
+사용예)구구단의 7단을 출력하시오.
+
+DECLARE
+    V_CNT NUMBER := 1;
+    V_RES NUMBER := 0;
+BEGIN
+    WHILE V_CNT <= 9 LOOP
+        V_RES := V_CNT * 7;
+        DBMS_OUTPUT.PUT_LINE(7 || ' * ' || V_CNT || ' = ' || V_RES);
+        V_CNT := V_CNT + 1;
+    END LOOP;
+END;
+
+사용예1)2005년 5월 입고상품별 출고현황을 조회하는 커서를 작성하시오.
+      ALIAS는 상품코드, 상품명, 수량
+
+DECLARE
+    V_PID   PROD.PROD_ID    %TYPE;
+    V_PNAME PROD.PROD_NAME  %TYPE;
+    V_AMT                   NUMBER := 0;
+    V_CNT                   NUMBER := 0; --매출데이터가 있는지 없는지
+    
+    CURSOR CUR_BUY01(PDATE DATE) IS
+--    CURSOR CUR_BUY01 IS
+    SELECT DISTINCT BUY_PROD
+      FROM BUYPROD
+     WHERE BUY_DATE BETWEEN PDATE AND LAST_DAY(PDATE);
+--     WHERE BUY_DATE BETWEEN TO_DATE('20050501') AND LAST_DAY(TO_DATE('20050501'));
+    
+BEGIN
+    OPEN CUR_BUY01(TO_DATE('20050501'));
+--    OPEN CUR_BUY01;
+    LOOP
+        FETCH CUR_BUY01 INTO V_PID;
+        EXIT WHEN CUR_BUY01%NOTFOUND;
+        SELECT COUNT(*) INTO V_CNT
+          FROM CART
+         WHERE CART_PROD = V_PID
+               AND SUBSTR(CART_NO,1,6) = '200505';
+        IF V_CNT != 0 THEN
+            SELECT B.PROD_NAME, SUM(A.CART_QTY)
+              INTO V_PNAME, V_AMT
+              FROM CART A, PROD B
+             WHERE A.CART_PROD = B.PROD_ID
+                   AND A.CART_PROD = V_PID
+                   AND SUBSTR(A.CART_NO,1,6) = '200505'
+             GROUP BY B.PROD_NAME;
+        ELSE        --기존 코드(IF와 CNT가 정의되지 않았을 때)에서 에러가 발생한 부분
+                    --매입은 있으나 매출은 없는상품의 경우 SELECT절이 빈 테이블을 반환하여 INTO V_PNAME, V_AMT 실행안됨
+                    --여기에서 빈 것을 대입할 수 없다고(?) 오류가 나옴
+            DBMS_OUTPUT.PUT_LINE('상품코드 : ' || V_PID || '는 판매되지 않음');
+            DBMS_OUTPUT.PUT_LINE('-----------------------');
+        END IF;
+        DBMS_OUTPUT.PUT_LINE('상품코드 : ' || V_PID);
+        DBMS_OUTPUT.PUT_LINE('상품명 : ' || V_PNAME);
+        DBMS_OUTPUT.PUT_LINE('판매수량 : ' || V_AMT);
+        DBMS_OUTPUT.PUT_LINE('-----------------------');
+    END LOOP;
+    CLOSE CUR_BUY01;
+END;
+
+사용예2)2005년 상품별 입고수량합계를 출력하는 블록을 커서를 이용하여 작성하시오
+      ALIAS는 상품코드, 상품명, 입고수량
+DECLARE
+    V_PID   PROD.PROD_ID    %TYPE;
+    V_PNAME PROD.PROD_NAME  %TYPE;
+    V_AMT                   NUMBER := 0;
+    V_CNT                   NUMBER := 0;
+    
+    CURSOR CUR_PROD01 IS
+    SELECT DISTINCT BUY_PROD
+      FROM BUYPROD
+     ORDER BY 1 DESC;
+BEGIN
+    OPEN CUR_PROD01;
+    
+    LOOP
+        V_CNT := V_CNT + 1;
+        FETCH CUR_PROD01 INTO V_PID;
+        EXIT WHEN CUR_PROD01%NOTFOUND;
+        
+        SELECT B.PROD_NAME, SUM(A.BUY_QTY)
+          INTO V_PNAME, V_AMT
+          FROM BUYPROD A, PROD B
+         WHERE A.BUY_PROD = B.PROD_ID
+               AND EXTRACT(YEAR FROM A.BUY_DATE) = 2005
+               AND B.PROD_ID = V_PID
+         GROUP BY B.PROD_NAME;
+        
+        DBMS_OUTPUT.PUT_LINE('상품코드 ' || V_PID);
+        DBMS_OUTPUT.PUT_LINE('상품명 ' || V_PNAME);
+        DBMS_OUTPUT.PUT_LINE('입고수량 ' || V_AMT);
+        DBMS_OUTPUT.PUT_LINE('카운트 ' || V_CNT);
+        DBMS_OUTPUT.PUT_LINE('-------------------------------------');
+         
+    END LOOP;
+    
+    CLOSE CUR_PROD01;
+END;
+
+FETCH INTO는 하나의 문법, FETCH는 커서의 한 행 전체를 내보낸다. 그래서 커서의 열의 수 만큼의 변수를 생성하여 모두 받아야 한다.
+안그러면 에러. 커서를 FETCH할 때 위부터 차례로 빼내온다(ORDER BY로 확인해봄)
+커서는 객체가 아니다. VIEW로는 하나씩 읽어올 수 없다. 커서에 매개변수를 사용하는 경우는 커서를
+정의하는 SELECT절에 매개변수를 사용하고 싶을 때이다(보통 조건에 매개변수를 활용한다). 문법이 까다로우므로 주의
+
+2005년 상품별 입고수량 합계
+
+SELECT B.PROD_ID, B.PROD_NAME, SUM(A.BUY_QTY)
+  FROM BUYPROD A, PROD B
+ WHERE A.BUY_PROD = B.PROD_ID
+       AND EXTRACT(YEAR FROM BUY_DATE) = 2005
+ GROUP BY B.PROD_ID, B.PROD_NAME
+ ORDER BY 1;
+ 
+DECLARE
+    V_PID   PROD.PROD_ID    %TYPE;
+    V_PNAME PROD.PROD_NAME  %TYPE;
+    V_AMT                   NUMBER := 0;
+    
+    CURSOR CUR_BUY02 IS
+    SELECT B.PROD_ID AS BID, B.PROD_NAME AS BNAME, SUM(A.BUY_QTY) AS AMT
+      FROM BUYPROD A, PROD B
+    WHERE A.BUY_PROD = B.PROD_ID
+           AND EXTRACT(YEAR FROM BUY_DATE) = 2005
+    GROUP BY B.PROD_ID, B.PROD_NAME
+    ORDER BY 1;
+BEGIN
+    OPEN CUR_BUY02;
+    
+    LOOP
+        FETCH CUR_BUY02 INTO V_PID, V_PNAME, V_AMT;
+        EXIT WHEN CUR_BUY02 %NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE('상품코드 ' || V_PID);
+        DBMS_OUTPUT.PUT_LINE('상품명 ' || V_PNAME);
+        DBMS_OUTPUT.PUT_LINE('입고수량 ' || V_AMT);
+        DBMS_OUTPUT.PUT_LINE('-------------------------------------');
+    END LOOP;
+    
+    CLOSE CUR_BUY02;
+END;
+
+숙제)위 1번과 2번을 WHILE문을 사용하여 작성하시오.
+
+DECLARE
+    V_PID   PROD.PROD_ID    %TYPE;
+    V_PNAME PROD.PROD_NAME  %TYPE;
+    V_AMT                   NUMBER := 0;
+    
+    CURSOR CUR_BUY02 IS
+    SELECT B.PROD_ID AS BID, B.PROD_NAME AS BNAME, SUM(A.BUY_QTY) AS AMT
+      FROM BUYPROD A, PROD B
+    WHERE A.BUY_PROD = B.PROD_ID
+           AND EXTRACT(YEAR FROM BUY_DATE) = 2005
+    GROUP BY B.PROD_ID, B.PROD_NAME
+    ORDER BY 1;
+BEGIN
+    OPEN CUR_BUY02;
+    
+    FETCH CUR_BUY02 INTO V_PID, V_PNAME, V_AMT;
+    WHILE CUR_BUY02 %FOUND LOOP
+        DBMS_OUTPUT.PUT_LINE('상품코드 ' || V_PID);
+        DBMS_OUTPUT.PUT_LINE('상품명 ' || V_PNAME);
+        DBMS_OUTPUT.PUT_LINE('입고수량 ' || V_AMT);
+        DBMS_OUTPUT.PUT_LINE('-------------------------------------');
+        FETCH CUR_BUY02 INTO V_PID, V_PNAME, V_AMT;
+    END LOOP;
+    
+    CLOSE CUR_BUY02;
+END;
+
+DECLARE
+    V_PID   PROD.PROD_ID    %TYPE;
+    V_PNAME PROD.PROD_NAME  %TYPE;
+    V_AMT                   NUMBER := 0;
+    V_CNT                   NUMBER := 0; --매출데이터가 있는지 없는지
+    
+    CURSOR CUR_BUY01(PDATE DATE) IS
+    SELECT DISTINCT BUY_PROD
+      FROM BUYPROD
+     WHERE BUY_DATE BETWEEN PDATE AND LAST_DAY(PDATE);
+    
+BEGIN
+    OPEN CUR_BUY01(TO_DATE('20050501'));
+    FETCH CUR_BUY01 INTO V_PID;
+    WHILE CUR_BUY01%FOUND LOOP
+        FETCH CUR_BUY01 INTO V_PID;
+        SELECT COUNT(*) INTO V_CNT
+          FROM CART
+         WHERE CART_PROD = V_PID
+               AND SUBSTR(CART_NO,1,6) = '200505';
+        IF V_CNT != 0 THEN
+            SELECT B.PROD_NAME, SUM(A.CART_QTY)
+              INTO V_PNAME, V_AMT
+              FROM CART A, PROD B
+             WHERE A.CART_PROD = B.PROD_ID
+                   AND A.CART_PROD = V_PID
+                   AND SUBSTR(A.CART_NO,1,6) = '200505'
+             GROUP BY B.PROD_NAME;
+        ELSE       
+            DBMS_OUTPUT.PUT_LINE('상품코드 : ' || V_PID || '는 판매되지 않음');
+            DBMS_OUTPUT.PUT_LINE('-----------------------');
+        END IF;
+        DBMS_OUTPUT.PUT_LINE('상품코드 : ' || V_PID);
+        DBMS_OUTPUT.PUT_LINE('상품명 : ' || V_PNAME);
+        DBMS_OUTPUT.PUT_LINE('판매수량 : ' || V_AMT);
+        DBMS_OUTPUT.PUT_LINE('-----------------------');
+    END LOOP;
+    CLOSE CUR_BUY01;
+END;
+
+===================================================================================
+HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("age", 10);
+		map.put("name", "홍길동");
+		map.put("date", new Date());
+		//하나의 키는 하나의 값만 저장, 수정은 그냥 같은 키값으로 해결
+		System.out.println(map);
+		//hashmap내부적으로 저장되어있는 순서대로 출력
+		map.put("name","이순신");
+		System.out.println(map);
+		
+		map.remove("age");
+		System.out.println(map);
+		
+		Object value = map.get("name");
+		System.out.println(value);
+		
+		((String)value).charAt(0);
+
+		
+		Set<String> keys = map.keySet();	//저장된 모든 키
+		
+		for(String key : keys){	//향상된 for문, for each 문, iterable
+			System.out.println(key + " : " + map.get(key));
+			
+		}	// Set이나 Map은 순서가 없기 때문에 내부적으로 저장된 순서에 따라서 for문이 수행된다
+		
+		map.values().toArray();
+
+
+/*
+		 * 아이디		: admin
+		 * 비밀번호	: admin123
+		 * 이름		: 관리자
+		 * 전화번호	: 010-1234-5678
+		 */
+		
+		HashMap<String, String> user = new HashMap<>();
+		user.put("아이디", "admin");
+		user.put("비밀번호", "admin123");
+		user.put("이름", "관리자");
+		user.put("전화번호", "010-1234-5678");
+		
+		System.out.println(user);
+		ArrayList<HashMap<String,String>> table = new ArrayList<HashMap<String,String>>();
+		table.add(user);
+		System.out.println(table);
+		
+//		Set<String> keyset = user.keySet();
+//		for(String key : keyset){
+//			user.remove(key);
+//		}
+//		user.clear();
+		HashMap<String, String> user2 = new HashMap<>();
+		System.out.println(user2);
+		user2.put("아이디", "ADMIN");
+		user2.put("비밀번호", "ADMIN123");
+		user2.put("이름", "관리자1234");
+		user2.put("전화번호", "010-8765-4321");
+		table.add(user2);
+		System.out.println(table);
+		
+		ArrayList<String> lprod_id = new ArrayList<String>();
+		ArrayList<String> lprod_gu = new ArrayList<String>();
+		ArrayList<String> lprod_nm = new ArrayList<String>();
+		
+		lprod_id.add("1");
+		lprod_id.add("2");
+		lprod_id.add("3");
+		lprod_id.add("4");
+		lprod_id.add("5");
+		lprod_id.add("6");
+		lprod_id.add("7");
+		lprod_id.add("8");
+		lprod_id.add("9");
+		lprod_id.add("10");
+		
+		lprod_gu.add("P101");
+		lprod_gu.add("P102");
+		lprod_gu.add("P201");
+		lprod_gu.add("P202");
+		lprod_gu.add("P301");
+		lprod_gu.add("P302");
+		lprod_gu.add("P401");
+		lprod_gu.add("P402");
+		lprod_gu.add("P403");
+		lprod_gu.add("P501");
+		
+		lprod_nm.add("컴퓨터제품");
+		lprod_nm.add("전자제품");
+		lprod_nm.add("여성캐주얼");
+		lprod_nm.add("남성캐주얼");
+		lprod_nm.add("피혁잡화");
+		lprod_nm.add("화장품");
+		lprod_nm.add("음반/CD");
+		lprod_nm.add("도서");
+		lprod_nm.add("문구류");
+		lprod_nm.add("농산물");
+
+		HashMap<String,String> instance = new HashMap<String,String>();
+//		HashMap<String,String> instance1 = new HashMap<String,String>();
+//		HashMap<String,String> instance2 = new HashMap<String,String>();
+//		HashMap<String,String> instance3 = new HashMap<String,String>();
+//		HashMap<String,String> instance4 = new HashMap<String,String>();
+//		HashMap<String,String> instance5 = new HashMap<String,String>();
+//		HashMap<String,String> instance6 = new HashMap<String,String>();
+//		HashMap<String,String> instance7 = new HashMap<String,String>();
+//		HashMap<String,String> instance8 = new HashMap<String,String>();
+//		HashMap<String,String> instance9 = new HashMap<String,String>();
+//		HashMap<String,String> instance10 = new HashMap<String,String>();
+		
+		ArrayList<HashMap<String,String>> LPROD = new ArrayList<HashMap<String,String>>();
+		for(int i = 0; i < lprod_id.size(); i++){
+			instance = new HashMap<String,String>();
+			instance.put("LPROD_ID",lprod_id.get(i));
+			instance.put("LPROD_GU",lprod_gu.get(i));
+			instance.put("LPROD_NM",lprod_nm.get(i));
+			LPROD.add(instance);
+		}
+		
+		//new를 잘 쓰면 새로운 변수를 생성하지 않아도 된다!
+		
+//		System.out.println(LPROD);
+//		LPROD.clear();
+//		System.out.println(LPROD);
+		
+//		instance1.put("LPROD_ID","1");
+//		instance1.put("LPROD_GU","P101");
+//		instance1.put("LPROD_NM","컴퓨터제품");
+//		LPROD.add(instance1);
+//		instance1 = new HashMap<>();
+//		instance1.put("LPROD_ID","2");
+//		instance1.put("LPROD_GU","P102");
+//		instance1.put("LPROD_NM","전자제품");
+//		LPROD.add(instance1);
+//		instance1 = new HashMap<>();
+//		instance1.put("LPROD_ID","3");
+//		instance1.put("LPROD_GU","P201");
+//		instance1.put("LPROD_NM","여성캐주열");
+//		LPROD.add(instance1);
+//		instance1 = new HashMap<>();
+//		instance1.put("LPROD_ID","4");
+//		instance1.put("LPROD_GU","P202");
+//		instance1.put("LPROD_NM","남성캐주얼");
+//		LPROD.add(instance1);
+//		instance1 = new HashMap<>();
+//		instance1.put("LPROD_ID","5");
+//		instance1.put("LPROD_GU","P301");
+//		instance1.put("LPROD_NM","피혁잡화");
+//		LPROD.add(instance1);
+//		instance1 = new HashMap<>();
+//		instance1.put("LPROD_ID","6");
+//		instance1.put("LPROD_GU","P302");
+//		instance1.put("LPROD_NM","화장품");
+//		LPROD.add(instance1);
+//		instance1 = new HashMap<>();
+//		instance1.put("LPROD_ID","7");
+//		instance1.put("LPROD_GU","P401");
+//		instance1.put("LPROD_NM","음반/CD");
+//		LPROD.add(instance1);
+//		instance1 = new HashMap<>();
+//		instance1.put("LPROD_ID","8");
+//		instance1.put("LPROD_GU","P402");
+//		instance1.put("LPROD_NM","도서");
+//		LPROD.add(instance1);
+//		instance1 = new HashMap<>();
+//		instance1.put("LPROD_ID","9");
+//		instance1.put("LPROD_GU","P403");
+//		instance1.put("LPROD_NM","문구류");
+//		LPROD.add(instance1);
+//		instance1 = new HashMap<>();
+//		instance1.put("LPROD_ID","10");
+//		instance1.put("LPROD_GU","P501");
+//		instance1.put("LPROD_NM","농산물");
+//		LPROD.add(instance1);
+		
+		System.out.println("LPROD_ID\tLPROD_GU\tLPROD_NM");
+		for(HashMap<String,String> walk : LPROD){
+			System.out.print(walk.get("LPROD_ID") + "\t\t");
+			System.out.print(walk.get("LPROD_GU") + "\t\t");
+			System.out.println(walk.get("LPROD_NM") + "\t\t");
+		}
+
+
+<TMI>
+
+PL/SQL을 실행했는데 실행시간이 오래 걸리면 숫자변수를 초기화하지 않고 사용했는지 확인하라
