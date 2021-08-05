@@ -1,0 +1,518 @@
+2021.08.05
+
+<이론>
+User Defined Function(함수)
+  - 프로시저와 장점 등이 유사
+  - 반환 값이 있음
+  - 자주 사용되는 서브쿼리 또는 복잡한 산술식 등을 함수로 구현
+  - SELECT 문의 SELECT절, WHERE절에 사용가능
+  
+  (사용형식)
+  CREATE [OR REPLACE] FUNCTION 함수명[(
+    매개변수 [MODE] 타입 [:=값][,
+              :
+    매개변수 [MODE] 타입 [:=값]])]
+    RETURN 데이터 타입
+  IS|AS
+    선언영역
+  BEGIN
+    실행영역
+    RETURN 값|expr;
+  END;
+   - 'RETURN 데이터 타입' : 반환할 데이터 타입(기본 데이터 타입, 참조형 데이터타입(테이블이나 행)은 반환불가)
+   - 'RETURN 값|expr' : 반환해야 하는 값이나 값을 산출하는 수식 등으로 반드시 1개 이상 존재해야 함
+   - OUT 매개변수를 이용한 값 반환은 사용을 위해서 반드시 PL/SQL 익명블록이 필요함.
+     그래서 함수와 OUT매개변수를 같이 활용하는 경우는 많지 않음
+     
+반환 : 해당 함수명이 기술되어지는 위치에 단 하나의 반환 결과값을 줌
+프로시저는 일반 쿼리에서는 사용이 불가하나 함수는 일반 쿼리(SELECT, INSERT 등의 서브쿼리)에서 사용할 수 있다.
+
+반환해야 하는 값이 여러개일 수 없다.
+반드시 여러개를 반환하고 싶으면 모두 문자열로 묶어서 반환하는 식으로 활용
+
+트리거 TRIGGER
+  - 특정 이벤트의 발생 전 또는 이후 자동으로 실행되야 할 프로시져
+  - 트리거는 문장단위 트리거와 행단위 트리거로 구분
+  - 문장단위 트리거 수행 시 트리거가 완료되지 않은 상태에서 또다른 트리거 호출시
+    테이블의 일관성 유지를 위해 해당테이블의 접근이 금지됨
+  
+  (사용형식)
+  CREATE [OR REPLACE] TRIGGER 트리거명
+    timming[BEFORE|AFTER] event[INSERT|UPDATE|DELETE]
+    ON 테이블명
+    [FOR EACH ROW]
+    [WHEN 조건]
+    [DECLARE
+        선언부
+    ]
+    BEGIN
+        실행부
+    END;
+     - 'BEFORE|AFTER' : '실행부'(트리거 본문)가 실행될 시점
+     - 'INSERT|UPDATE|DELETE' : 트리거를 발생시키는 이벤트로 OR 연산자로 복수개 사용 가능
+       EX) INSERT OR DELETE, INSERT OR UPDATE OR DELETE etc..
+     - 'FOR EACH ROW' : 행단위 트리거 시 기술(생략하면 문장단위 트리거)
+     - 'WHEN 조건' : 행단위 트리거에서만 사용 가능하며, 이벤트 발생에 대한 구체적인 조건 기술
+     
+트리거 사용시 많은 주의가 필요함. 프로시저의 일종
+BEFORE를 사용하는 TRIGGER가 많지는 않음.(카트/상품에 없는 상품을 판매하는 것과 같이 예외적인 경우에 필요)
+
+=======================================================================
+
+JDBC(Java Databace Connectivity)
+- 자바의 데이터베이스를 연결해주는 라이브러리
+- ojdbc : 오라클 JDBC
+
+JDBC 작성 단계
+1. Connection 생성(DB연결)
+2. Statement 생성(쿼리 작성)
+3. Query 실행
+4. ResultSet에서 결과 추출(Select인 경우)
+5. ResultSet, Statement, Connection 닫기
+
+jdbc 연결방법 : javaprogramming 우클릭 - buildpath -> configure buildpath... ->
+libraries -> add external jars -> ojdbc6.jar 추가 ok
+
+//데이터베이스 접속 정보
+String url = "jdbc:oracle:thin:@localhost:1521:xe";
+//jdbc:oracle:thin: <- 접속할 때 사용할 드라이버 @ 앞쪽에 위치
+//localhost <- ip주소
+//1521 <- 포트
+//xe <- 서비스아이디(SID)
+
+
+//select
+rs = ps.executeQuery();
+
+//insert, update, delete
+//int result = ps.executeUpdate();
+//정수형 리턴값은 영향받은 행의 개수
+
+// 메타데이터 : 데이터에 대한 데이터
+
+while(rs.next()){	//next수행 이후 해당 쿼리의 레코드가 있다면 그 결과를 바라보게 됨 
+
+//드라이버 : 서로 다른 애를 연결시켜주는 중간다리 같은 애
+
+<실습>
+사용예)'대전'에 거주하는 회원번호를 입력받아 해당회원의 2005년 6월 구매금액을 출력하는 함수를 작성하시오.
+
+(함수)
+CREATE OR REPLACE FUNCTION FN_SUM01(
+    P_MID   MEMBER.MEM_ID   %TYPE)  --매개변수의 MODE를 생략하면 DEFAULT가 IN
+    RETURN  NUMBER
+IS
+    V_SUM   NUMBER := 0;    --구매금액 합계
+    V_CNT   NUMBER := 0;    --해당회원의 자료(CART) 존재유무
+                            --BOOLEAN으로 할 수도 있지만 SELECT 절의 COUNT로 얻은 값을 보고 값을 할당하는 과정필요
+BEGIN
+    SELECT COUNT(CART_NO) INTO V_CNT
+      FROM CART
+     WHERE SUBSTR(CART_NO,1,6) = '200506'
+           AND CART_MEMBER = P_MID;
+           
+    IF  V_CNT != 0 THEN
+        SELECT SUM(A.CART_QTY * B.PROD_PRICE) INTO V_SUM
+          FROM CART A, PROD B
+         WHERE A.CART_PROD = B.PROD_ID
+               AND A.CART_MEMBER = P_MID
+               AND SUBSTR(A.CART_NO,1,6) = '200506';
+    ELSE
+        V_SUM := 0;
+    END IF;
+    
+    RETURN V_SUM;
+END;
+
+(실행)
+SELECT MEM_ID AS "회원번호",
+       MEM_NAME AS "회원명",
+       MEM_ADD1 || ' ' || MEM_ADD2 AS "주소",
+       FN_SUM01(MEM_ID) AS "구매금액"
+  FROM MEMBER
+ WHERE SUBSTR(MEM_ADD1,1,2) = '대전';
+ 
+사용예)상품코드와 년도 및 월을 입력받아 해당 상품의 구매수량과 구매금액을 출력하는 함수를 작성하시오.
+
+(함수) : FN_BUY01
+
+CREATE OR REPLACE FUNCTION FN_BUY01(
+    P_PID   PROD.PROD_ID    %TYPE,
+    P_YEAR                  CHAR,
+    P_MONTH                 CHAR)
+    RETURN VARCHAR2
+IS
+    V_CNT   NUMBER          := 0;
+    V_DATE  DATE            := TO_DATE(P_YEAR || P_MONTH || '01');
+    V_SUM   NUMBER          := 0;
+    V_AMT   NUMBER          := 0;
+    V_RES   VARCHAR2(100);
+BEGIN
+    SELECT COUNT(*) INTO V_CNT
+      FROM BUYPROD
+     WHERE BUY_PROD = P_PID
+           AND BUY_DATE BETWEEN V_DATE AND LAST_DAY(V_DATE);
+           
+    IF  V_CNT != 0 THEN
+        SELECT SUM(A.BUY_QTY * B.PROD_COST), SUM(A.BUY_QTY) INTO V_SUM, V_AMT
+          FROM BUYPROD A, PROD B
+         WHERE A.BUY_PROD = B.PROD_ID
+               AND A.BUY_DATE BETWEEN V_DATE AND LAST_DAY(V_DATE)
+               AND A.BUY_PROD = P_PID;
+    ELSE
+        V_SUM := 0;
+        V_AMT := 0;
+    END IF;
+    V_RES := '구매수량 : ' || V_AMT || ', 구매금액 : ' || V_SUM;
+    RETURN V_RES;
+END;
+
+(실행)
+SELECT PROD_ID, PROD_NAME, FN_BUY01(PROD_ID, '2005', '05')
+  FROM PROD;
+  
+(함수) : FN_BUY02
+
+CREATE OR REPLACE FUNCTION FN_BUY02(
+    P_PID   PROD.PROD_ID    %TYPE,
+    P_YEAR                  CHAR,
+    P_MONTH                 CHAR,
+    P_AMT   OUT             NUMBER)
+    RETURN NUMBER
+IS
+    V_CNT   NUMBER          := 0;
+    V_DATE  DATE            := TO_DATE(P_YEAR || P_MONTH || '01');
+    V_SUM   NUMBER          := 0;
+    V_AMT   NUMBER          := 0;
+BEGIN
+    SELECT COUNT(BUY_PROD) INTO V_CNT
+      FROM BUYPROD
+     WHERE BUY_PROD = P_PID
+           AND BUY_DATE BETWEEN V_DATE AND LAST_DAY(V_DATE);
+           
+    IF  V_CNT != 0 THEN
+        SELECT SUM(A.BUY_QTY * B.PROD_COST), SUM(A.BUY_QTY) INTO V_SUM, V_AMT
+          FROM BUYPROD A, PROD B
+         WHERE A.BUY_PROD = B.PROD_ID
+               AND A.BUY_DATE BETWEEN V_DATE AND LAST_DAY(V_DATE)
+               AND A.BUY_PROD = P_PID;
+    ELSE
+        V_SUM := 0;
+        V_AMT := 0;
+    END IF;
+    P_AMT := V_AMT;
+    RETURN V_SUM;
+END;
+
+(실행)
+DECLARE
+    V_AMT   NUMBER  := 0;
+    V_SUM   NUMBER  := 0;
+BEGIN
+    FOR REC IN 
+    (SELECT PROD_ID, PROD_NAME
+       FROM PROD)
+    LOOP
+        V_SUM := FN_BUY02(REC.PROD_ID, '2005', '05', V_AMT);
+        
+        DBMS_OUTPUT.PUT_LINE(REC.PROD_ID);
+        DBMS_OUTPUT.PUT_LINE(REC.PROD_NAME);
+        DBMS_OUTPUT.PUT_LINE(V_SUM);
+        DBMS_OUTPUT.PUT_LINE(V_AMT);
+        DBMS_OUTPUT.PUT_LINE('=======================');
+    END LOOP;
+END;
+
+사용예)년도와 월을 6자리 문자열로 입력 받아 해당월에 가장 많은 상품을 구매(금액기준)한 회원의 이름과 구매금액을 출력하는 함수를 작성하시오
+      함수명:FN_MAXMEM
+
+CREATE OR REPLACE FUNCTION FN_MAXMEM(
+    P_MONTH VARCHAR2)
+    RETURN  VARCHAR2
+IS
+    V_CNT   NUMBER          := 0;
+    V_SUM   NUMBER          := 0;
+    V_MNAME MEMBER.MEM_NAME %TYPE;
+    
+BEGIN
+    SELECT COUNT(CART_NO) INTO V_CNT
+      FROM CART
+     WHERE SUBSTR(CART_NO,1,6) = P_MONTH;
+     
+--    IF V_CNT > 0 THEN
+        SELECT MNAME, MSUM INTO V_MNAME, V_SUM
+          FROM (SELECT B.MEM_NAME AS MNAME, SUM(A.CART_QTY * C.PROD_PRICE) AS MSUM
+                  FROM CART A, MEMBER B, PROD C
+                 WHERE A.CART_MEMBER = B.MEM_ID
+                       AND A.CART_PROD = C.PROD_ID
+                       AND SUBSTR(CART_NO,1,6) = P_MONTH
+                 GROUP BY B.MEM_NAME
+                 ORDER BY 2 DESC) A
+         WHERE ROWNUM = 1;
+--    ELSE
+--        V_MNAME := '';
+--    END IF;
+    
+--    RETURN '회원이름 : ' || V_MNAME || ', 구매금액 : ' || V_SUM;
+    RETURN '회원이름 : ';
+
+END;
+
+SELECT FN_MAXMEM('200506') AS "최고구매고객" FROM DUAL;
+
+주의)
+LIKE 사용법 : CART_NO LIKE P_DATE||'%'
+VARCHAR2, CHAR 데이터타입은 VARCHAR2(크기), CHAR(크기)에서 크기 안쓰면 컴파일에러가 발생한다
+SELECT INTO에서 SELECT 절 실행 결과가 NULL일 때는 에러는 나오지 않으나 조회해보면 NULL로 되어있다.
+PL/SQL절 안의 SELECT INTO절의 레코드가 없다면 특정 값을 RETURN으로 항상 출력하고자 해도 NULL로 출력된다(왜죠?)
+
+
+ACCEPT  P_DATE  PROMPT  '년월(YYYYMM) : '
+DECLARE
+    V_RES   VARCHAR2(50);
+BEGIN
+    V_RES := FN_MAXMEM('&P_DATE');
+    DBMS_OUTPUT.PUT_LINE(SUBSTR('&P_DATE',1,4) || '년 ' || SUBSTR('&P_DATE',5,2) || '월');
+    DBMS_OUTPUT.PUT_LINE(V_RES);
+END;
+
+=======================================================================
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+
+String url = "jdbc:oracle:thin:@localhost:1521:xe";
+String user = "LKH96";
+String password = "java";
+Connection con = null;
+PreparedStatement ps = null;
+ResultSet rs = null;
+
+try {
+			con = DriverManager.getConnection(url, user, password);
+			String sql = "SELECT * from member";
+			//JDBC로 쿼리를 작성할 때는 세미콜론을 넣으면 안됨
+			ps = con.prepareStatement(sql);
+			rs = ps.executeQuery();
+			//여기까지는 rs가 아무것도 바라보지 않음
+			ResultSetMetaData metaData = rs.getMetaData(); // 메타데이터 : 데이터에 대한 데이터
+			int columnCount = metaData.getColumnCount();
+			for(int i = 1; i <= columnCount; i++){
+				System.out.print(metaData.getColumnName(i) + "\t");
+			}
+			System.out.println();
+			while(rs.next()){	//next수행 이후 해당 쿼리의 레코드가 있다면 그 결과를 바라보게 됨 
+				String memId = rs.getString(1);			// 컬럼의 인덱스, 첫 번째 컬럼
+				String memPass = rs.getString("MEM_PASS");	//컬럼의 이름
+				System.out.println("MEM_ID : " + memId + "/ MEM_PASS : " + memPass);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(rs != null) try { rs.close(); } catch (Exception e) {}
+			if(ps != null) try { ps.close(); } catch (Exception e) {}
+			if(con != null) try { con.close(); } catch (Exception e) {}
+		}
+
+String sql = "select *"
+	+ " from cart"
+	+ " where cart_member = ?"
+	+ " and cart_qty > ?";
+// ? 는 뭘까
+//JDBC에서 쿼리를 작성할 때 값 대신에 ?로 바꾸고 ?의 값을 나중에 세팅함
+ps = con.prepareStatement(sql);
+ps.setString(1, "a001");
+//첫번째 ?에 String "a001"을 넣겠다
+ps.setInt(2, 5);
+//두번째 ?에 int 5를 넣겠다.
+//set으로 ?에 넣는 것은 값만 넣을 수 있음
+rs = ps.executeQuery();
+			
+ResultSetMetaData metaData = rs.getMetaData();
+
+
+int columnCount = metaData.getColumnCount();
+			
+for(int i = 1; i <= columnCount; i++){
+	System.out.println(metaData.getColumnName(i) + "\t");
+}
+			
+while(rs.next()){
+	for(int i = 1; i <= columnCount; i++){
+		Object value = rs.getObject(i);
+		System.out.print(value + "\t");
+	}
+	System.out.println();
+}
+
+package k_jdbc;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class JDBCUtil {
+
+	//싱글톤 패턴 : 인스턴스의 생성을 제한하여 하나의 인스턴스만 사용하는 디자인 패턴
+	
+	//객체생성을 막기 위한 생성자
+	private JDBCUtil(){
+		
+	}
+	
+	//객체를 보관할 변수
+	private static JDBCUtil instance;
+	
+	//객체를 생성해서 빌려주는 메서드
+	public static JDBCUtil getInstance(){
+		if(instance == null){
+			instance = new JDBCUtil();
+		}
+		return instance;
+	}
+	
+	//디자인패턴 : 클래스를 만드는 양식
+	
+	private String url = "jdbc:oracle:thin:@localhost:1521:xe";
+	private String user = "TOY";
+	private String password = "java";
+	
+	private Connection con = null;
+	private PreparedStatement ps = null;
+	private ResultSet rs = null;
+	
+	/*
+	 * Map<String, Object> selectOne(String sql)		//조회의 결과가 단일 행
+	 * List<Map<String, Object>> selectList(String sql)	//조회의 결과가 다중 행
+	 * int update(String sql)							//insert, update, delete를 하면 영향을 받는 행의 수를 리턴
+	 */
+	
+	public List<Map<String, Object>> selectList(String sql){
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		
+		try {
+			con = DriverManager.getConnection(url, user, password);
+			
+			ps = con.prepareStatement(sql);
+			
+			rs = ps.executeQuery();
+			
+			ResultSetMetaData metaData = rs.getMetaData();
+			
+			int columnCount = metaData.getColumnCount();
+			
+			while(rs.next()){
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				for(int i = 1; i <= columnCount; i++){
+					map.put(metaData.getColumnName(i), rs.getObject(i));
+				}
+				list.add(map);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(rs != null) try { rs.close(); } catch (Exception e) {}
+			if(ps != null) try { ps.close(); } catch (Exception e) {}
+			if(con != null) try { con.close(); } catch (Exception e) {}
+		}
+		
+		return list;
+	}
+	
+	public Map<String, Object> selectOne(String sql){
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		try {
+			con = DriverManager.getConnection(url, user, password);
+			
+			ps = con.prepareStatement(sql);
+			
+			rs = ps.executeQuery();
+			
+			ResultSetMetaData metaData = rs.getMetaData();
+			
+			int columnCount = metaData.getColumnCount();
+			
+			if(rs.next()){
+				for(int i = 1; i <= columnCount; i++){
+					map.put(metaData.getColumnName(i), rs.getObject(i));
+				}
+				
+			}else{
+				map = null;
+			}
+			
+//			rs.next();
+//			
+//			for(int i = 1; i <= columnCount; i++){
+//				map.put(metaData.getColumnName(i), rs.getObject(i));
+//			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(rs != null) try { rs.close(); } catch (Exception e) {}
+			if(ps != null) try { ps.close(); } catch (Exception e) {}
+			if(con != null) try { con.close(); } catch (Exception e) {}
+		}
+		return map;
+	}
+	
+	int update(String sql){
+		int result = 0;
+		try {
+			con = DriverManager.getConnection(url, user, password);
+			
+			ps = con.prepareStatement(sql);
+			
+			result = ps.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(rs != null) try { rs.close(); } catch (Exception e) {}
+			if(ps != null) try { ps.close(); } catch (Exception e) {}
+			if(con != null) try { con.close(); } catch (Exception e) {}
+		}
+		return result;
+	}
+	
+}
+
+
+package k_jdbc;
+
+import java.util.List;
+import java.util.Map;
+
+public class JDBCTest {
+
+	public static void main(String[] args) {
+		
+		JDBCUtil jdbc = JDBCUtil.getInstance();
+		
+		List<Map<String, Object>> list = jdbc.selectList("select cart_qty from cart where cart_qty > 6");
+		Map<String, Object> map = jdbc.selectOne("select cart_member from cart where cart_qty > 6");
+		
+		int test = jdbc.update("delete cart where cart_qty > 6");
+		
+		System.out.println(list);
+		System.out.println(map);
+		System.out.println(test);
+		
+	}
+
+}
+
+<TMI>
