@@ -223,7 +223,44 @@ END;
 
 <TMI>
 
-사용예의 답
+분류테이블에 새로운 분류코드를 삽입하시오. 삽입 후 '새로운 분류가 추가되었습니다.'를 출력하는 트리거를 작성하시오.
+[분류코드 'P502', 분류명 : '임산물', 순번 : 11]
+
+CREATE OR REPLACE TRIGGER TG_LPROD_INSERT
+    AFTER INSERT ON LPROD
+DECLARE
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('새로운 분류가 추가되었습니다.');
+END;
+
+INSERT INTO LPROD SELECT 11, 'P502', '임산물' FROM DUAL;
+COMMIT;
+
+SELECT * FROM LPROD ORDER BY 1 DESC;
+DELETE LPROD WHERE LPROD_ID = 11;
+ROLLBACK;
+
+오늘이 2005년 6월 11일이라고 가정하고, 제품코드가 'P102000005'인 상품 10대를 매입했다고 하자.
+이 정보를 매입테이블에 저장한 후 재고 수불 테이블을 변경하는 트리거를 작성하시오.
+[단순화 가정 : 이 시점에서는 INSERT가 수행된다]
+
+CREATE OR REPLACE TRIGGER TG_CART_INSERT_REMAIN
+    AFTER INSERT ON CART
+    FOR EACH ROW
+DECLARE
+    
+BEGIN
+    UPDATE REMAIN A
+       SET (REMAIN_I, REMAIN_J_99, REMAIN_DATE) =
+           (SELECT REMAIN_I + 
+              FROM 
+END;
+
+
+INSERT INTO REMAIN
+SELECT '2005', PROD_ID, PROD_PROPERSTOCK, 0, 0, PROD_PROPERSTOCK, TO_DATE('20041231') FROM PROD;
+
+사용예)2005년 1월 상품별 매입정보를 이용하여 REMAIN테이블을 변경하시오
 
 CREATE OR REPLACE FUNCTION FN_BUYPROD_AMT(P_PID PROD.PROD_ID%TYPE, P_DATE VARCHAR2)
     RETURN NUMBER
