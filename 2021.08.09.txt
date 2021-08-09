@@ -1,0 +1,204 @@
+2021.08.09
+
+<이론>
+PACKAGE
+  - 논리적 연관성이 있는 PL/SQL의 변수, 상수커서, 서브프로그램(함수, 프로시져) 들의 항목을 묶어놓은 객체
+  - 다른 객체에서 패키지 항목들을 공유, 실행
+  - 모듈화 기능 제공
+  - 프로그램 설계의 용이성 제공
+  - 캡슐화 기능 제공
+  - 선언부와 본문부로 구성
+  
+  1)패키지 선언부
+   - 패키지에서 사용할 변수, 상수, 함수 등의 선언 영역(명세)
+   (사용형식)
+   
+CREATE [OR REPLACE] PACKAGE 패키지명 IS
+    변수, 상수, 커서 선언;
+    FUNCTION 함수명[(매개변수 LIST)]
+      RETURN 반환타입;
+                :
+    PROCEDURE 프로시저명(매개변수LIST);
+                :
+END 패키지명;
+
+선언패키지와 본문 패키지가 각각 만들어줘야 함. 여러사람이 하나의 프로젝트에 투입되기 때문에 사용하는 용어가 동일해야 한다.
+분업을 하되 함수/프로시져의 프로토타입을 통일해주어야 하기 때문에 패키지를 선언한다. 나중에 패키지명.함수/프로시저명으로 호출함
+
+  2)패키지 본문부
+   - 선언부에서 선언된 PL/SQL객체들의 구현내용 기술
+   (사용형식)
+CREATE [OR REPLACE] PACKAGE BODY 패키지명 IS
+    변수명 타입;
+    상수명 CONSTANT 타입;
+    커서 정의;
+    
+    FUNCTION 함수명[(매개변수LIST)]
+    RETURN 타입
+    IS
+        선언부
+    BEGIN
+        실행부
+        RETURN EXPR;
+    END 함수명;
+    
+    PROCEDURE 프로시저명[(매개변수LSIT)]
+    IS
+        선언부
+    BEGIN
+        실행부
+        RETURN EXPR;
+    END 프로시저명;
+END 패키지명;
+
+선언부와 본문부는 따로 컴파일되어야 함.
+FUNCTION 함수명 ~ END [함수명]; FUNCTION 프로시저명 ~ END [프로시저명];
+
+<실습>
+사원테이블에서 사원번호 125번(Julia Mayer) 사원의 직무가 'ST-CLERK'에서 'ST-MAN'으로 승진되었다.
+             이 정보를 사원테이블에 반영하고 난 후 직무변동테이블을 갱신하시오.(트리거 작성)
+CREATE OR REPLACE TRIGGER TG_JOB_CHANGE
+    AFTER UPDATE OF JOB_ID, DEPARTMENT_ID ON EMPLOYEES
+    FOR EACH ROW
+DECLARE
+    V_EID   EMPLOYEES.EMPLOYEE_ID   %TYPE;
+    V_CNT   NUMBER := 0;
+    V_SDATE DATE;
+    V_EDATE DATE;
+BEGIN
+    SELECT COUNT(*) INTO V_CNT
+      FROM JOB_HISTORY
+     WHERE EMPLOYEE_ID = :NEW.EMPLOYEE_ID;
+     
+     V_EID := :NEW.EMPLOYEE_ID;
+      
+    IF V_CNT = 0 THEN
+        V_SDATE :=:OLD.HIRE_DATE;
+        V_EDATE := SYSDATE - 1;
+    ELSE
+        SELECT A.END_DATE INTO V_SDATE
+          FROM (SELECT END_DATE
+                  FROM JOB_HISTORY
+                 WHERE EMPLOYEE_ID = 125
+                 ORDER BY 1 DESC) A
+         WHERE ROWNUM = 1;
+        V_SDATE := V_SDATE + 1;
+        V_EDATE := SYSDATE - 1;
+    END IF;
+    INSERT INTO JOB_HISTORY
+    VALUES(V_EID, V_SDATE, V_EDATE, :OLD.JOB_ID, :OLD.DEPARTMENT_ID);
+    DBMS_OUTPUT.PUT_LINE('직무 변동이력을 갱신하였습니다');
+END;
+
+DECLARE
+BEGIN
+    UPDATE EMPLOYEES
+       SET (SALARY, JOB_ID) = (SELECT MIN_SALARY, JOB_ID
+                                 FROM JOBS
+                                WHERE JOB_ID = 'ST_MAN')
+     WHERE EMPLOYEE_ID = 125;
+END;
+COMMIT;
+
+DROP TRIGGER UPDATE_JOB_HISTORY;
+
+두번씩 나오는 이유 : HR계정 자체에서 만들어 둔 이력관리 TRIGGER가 있기 때문
++ AFTER/BEFORE [UPDATE/INSERT/DELETE] OF 컬럼명 ON 테이블명
+테이블의 특정 컬럼에 DML 명령이 수행되었을 때. 근데 INSERT랑 DELETE는 기본적으로 행 단위라 컬럼명까지 관여하는 디테일은 UPDATE만 적용될듯
+새로운 문법
+
+    ** 사원테이블에 퇴직일자컬럼을 추가하시오
+       컬럼명          타입       NULL여부
+       RETIRE_DATE    DATE      
+       
+ALTER TABLE EMPLOYEES ADD RETIRE_DATE DATE;
+COMMIT;
+
+사용예)사원관리에 필요한 함수 등을 관리
+      - 패키지명 : PKG_EMP
+      - FN_GET_NAME : 사원번호를 입력받아 이름을 반환하는 함수
+      - PROC_NEW_EMP : 신규사원정보 입력 프로시져(사원번호, LAST_NAME, 이메일, 입사일, JOB_ID)
+      - PROC_RETIRE_EMP : 퇴직자처리 프로시져(사원번호 입력)
+      
+(패키지선언)
+CREATE OR REPLACE PACKAGE PKG_EMP IS
+    
+    --이름반환 함수
+    FUNCTION FN_GET_NAME(
+        P_EID  IN EMPLOYEES.EMPLOYEE_ID    %TYPE)
+        RETURN VARCHAR2;
+    
+    --신규사원정보 입력
+    PROCEDURE PROC_NEW_EMP(
+        P_EID  IN EMPLOYEES.EMPLOYEE_ID    %TYPE,
+        P_LNAME IN EMPLOYEES.LAST_NAME      %TYPE,
+        P_EMAIL IN EMPLOYEES.EMAIL          %TYPE,
+--        P_HIRE_DATE IN EMPLOYEES.HIRE_DATE%TYPE 입사일은 오늘이라고 하자
+        P_JOB_ID IN JOBS.JOB_ID        %TYPE);
+    
+    --퇴직자처리
+    PROCEDURE PROC_RETIRE_EMP(
+        P_EID IN EMPLOYEES.EMPLOYEE_ID%TYPE);
+END PKG_EMP;
+
+CREATE OR REPLACE PACKAGE BODY PKG_EMP IS
+    FUNCTION FN_GET_NAME(
+        P_EID  IN EMPLOYEES.EMPLOYEE_ID    %TYPE)
+        RETURN VARCHAR2
+    IS
+        V_ENAME EMPLOYEES.EMP_NAME         %TYPE;
+    BEGIN
+        SELECT EMP_NAME INTO V_ENAME
+          FROM EMPLOYEES
+         WHERE EMPLOYEE_ID = P_EID;
+         
+        DBMS_OUTPUT.PUT_LINE('사원번호 : ' || P_EID);
+        DBMS_OUTPUT.PUT_LINE('사원명 : ' || V_ENAME);
+        DBMS_OUTPUT.PUT_LINE('-------------------');
+    RETURN V_ENAME;
+    END FN_GET_NAME;
+    
+    PROCEDURE PROC_NEW_EMP(
+        P_EID  IN EMPLOYEES.EMPLOYEE_ID     %TYPE,
+        P_LNAME IN EMPLOYEES.LAST_NAME      %TYPE,
+        P_EMAIL IN EMPLOYEES.EMAIL          %TYPE,
+--        P_HIRE_DATE IN EMPLOYEES.HIRE_DATE%TYPE 입사일은 오늘이라고 하자
+        P_JOB_ID IN JOBS.JOB_ID        %TYPE)
+    IS
+    BEGIN
+        INSERT INTO EMPLOYEES(EMPLOYEE_ID, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, EMP_NAME)
+        VALUES(P_EID, P_LNAME, P_EMAIL, SYSDATE - 1, P_JOB_ID, P_LNAME || '길동');
+        COMMIT;
+    END PROC_NEW_EMP;
+    
+    PROCEDURE PROC_RETIRE_EMP(
+        P_EID IN EMPLOYEES.EMPLOYEE_ID%TYPE)
+    IS
+    BEGIN
+        UPDATE EMPLOYEES
+           SET RETIRE_DATE = SYSDATE
+         WHERE EMPLOYEE_ID = P_EID;
+        COMMIT;
+    END PROC_RETIRE_EMP;
+    
+END PKG_EMP;
+
+(실행)
+
+SELECT EMPLOYEE_ID, PKG_EMP.FN_GET_NAME(EMPLOYEE_ID)
+  FROM EMPLOYEES
+ WHERE DEPARTMENT_ID = 60;
+ 
+EXECUTE PKG_EMP.PROC_NEW_EMP(250, '홍', 'gdhong@gmail.com', 'FI_ACCOUNT');
+EXECUTE PKG_EMP.PROC_RETIRE_EMP(150);
+
+TRIGGER에서는 COMMIT을 쓸 수 없다
+
+====================================================================================
+
+자바 
+화면이동은 컨트롤러로,
+database에 접근할 일이 있으면 dao(database access object)로,
+기능 구현은 service 패키지로 나누어 구현한다.
+
+<TMI>
