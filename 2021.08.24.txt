@@ -1,0 +1,636 @@
+2021.08.24
+<이론>
+/ Set은 데이터의 순서가 없고, 중복을 허용하지 않는다.
+/ 그래서 이미 있는 데이터를 add하면 false를 반환하고,
+/ 데이터는 추가되지 않는다.
+
+/ Set의 데이터를 수정하려면 수정하는 명령이 따로 없기 때문에 자료를
+/ 삭제한 후 새로운 데이터를 추가해 주어야 한다.
+/ Set은 데이터의 순서가 없기 때문에 List처럼 인덱스로 데이터를
+/ 하나씩 불러올 수 없다. 그래서 데이터를 하나씩 얻기 위해서는	
+/ Iterator를 이용해야 한다.	
+/ 데이터 개수만큼 반복하기
+/ hasNext()메서드 => 포인터 다음 위치에 데이터가 있으면 true,
+/ 					없으면 false를 반환한다.
+/ TreeSet에 저장된 자료 중 특정한 자료보다 작은 자료를 찾아서 SortedSet으로
+// 반환하는 메서드가 있다.
+// => headSet(기준값) : 기본적으로 '기준값은 포함시키지 않는다.'
+// => headSet(기준값, 논리값) : 논리값이 true이면 '기준값' 포함함.
+// '기준값' 보다 큰 자료를 찾아 SortedSet으로 반환하는 메서드
+// tailSet(기준값) : 기본적으로 '기준값'을 포함시킨다.
+// tailSet(기준값, 논리값) : 논리값이 false이면 '기준값' 미포함.
+// subSet(기준값1, 기준값2) : 기준값1 ~ 기준값2 사이의 값을 가져온다.
+// subSet(기준값1, 논리값1, 기준값2, 논리값2) : 각 기준값 포함여부 설정
+/*
+ *  해시함수(hash function)은 임의의 길이의 데이터를 고정된 길이의 데이터로 매핑하는 
+ *  함수이다. 해시 함수에 의해 얻어지는 값은 해시값, 해시코드, 해시체크섬 또는 간단하게
+ *  해시라고 한다.
+ *  
+ *  HashSet, HashMap, Hashtable과 같은 객체들을 사용할 경우
+ *  객체가 서로 같은지를 비교하기 위해 equals()메서드와  hashCode()메서드를 호출한다.
+ *  // 클래스의 이름에 Hash가 포함되어 있으면 같은지 비교할 때 equals 뿐만 아니라 hashCode도 사용한다
+ *  // 그래서 equals를 override 하려면 hashCode도 override 해줘야 한다.
+ *  // hashCode는 메모리주소를 기반으로 결정된다.
+ *  그리새 객체가 서로 같은지 여부를 결정하려면 두 메서드를 재정의 해야 한다.
+ *  HashSet, HashMap, Hashtable에서는 객체가 같은지 여부는 데이터를 추가할 때 검사한다.
+ *  
+ *  - equals() 메서드는 두 객체의 내용(값)이 같은지 비교하는 메서드이고
+ *  - hashCode() 메서드는 객체애 대한 해시코드값을 반환하는 메서드이다.
+ *  
+ *  // 집합은 중복을 허용하지 않는다. 즉, 데이터 추가시 중복체크하는 부분이 있다. 그래서 이걸 공부한다.
+ *  // 내부동작은 두 객체의 hashCode 비교 후 같은 hashCode가 같은 경우에 equals로 판단한다.
+ *  
+ *  - equals() 메서드와 hashCode()메서드에 관련된 규칙
+ *  1. 두 객체가 같으면 반드시 같은 hashCode를 가져야 한다.
+ *  2. 두 객체가 같으면 equals() 메서드를 추출했을 때 true값을 반환해야 한다.
+ *  즉, 객체 a, b가 같다면 a.equals(b)와 b.equals(a) 둘다 true여야 한다.
+ *  3. 두 객체의 hashCode가 같다고 해서 두 객체가 반드시 같은 객체는 아니다.
+ *  하지만 두 객체가 같으면 반드시 hashCode가 같아야 한다.
+ *  4. equals() 메서드를 override하면 반드시 hashCode() 메서드도 override해야 한다.
+ *  5. hashCode()는 기본적으로 Heap에 있는 각 객체에 대한 메모리 주소 매핑정보를 기반으로
+ *     한 정수값을 반환한다. 그러므로, 클래스에서 hashCode() 메서드를 override하지 않으면
+ *     절대로 두 객체가 같은 것으로 간주될 수 없다.
+ *  
+ *  - hashCode()에서 사용하는 '해싱 알고리즘'에서 서로 다른 객체에 대하여 같은 hashCode
+ *    값을 만들어 낼 수 있다. 그래서 객체가 같지 않더라도 hashCode값이 같을 수 있다.
+ */
+ ==========================================================================================
+
+
+<실습>
+/Set hs1 = new HashSet();
+		
+		//Set에 데이터를 추가할 때도 add()를 사용한다.
+		hs1.add("DD");
+		hs1.add("AA");
+		hs1.add(2);
+		hs1.add("CC");
+		hs1.add("BB");
+		hs1.add(1);
+//		hs1.add(new Integer(1));	wrapping | auto-boxing
+		hs1.add(3);
+
+		System.out.println("Set 데이터 : " + hs1);
+		System.out.println();*
+        boolean isAdd = hs1.add("FF");
+		System.out.println("중복되지 않을 때 : " + isAdd);
+		System.out.println("Set 데이터 : " + hs1);
+		System.out.println();
+        isAdd = hs1.add("CC");
+		System.out.println("중복될 때 : " + isAdd);
+		System.out.println("Set 데이터 : " + hs1);
+		System.out.println();
+        hs1.remove("FF");	// FF자료 삭제
+		System.out.println("삭제 후 Set 데이터 : " + hs1);
+		System.out.println();
+		
+		hs1.add("EE");	// EE자료 추가
+		System.out.println("Set 데이터 : " + hs1);
+		System.out.println();
+		
+		hs1.clear();	// 전체 자료 삭제
+		System.out.println("Clear 후 Set 데이터 : " + hs1);
+		System.out.println();
+		
+		System.out.println("Set의 자료 개수 : " + hs1.size());
+		System.out.println();
+
+        Iterator it = hs1.iterator();
+        while(it.hasNext()) {	// 다음 자료가 있는지 검사
+			// next() => 포인터를 다음 자료 위치로 이동하고, 이동한 위치의 자료를 반환한다.
+			System.out.println(it.next());
+		}
+		
+		// 1~100사이의 중복되지 않는 정수 5개 만들기
+		Set<Integer> intRnd = new HashSet<>();
+		
+		while(intRnd.size() < 5) {	// 데이터가 5개가 될 때까지 
+			int num = (int) (Math.random() * 100 + 1);
+			intRnd.add(num);
+		}
+		
+		System.out.println("만들어진 난수들 : " + intRnd);
+		
+		// Collection 유형의 객체들은 서로다른 자료구조로 쉽게 변경해서 사용할 수 있다.
+		// 다른 종류의 객체를 생성할 때 생성자에 변경할 데이터를 넣어주면 된다.
+		List<Integer> intRndList = new ArrayList<Integer>(intRnd);
+		System.out.println("List의 자료 출력...");
+		
+		for (Integer num : intRndList) {
+			System.out.print(num + " ");
+		}
+
+        // TreeSet은 자동 정렬 기능이 들어가 있다.
+		TreeSet<String> ts = new TreeSet<String>();
+		// headSet과 tailSet, subSet은 TreeSet만 가지고 있는 메서드임.
+		// 이를 사용하기 위해 treeset instance 설정
+		
+		// 영어 대문자를 문자열로 변환하여 TreeSet에 저장
+		for(char ch = 'Z'; ch >='A'; ch--) {
+			String temp = String.valueOf(ch);
+			ts.add(temp);
+		}
+		
+        System.out.println("TreeSet 자료 : " + ts);
+        SortedSet<String> ss1 = ts.headSet("K");
+		System.out.println("K 이전 자료 : " + ss1); // 기준값 미포함
+		System.out.println("K 이전 자료(기준값포함) : "
+							+ ts.headSet("K",true)); // 기준값 미포함
+        SortedSet<String> ss2 = ts.tailSet("K");
+		System.out.println("K 이후 자료 : " + ss2); // 기준값 미포함
+		System.out.println("K 이후 자료(기준값 미포함) : "
+				+ ts.tailSet("K", false)); // 기준값 미포함
+        System.out.println("K(포함)부터 N(미포함)까지 : "
+				+ ts.subSet("K", "N"));
+		System.out.println("K(포함)부터 N(포함)까지 : "
+				+ ts.subSet("K", true, "N", true));
+		System.out.println("K(미포함)부터 N(포함)까지 : "
+				+ ts.subSet("K", false, "N", true));
+		System.out.println("K(미포함)부터 N(미포함)까지 : "
+				+ ts.subSet("K", false, "N", false));
+
+
+
+ * 정렬 기준의 외부 선언을 위해서는 Comparator인터페이스를 구현한다.
+ * (Member객체의 번호(num)의 내림차순으로 정렬하기)
+ *
+ */
+
+class SortNumDesc implements Comparator<Member>{
+
+	@Override
+	public int compare(Member mem1, Member mem2) {
+		/*if(mem1.getNum() > mem2.getNum()) {
+			return -1;
+		}else if(mem1.getNum() == mem2.getNum()) {
+			return 0;
+		}else {
+			return 1;
+		}*/
+		
+		//Wrapper클래스에서 제공하는 메서드를 이용하는 방법1
+//		return -new Integer(mem1.getNum()).compareTo(mem2.getNum());
+//		return -((Integer)mem1.getNum()).compareTo(mem2.getNum());
+		//Wrapper클래스에서 제공하는 메서드를 이용하는 방법2
+		return Integer.compare(mem1.getNum(), mem2.getNum()) * -1;
+	}
+	
+}
+public static void main(String[] args) {
+		Person p1 = new Person(1, "홍길동");
+		Person p2 = new Person(1, "홍길동");
+		Person p3 = new Person(1, "이순신");
+		
+		System.out.println("p1.equals(p2) : " + p1.equals(p2));
+		// object의 equals를 사용함, 메모리기반 동일성체크, 다른 메모리에 있으므로 
+		// 우연히 멤버변수들이 같더라도 다른 object라고 간주
+		// 멤버변수가 같다면 서로 같다고 정의하기 위해서는 equals를 커스터마이징 해야 함.
+		System.out.println("p1 == p2 : " + (p1 == p2));
+		
+		Set<Person> set = new HashSet<>();
+		
+		set.add(p1);
+		set.add(p2);
+		
+		System.out.println("p1, p2 등록후 데이터");
+		for(Person p : set) {
+			System.out.println(p.getId() + p.getName());
+		}
+	}
+}
+
+class Person {
+	private int id;
+	private String name;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public Person(int id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+}
+ ==========================================================================================
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" href="../css/mystyle.css">
+        <style>
+        sub{
+            /*background-color*/
+            background : orange;
+        }
+        sup{
+            color : orange;
+        }
+        </style>
+    </head>
+
+    <body>
+        <pre>
+        &lt;code>script코드 실행문을 문자처럼 표시&lt;/code>
+        sub : 아래첨자
+        sup : 위첨자
+        </pre>
+        <img src = "../images/img2.jpg" alt = "image">
+
+        <br>꽃사슴의 어깨높이는 약 92cm이다. 일본사슴의 만주 아종으로, 우수리사슴보다 작으며, <strong>키가 크고</strong> 흰색의 경반(鏡斑)이 특히 작으므로 원래의 종과 서로 다르다.<br>
+                여름털은 <em>연분홍빛</em>을 띤 <i>밤색</i>이고, 등면과 옆구리에는 노란색 반점이 있으며, 흰색의 <b>경반</b>은 비교적 작다. 겨울털은 몸통이 어두운 갈색이고, 머리·목·어깨는 여름털의 반점 흔적이 엿보인다.<br>
+
+                평지부터 해발고도 <sub>2,500m</sub>까지의 산림에 살며, 먹이를 섭취할 때 외에는 산림을 떠나지 않는다. 수컷끼리 또는 암컷끼리 무리를 이루거나 혼합 무리를 이룬다. 먹이는 주로 나뭇잎과 풀의 잎·줄기, 이끼를 많이 먹는데,<br>
+        먹이가 부족하게 되면 나무껍질도 먹으며, 메밀·조·밤·도토리 등도 먹는다. 소에 비해 거친 먹이에 잘 견디지만, 염소나 양보다는 못하다.<br>
+
+        꽃사슴에 번식기는 <sup>10∼12</sup>월이고, 임신기간은 227∼249일이며, 5∼6월에 한배에 1마리의 새끼를 낳는다. 새끼는 일반적으로 잡초가 무성한 덤불 속에 낳으며, 3∼4일 동안 그곳에 누워 있는다.<br>
+         어미는 1∼2일간 새끼의 옆을 떠나지 않고 지키다가 밖으로 나와 먹이를 섭취하면서 때때로 새끼들에게 젖을 먹인다. 한국과 중국 북동부 등지에 분포한다.<br>
+    </body>
+
+</html>
+
+<!DOCTYPE html>
+<html>
+    <link rel="stylesheet" href="../css/mystyle.css" >
+<style>
+div{
+    border : 2px solid green;
+    width : 50%;
+    margin-left : 20%;
+    margin-top : 200px;
+}
+p{
+    border : 2px solid blue;
+    text-align : center;
+}
+img{
+    width : 500px;
+    height : 500px;
+    margin-left : 35%;
+}
+sub{
+    background : pink;
+    width : 500px;
+    height : 50px;
+}
+sup{
+    background : pink;
+    width : 500px;
+    height : 50px;
+}
+/*인라인 요소는 width height를 지정해도 바뀌지 않음*/
+</style>
+<body>
+    <pre>
+     특수문자
+     공백 : &amp;nbsp;
+     < : &amp;lt;
+     > : &amp;gt;
+    </pre>
+    <img src="../images/img2.jpg" alt="">
+    <hr color='blue'>
+    <div>
+<p><b>이 텍스트는 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; bold입니다.</b></p>
+<p><strong>이 텍스트는 strong입니다.</strong></p>
+<p><i>이 텍스트는 italic입니다.</i></p>
+<p><em>이 텍스트는 emphasized입니다.</em></p>
+<p><code>이 텍스트는 code입니다.</code></p>
+<p><sub> subscript</sub>이고 <sup>superscript</sup>입니다.</p>
+<mark>여기는 "mark"태그로 작성된 문장입니다.</mark>
+<p style="color:red;">여기는 style 태그를 직접 설정합니다</p>
+    </div>
+</body>
+
+</html>
+
+<!DOCTYPE html>
+<html>
+<style>
+h2{
+    color : blue;
+    background-color : gray;
+    width : 15%;
+}
+        sup{
+            background-color : yellow;
+            color : red;
+        }
+        sub{
+            color : blue;
+        }
+
+
+</style>
+    <head>
+        <meta charset="UTF-8">
+        <title>Web Coffee</title>
+    </head>
+    <body>
+        <h1>Web 커피 메뉴</h1>
+        <h2>아메리카노 5000원</h2>
+        <p>에스프레소에 <sup>물</sup>을 추가한 것입니다.</p>
+        <h2>카페오레 6000원</h2>
+        <p>에스프레소에 <em><sub>우유</sub></em>를 넣은 커피입니다.</p>
+        <h2>카푸치노 6000원</h2>
+        <p>커피 위에 <sup>우유거품</sup>을 얹은 커피입니다.</p>
+    </body>
+
+</html>
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="../css/mystyle.css">
+    <style>
+    div{
+        border : 1px dotted orange;
+        width : 200px;
+/*        display : inline;*/
+        float : left;
+        margin-left : 20px;
+/*      margin : 20px 50px [100px 60px]*/
+        /*두개 있을 때는 상하에 첫번째 값, 좌우에 두번째 값*/
+        /*세개 있을 때는 위에 첫번째 값, 좌우에 두번째 값, 아래에 세번째 값*/
+        /*네개 있을 때는 상우하좌의 순으로*/
+    }
+    .d2{
+        float : right;
+    }
+
+    hr{
+        clear : both;
+    }
+    img{
+        width : 50px;
+        height : 50px;
+    }
+    #circle{
+        list-style-type : circle;
+    }
+    #square{
+        list-style-type : square;
+    }
+    #typeimg{
+        list-style-image : url('../images/check.png')
+    }
+    </style>
+    </head>
+
+    <body>
+        <pre>
+        번호없는 리스트
+        ul : unordered list
+        li : list item
+            ●(disk) ○(circle) ■(square)
+        </pre>
+        <div class = "d1">
+            <ul>
+                <li>에스프레소</li>
+                <li>아메리카노</li>
+                <li>카페라떼</li>
+                <li>카푸치노</li>
+            </ul>
+        </div>
+        <div class = "d1">
+            <ul>
+                <li><img src = "../images/에스프레소.jpg" alt = "에스프레소.jpg"></li>
+                <li><img src = "../images/아메리카노.jpg" alt = "아메리카노.jpg"></li>
+                <li><img src = "../images/카페라떼.jpg" alt = "카페라떼.jpg"></li>
+                <li><img src = "../images/카푸치노.jpg" alt = "카푸치노.jpg"></li>
+            </ul>
+        </div>
+        <div class = "d1">
+            <ul>
+                <li><a target="_blank" href="../images/에스프레소.jpg">에스프레소</a></li>
+                <li><a target="_blank" href="../images/아메리카노.jpg">아메리카노</a></li>
+                <li><a target="_blank" href="../images/카페라떼.jpg">카페라떼</a></li>
+                <li><a target="_blank" href="../images/카푸치노.jpg">카푸치노</a></li>
+            </ul>
+        </div>
+        <hr>
+        <div class = "d2">
+            <ul>
+                <li><a target="_blank" href="../images/에스프레소.jpg"><img src = "../images/에스프레소.jpg" alt = "에스프레소.jpg"></a></li>
+                <li><a target="_blank" href="../images/아메리카노.jpg"><img src = "../images/아메리카노.jpg" alt = "아메리카노.jpg"></a></li>
+                <li><a target="_blank" href="../images/카페라떼.jpg"><img src = "../images/카페라떼.jpg" alt = "카페라떼.jpg"></a></li>
+                <li><a target="_blank" href="../images/카푸치노.jpg"><img src = "../images/카푸치노.jpg" alt = "카푸치노.jpg"></a></li>
+            </ul>
+        </div>
+        <div class = "d2">
+            <ul>
+                <li>에스프레소
+                    <ul>
+                        <li>신맛</li>
+                        <li>구수한맛
+                            <ol>
+                                <li>큰거</li>
+                                <li>보통</li>
+                                <li>작은거</li>
+                            </ol>
+                        </li>
+                        <li>쓴맛</li>
+                    </ul>
+                </li>
+                <li>아메리카노</li>
+                <li>카페라떼</li>
+                <li>카푸치노</li>
+            </ul>
+        </div>
+        <hr>
+
+        <div class = "d1">
+            <h3>list-style-type : disk</h3>
+            <ul>
+                <li>에스프레소</li>
+                <li>아메리카노</li>
+                <li>카페라떼</li>
+                <li>카푸치노</li>
+            </ul>
+        </div>
+        <div class = "d1">
+            <h3>list-style-type : circle</h3>
+            <ul id = "circle" >
+                <li>에스프레소</li>
+                <li>아메리카노</li>
+                <li>카페라떼</li>
+                <li>카푸치노</li>
+            </ul>
+        </div>
+        <div class = "d1">
+            <h3>list-style-type : square</h3>
+
+            <ul id = "square" >
+                <li>에스프레소</li>
+                <li>아메리카노</li>
+                <li>카페라떼</li>
+                <li>카푸치노</li>
+            </ul>
+        </div>
+        <div class = "d1">
+            <h3>list-style-image :</h3>
+            <ul id = "typeimg" >
+                <li>에스프레소</li>
+                <li>아메리카노</li>
+                <li>카페라떼</li>
+                <li>카푸치노</li>
+            </ul>
+        </div>
+    </body>
+
+</html>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+    <style>
+        div{
+            border : 1px dotted blue;
+            width : 200px;
+            float : left;
+            margin : 20px;
+        }
+        hr{
+            clear : both;
+        }
+		img{
+			width : 50px;
+			height : 50px;
+		}
+        ol#lalpha{ list-style-type : lower-alpha; }
+        ol#lroman{ list-style-type : lower-roman; }
+        ol#hangul{ list-style-type : hangul; }
+        ol#hformal{ list-style-type : korean-hangul-formal; }
+        ol#consonant{ list-style-type : hangul-consonant; }
+    </style>
+    </head>
+
+    <body>
+        <div>
+            <ol>
+                <li>에스프레소</li>
+                <li>아메리카노</li>
+                <li>카페라떼</li>
+                <li>카푸치노</li>
+            </ol>
+        </div>
+		<div>
+            <ol>
+                <li><img src="../images/에스프레소.jpg" alt="에스프레소.jpg"></li>
+				<li><img src="../images/아메리카노.jpg" alt="아메리카노.jpg"></li>
+				<li><img src="../images/카페라떼.jpg" alt="카페라떼.jpg"></li>
+				<li><img src="../images/카푸치노.jpg" alt="카푸치노.jpg"></li>
+            </ol>
+        </div>
+        <div>
+            <ol>
+                <li><a href="../images/에스프레소.jpg" target="_blank">에스프레소</a></li>
+				<li><a href="../images/아메리카노.jpg" target="_blank">아메리카노</a></li>
+				<li><a href="../images/카페라떼.jpg" target="_blank">카페라떼</a></li>
+				<li><a href="../images/카푸치노.jpg" target="_blank">카푸치노</a></li>
+            </ol>
+        </div>
+        <div>
+            <ol>
+                <li><a href="../images/에스프레소.jpg" target="_blank"><img src="../images/에스프레소.jpg" atl="에스프레소.jpg"></a></li>
+				<li><a href="../images/아메리카노.jpg" target="_blank"><img src="../images/아메리카노.jpg" atl="아메리카노.jpg"></a></li>
+				<li><a href="../images/카페라떼.jpg" target="_blank"><img src="../images/카페라떼.jpg" atl="카페라떼.jpg"></a></li>
+				<li><a href="../images/카푸치노.jpg" target="_blank"><img src="../images/카푸치노.jpg" atl="카푸치노.jpg"></a></li>
+            </ol>
+        </div>
+        <hr>
+        <div>
+        <h3>list-style-type: decimal</h3>
+            <ol>
+                <li>에스프레소</li>
+                <li>아메리카노</li>
+                <li>카페라떼</li>
+                <li>카푸치노</li>
+            </ol>
+        </div>
+        <div>
+        <h3>list-style-type: lower-alpha</h3>
+            <ol id="lalpha">
+                <li>에스프레소</li>
+                <li>아메리카노</li>
+                <li>카페라떼</li>
+                <li>카푸치노</li>
+            </ol>
+        </div>
+        <div>
+        <h3>list-style-type: lower-roman</h3>
+            <ol id="lroman">
+                <li>에스프레소</li>
+                <li>아메리카노</li>
+                <li>카페라떼</li>
+                <li>카푸치노</li>
+            </ol>
+        </div>
+        <div>
+            <h3>list-style-type: hangul</h3>
+            <ol id="hangul">
+                <li>에스프레소</li>
+                <li>아메리카노</li>
+                <li>카페라떼</li>
+                <li>카푸치노</li>
+            </ol>
+        </div>
+        <div>
+            <h3>list-style-type : korean-hangul-formal</h3>
+            <ol id="hformal">
+                <li>에스프레소</li>
+                <li>아메리카노</li>
+                <li>카페라떼</li>
+                <li>카푸치노</li>
+            </ol>
+        </div>
+        <div>
+            <h3>list-style-type : hangul-consonant</h3>
+            <ol id="consonant">
+                <li>에스프레소</li>
+                <li>아메리카노</li>
+                <li>카페라떼</li>
+                <li>카푸치노</li>
+            </ol>
+        </div>
+    </body>
+
+</html>
+
+
+<TMI>
+스택의 활용예는 컴파일러의 에러메세지 출력방법과(메서드는 콜스택이라는
+곳에 쌓는다. 한 메서드가 다른 메서드를 호출하면 신규 메서드를
+콜스택의 신규자리에 쌓는다. 이런 식으로 메서드를 따라가다가
+에러가 나면 컴파일러가 그 순간에 쌓여있는 모든 콜스택을 빼내오면서
+에러의 위치와 메시지를 보여준다.) 웹 프로그래밍의 뒤로가기 기능에
+사용할 수 있다.
+
+스태틱 메서드는 객체를 생성하기 싫을 때, 많이 사용하면서 유용한 기능
+-> util을 사용하기에 적합
+
+interface comparable<T> @compareTo(T o)
+interface comparator<T> @compare(T o1, T o2)
+
+두개의 값이 같으면 0, 앞의 것이 크면 양수, 뒤의 것이 크면 음수를 반환
+
+기본은 양수를 반환하면 두 객체의 자리를 바꾼다는 의미이다.
+
+Set 인터페이스 특징
+1. 순서가 없다(인덱스가 유지되지 않음)
+2. 데이터 중복을 허용하지 않는다. (데이터를 등록할 때 중복된 
+데이터가 있는지 확인 후 없으면 등록한다.)
