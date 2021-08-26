@@ -1,0 +1,603 @@
+2021.08.26
+<이론>
+/*
+ *  제네릭 메서드 <T, R> R method(T t)
+ *
+ *  파라미터 타입과 리턴타입으로 타입 파라미터를 가지는 메서드
+ *  선언방법: 리턴타입 앞에 <> 기호를 추가하고 타입파라미터를 기술 후 사용함.
+ */
+public static <K, V> boolean compare(Pair<K, V> p1,
+                                     Pair<K, V> p2) {
+    boolean keyCompare = p1.getKey().equals(p2.getKey());
+    boolean valueCompare = p1.getValue().equals(p2.getValue());
+    return keyCompare && valueCompare;
+    
+}
+// 파라미터에 제네릭 문법을 사용하기 위해서는 사용할 타입문자를 먼저
+// 컴파일러에게 인식시켜주어야 한다. 이를 위해 리턴타입 앞에
+// 어떤 글자를 제네릭 타입문자로 사용할 것인지 명시해 주었다.
+/*
+ * 와일드 카드에 대하여...
+ *
+ * 와일드카드(?)는 제네릭 타입을 이용한 타입 안전한 코드를 위해 사용되는 특별한 종류의
+ * 인수로서, 변수선언, 객체생성 및 메서드 정의할 때 사용된다.
+ * (제네릭 타입 선언시에는 사용할 수 없다.) class MyClass<?>는 불가하다
+ *
+ * ?도 하나의 타입이다.
+ *
+ * <? extends T> => 와일드카드의 상한 제한. T와 그 자손들만 가능
+ * <? super T> => 와일드카드의 하한 제한. T와 그 조상들만 가능
+ * <?> => 모든 타입 가능 <? extends Object>와 동일. 
+ */
+
+<실습>
+public static void main(String[] args) {
+    NonGenericClass ng1 = new NonGenericClass();
+    ng1.setVal("가나다라");
+
+    NonGenericClass ng2 = new NonGenericClass();
+    ng2.setVal(100);
+
+    String rtnNg1 = (String) ng1.getVal();
+    System.out.println("문자열 반환값 rtnNg1 => " + rtnNg1);
+
+    Integer irtnNg2 = (Integer) ng2.getVal();
+    System.out.println("정수 반환값 irtNg2 => " + irtnNg2);
+    System.out.println();
+
+    MyGeneric<String> mg1 = new MyGeneric<String>();
+    MyGeneric<Integer> mg2 = new MyGeneric<Integer>();
+
+    mg1.setVal("우리나라");
+    mg2.setVal(500);
+    rtnNg1 = mg1.getVal();
+    irtnNg2 = mg2.getVal();
+
+
+    System.out.println("제네릭 문자열반환값 : " + rtnNg1);
+    System.out.println("제네릭 정수반환값 : " + irtnNg2);
+
+    
+
+       
+}
+
+}
+
+class NonGenericClass {
+private Object val;
+
+public Object getVal() {
+    return val;
+}
+
+public void setVal(Object val) {
+    this.val = val;
+}
+
+
+}
+
+
+class MyGeneric<T> {
+private T val;
+
+public T getVal() {
+    return val;
+}
+
+public void setVal(T val) {
+    this.val = val;
+}
+
+}
+
+package kr.or.ddit.basic;
+
+import java.util.Arrays;
+
+public class T05_WildCardTest {
+
+    public static void main(String[] args) {
+        Course<Person> personCourse = 
+            new Course("일반인과정", 5);
+        personCourse.add(new Person("일반인1"));
+        personCourse.add(new Worker("직장인1"));
+        personCourse.add(new Student("학생1"));
+        personCourse.add(new HighStudent("고등학생1"));
+
+        Course<Worker> workerCourse =
+            new Course<>("직장인과정", 5);
+        //workerCourse.add(new Person("일반인"));
+        workerCourse.add(new Worker("직장인1"));
+
+        Course<Student> studentCourse =
+            new Course<>("학생과정", 5);
+        studentCourse.add(new Student("학생1"));
+        studentCourse.add(new HighStudent("고등학생1"));
+
+        Course<HighStudent> highStudentCourse =
+            new Course<>("고등학생과정", 5);
+       highStudentCourse.add(new HighStudent("고등학생1")); 
+
+
+       //------------------------------------------------------
+       
+       listCourseInfo(personCourse);
+       listCourseInfo(workerCourse);
+       listCourseInfo(studentCourse);
+       listCourseInfo(highStudentCourse);
+
+       //listStudentCourseInfo(workerCourse);
+       listStudentCourseInfo(studentCourse);
+       listStudentCourseInfo(highStudentCourse);
+
+       listWorkerCourseInfo(workerCourse);
+       listWorkerCourseInfo(personCourse);
+    
+    }
+    /*
+     * 모든과정 수강생 정보 조회
+     * @param course
+     */
+    public static void listCourseInfo(Course<?> course){
+        System.out.println(course.getName()
+                + " 수강생: "
+                + Arrays.toString(course.getStudents()));
+    }
+    /*
+     * 학생과정 수강정보 조회
+     */
+    public static void listStudentCourseInfo
+        (Course<? extends Student> course){
+        System.out.println(course.getName()
+                + " 수강생: "
+                + Arrays.toString(course.getStudents()));
+        }
+    /*
+     * 직장인 수강정보 조회
+     */
+
+    public static void listWorkerCourseInfo
+        (Course<? super Worker> course){
+        System.out.println(course.getName()
+                + " 수강생: "
+                + Arrays.toString(course.getStudents()));
+        }
+
+    
+}
+
+class Person {
+
+    String name; // 이름
+    public Person(String name){
+        this.name = name;
+    }
+
+    @Override
+    public String toString(){
+        return "이름:" + name;
+
+    }
+}
+
+//근로자
+class Worker extends Person {
+    public Worker(String name){
+        super(name);
+    }
+}
+
+//학생
+class Student extends Person {
+    public Student(String name){
+        super(name);
+    }
+}
+
+//고등학생
+class HighStudent extends Student {
+    public HighStudent(String name){
+        super(name);
+    }
+}
+
+class Course<T> {
+    private String name; //과목명
+    private T[] students; // 수강생(제네릭 배열)
+
+    public Course(String name, int capacity){
+        this.name = name;
+        // 타입 파라미터로 배열을 생성시 오브젝트 배열을 생성 후, 타입 파라미터 배열로
+        // 캐스팅 처리해야 함.
+        students = (T[])(new Object[capacity]);
+    }
+
+	public String getName() {
+		return name;
+	}
+
+    /*
+     * 수강생 조회
+     *
+     */
+
+	public T[] getStudents() {
+		return students;
+	}
+
+    public void add(T t){
+        for(int i = 0; i < students.length; i++){
+            if(students[i] == null){ // 아직 등록되지 않은(빈) 자리인지...
+                students[i] = t; //등록
+                break;
+            }
+        }
+    }
+}
+public class T02_GenericMethodTest {
+    public static void main(String[] args) {
+        
+        Pair<Integer, String> p1 = new Pair<Integer, String>(1, "홍길동");
+        Pair<Integer, String> p2 = new Pair<Integer, String>(1, "홍길동");
+
+        boolean result1 = Util.<Integer, String>compare(p1, p2);
+
+        if(result1){
+            System.out.println("논리(의미)적으로 동일한 객체임");
+        }else{
+            System.out.println("논리(의미)적으로 동일한 객체아님.");
+        }
+
+        Pair<String, String> p3 = new Pair<String, String>("001", "홍길동");
+        Pair<String, String> p4 = new Pair<String, String>("002", "홍길동");
+
+
+        //boolean result2 = Util.<String, String>compare(p3, p4);
+        boolean result2 = Util.compare(p3, p4);
+
+        if(result2){
+            System.out.println("논리(의미)적으로 동일한 객체임");
+        }else{
+            System.out.println("논리(의미)적으로 동일한 객체아님.");
+        }
+        
+        // 제네릭 메서드 테스트
+        p1.<String, Integer>displayAll("키",180);
+        p1.displayAll("키",180);
+        p1.displayAll(180,"키");
+        //위를 보면 p1은 Pair<Integer, String>으로 선언되어 있다!
+        //제네릭 메서드에 타입파라미터를 정의해주었기 때문에 autocasting되는 것을 확인할 수 있다
+        //타입파라미터 없으면 컴파일 에러
+    }
+}
+
+/*
+ *  멀티타입<K,V>를 가지는 제네릭 클래스
+ *  @param <K>
+ *  @param <V>
+ */
+class Pair<K, V>{
+	private K key;
+	private V value;
+	
+	public Pair(K key, V value) {
+		super();
+		this.key = key;
+		this.value = value;
+	}
+	public K getKey() {
+		return key;
+	}
+	public void setKey(K key) {
+		this.key = key;
+	}
+	public V getValue() {
+		return value;
+	}
+	public void setValue(V value) {
+		this.value = value;
+	}
+
+    // key와 value 모두 출력하기
+    public <K, V> void displayAll(K key, V val) {
+        System.out.println(key.toString() + " : " + val.toString());
+
+    }
+}
+/*
+ * 제한된 타입파라미터(Bounded Parameter) 예제
+ * type-safety coding
+ */
+
+public class T03_GenericMethodTest {
+    public static void main(String[] args) {
+        
+        int result1 = Util2.compare(10,20);
+        System.out.println(result1);
+        
+        
+        int result2 = Util2.compare(3.14,3);
+        System.out.println(result2);
+
+        //int result3 = Util2.compare("C", "java");
+        
+    } 
+
+}
+
+class Util2 {
+    public static <T extends Number> int compare(T t1, T t2) {
+        double v1 = t1.doubleValue();
+        double v2 = t2.doubleValue();
+    	return Double.compare(v1,v2);
+    }
+}
+    public static void main(String[] args) {
+
+        FruitBox<Fruit> fruitBox = new FruitBox<>(); //과일상자
+        FruitBox<Apple> appleBox = new FruitBox<>(); //사과상자
+        FruitBox<Grape> grapeBox = new FruitBox<>(); //사과상자
+
+        fruitBox.add(new Apple());
+        fruitBox.add(new Grape());
+        
+        appleBox.add(new Apple());
+        appleBox.add(new Apple());
+
+        Juicer.makeJuice(fruitBox);
+        Juicer.makeJuice(appleBox);
+
+    }
+
+}
+
+class Juicer {
+    // 제한된 타입 파라미터
+    // static <T extends Fruit> void makeJuice(FruitBox<T> box) {
+    static void makeJuice(FruitBox<? extends Fruit> box) {
+        String fruitListStr = ""; // 과일목록
+
+        int cnt = 0;
+        for(Fruit f : box.getFruitList()) {
+        if(cnt == 0){
+                fruitListStr += f;
+        }else{
+            fruitListStr += "," + f;
+        }
+        cnt++;
+    }
+    System.out.println(fruitListStr + " => 쥬스완성!!!");
+    }
+}
+
+class Fruit {
+    private String name; // 과일이름
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Fruit(String name) {
+		super();
+		this.name = name;
+	}
+    
+    @Override
+    public String toString() {
+        return "과일(" + name + ")";
+    }
+}
+
+class Apple extends Fruit {
+    public Apple(){
+        super("사과");
+    }
+}
+class Grape extends Fruit {
+    public Grape(){
+        super("포도");
+    }
+}
+class FruitBox <T>{
+    private List<T> fruitList;
+
+    public FruitBox() {
+        fruitList = new ArrayList<>();
+    }
+
+	public List<T> getFruitList() {
+		return fruitList;
+	}
+
+	public void setFruitList(List<T> fruitList) {
+		this.fruitList = fruitList;
+	}
+    
+    public void add(T fruit){
+        fruitList.add(fruit);
+    }
+
+}
+
+===========================================================================
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+<style>
+iframe{
+    width : 500px;
+    height : 500px;
+}
+</style>
+    </head>
+
+    <body>
+        <br> <br>
+        <a href="http://www.naver.com" target="_blank">네이버</a>
+        <a href="http://www.daum.net" target="_self">다음</a>
+        <a href="../0825/table5.html" target="ifr">table2</a>
+        <hr>
+        <iframe name="ifr" src="../0825/table5.html">
+        </iframe>
+    </body>
+</html>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+        iframe{
+            width : 60%;
+            height : 500px;
+        }
+        </style>
+    </head>
+
+    <body>
+        <h1>커피메뉴</h1>
+        <a href="../images/에스프레소.jpg" target="fimg">에스프레소</a>
+        <a href="../images/아메리카노.jpg" target="fimg">아메리카노</a>
+        <a href="../images/카페라떼.jpg" target="fimg">카페라떼</a>
+        <a href="../images/카푸치노.jpg" target="fimg">카푸치노</a>
+        <br><br>
+
+        <iframe src="../0825/table1.html" name="fimg"></iframe>
+    </body>
+</html>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+    <style>
+    div{
+      width : 90%;
+      height : 450px;
+      border : 2px dotted red;
+      margin : 10px auto;
+    }
+    #d1{
+      height : 200px;
+    }
+    #d2{
+      height : 200px;
+    }
+    .aa{
+      margin : 10px;
+      border : 1px solid blue;
+      height : 180px;
+      float : left;
+      padding : 5px;
+    }
+    .first{
+      width : 30%;
+    }
+    .last{
+      overflow : auto; /* scroll, hidden */
+      width : 65%;
+    }
+    img{
+      width : 95%;
+      height : 95%;
+      padding : 1px;
+    }
+    span{
+      background : lime;
+      display : inline-block;
+      width : 200px;
+      height : 20px;
+    }
+    </style>
+    </head>
+
+    <body>
+      <div>
+        <div id="d1">
+          <div class="aa first">
+            <img src="../images/코알라.jpg" alt="코알라.jpg">
+          </div>
+          <div class="aa last">
+            오스트레일리아에 서식하는 <span>초식성 유대류</span>이며, 몸길이 60-80cm, 몸무게 4-15kg이다. 꼬리는 거의 없고 코가 크다. 앞·뒷발에 모두 5개씩 발가락이 있는데, 앞발 제1·제2발가락은 다른 발가락과 서로 마주보며 나뭇가지를 잡는 데 적합하다. 암컷의 배에는 육아낭이 있는데, 뒤쪽으로 입구가 있으며 안에 두 개의 젖꼭지가 있다. 털은 양털처럼 빽빽이 나 있으며 윗면은 암회색, 아랫면은 회백색이고 특히 귀의 털이 길다. 맹장은 몸길이의 약 3배로 포유류 중에서 가장 길어 2.4m나 된다.
+          </div>
+        </div>
+        <div id="d2">
+          <div class="aa first">
+            <img src="../images/펭귄.jpg" alt="펭귄.jpg">
+          </div>
+          <div class="aa last">
+            원래 ‘펭귄’은 북반구에 서식했던 <span>큰바다쇠오리</span>(Pinguinus impennis)를 부르는 말이었으나, 나중에 유럽인들이 남반구에서 발견한 비슷하게 생긴 새에 ‘펭귄’이라는 이름을 붙였다. 이후 자연을 착취하는 인간의 탐욕에 큰바다쇠오리가 멸종하면서(1844년) ‘펭귄’은 남반구 펭귄을 부르는 이름으로 굳어졌다. ‘펭귄’이라는 말의 어원에 대해서는 수렴된 의견이 없다. ‘흰 머리’란 뜻의 웨일스어 pen gwyn에서 왔다는 설과 ‘통통하다’라는 뜻의 라틴어 pinguis에서 왔다는 설이 존재하며, 위 단어들 중 학자들이 잘못 해석했다는 설도 있다.
+          </div>
+        </div>
+      </div>
+    </body>
+</html>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+        video{
+          width : 50%;
+          height : 50%;
+        }
+        </style>
+    </head>
+
+    <body>
+      <audio autoplay controls>
+        <source src="../multi/old_pop.ogg" type="audio/ogg">
+        <source src="../multi/old_pop.mp3" type="audio/mp3">
+        <source src="../multi/old_pop.wav" type="audio/wav">
+      </audio>
+    <video width="640" height="480" controls>
+        <source src="../multi/trailer.mp4" type='video/mp4'>
+        <source src="../multi/trailer.ogv"  type='video/ogg'>
+        <p>Your user agent does not support HTML5.</p>
+    </video>
+    </body>
+</html>
+
+<TMI>
+generic문법의 장점
+1.type-safty한 코딩을 할 수 있다.
+2.유지보수가 쉽다
+
+generic 사용법 : class 클래스명<타입글자[,타입글자...]>
+
+iframe의 name은 a태그의 target 대상이 될 수 있다.
+
+==========================================================================
+이클립스에서 웹개발하기
+tomcat 8.5설치
+preference->enc->모든것UTF-8로 변경
+preference->server->runtime...->add->tomcat8.5설정
+밑 탭의 server new server-> next 등
+
+하다가 안되는 경우는 제대로 못지운 경우임
+지울 때는 preference->서버 remove하고 Explorer에서도 지우되 반드시
+체크하고 지워야 함.
+
+servers->Tomcat v8.5...->server.xml의 63번째 줄에
+<Connector connectionTimeout="20000" URIEncoding= "URF-8" port="80" protocol="HTTP/1.1" redirectPort="8443"/>
+로 설정하고 서버 start
+
+이후 <C-n>web-Dynamic Web project 만들기
+
+WebContent : html, image, css, javascript저장
+이 폴더 내부에 날짜에 맞는 폴더 생성해서 관리할 것임
+
+java Resources.src : java파일 저장
+
+url구조
+server:포트번호/root/폴더/이름
+
