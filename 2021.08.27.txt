@@ -1,0 +1,448 @@
+2021.08.27
+<이론>
+/*
+ *  enum(열거형) => 상수값들을 선언하는 방법
+ *
+ *  static final int A = 0;
+ *  static final int B = 0;
+ *  static final int C = 0;
+ *  static final int D = 0;
+ *
+ *  enum Data {A, B, C, D};
+ *
+ *  열거형 선언하는 방법
+ *   
+ *  enum 열거형이름 { 상수값1, 상수값2, 상수값2,..., 상수값n }
+ */
+
+    // City 열거형 객체 선언 (기본값을 이용하는 열거형)
+    // default 생성자를 사용한다.
+
+    // 데이터 값을 임의로 지정한 열거형 객체 선언
+    // 데이터 값을 정해줄 경우에는 생성자를 만들어서 괄호속의 값이 변수에 저장되도록
+    // 해야한다.
+
+    // 생성자 만들기(열거형의 생성자는 제어자가 묵시적으로 'private'이다.)
+
+/*
+         * 열거형에서 사용되는 메서드
+         * 1. name() => 열거형 상수의 이름을 문자열로 반환한다.
+         *   enum의 열거객체이름을 각 객체의 key 열거객체 자체를 value로 생각했을 때
+         *   key를 가져온다고 생각할 수 있다. valueOf는 value를 가져온다고 생각할 수 있다.
+         *   enumtype도 toString이 @Override되어있기 때문에 System.out.println(); 해도 찍힘
+         * 2. ordinal() => 열거형 상수가 정의된 순서값을 반환한다.(기본적으로 0부터 시작)
+         * 3. valueOf("열거형상수이름") => 지정된 열거형에서 '열거형상수이름'과 일치하는
+         *                                 열거형 상수를 반환한다.
+         */
+
+/*
+ * 가변형 인수 => 메서드의 매개변수의 개수가 실행될 때마다 다를 때 사용한다.
+ *
+ * - 가변형 인수는 메서드 안에서 배열로 처리된다.
+ * - 가변형 인수는 한가지 자료형만 사용할 수 있다.
+ */
+
+   // 가변형 인수와 일반적인 인수를 같이 사용할 경우에는
+   // 가변형 인수를 제일 뒤쪽에 배치해야 한다.
+
+/*
+ * Java Reflection에 대하여...
+ *
+ * 1. 리플렉션은 런타임 시점에 클래스 또는 멤버변수, 메서드, 생성자에 대한 정보를
+ * 가져오거나 수정할 수 있고, 새로운 객체를 생성하거나, 메서드를 실행할 수 있다.
+ * 2. Reflection API는 java.lang.reflect 패키지와 java.lang.Class를 통해 제공된다.
+ * 3. java.lang.Class의 주요 메서드
+ * - getName(), getSuperclass(), getInterface, getModifiers()
+ * 4. java.lang.reflect 패키지의 주요 클래스
+ * - Field, Method, Constructor, Modifier 등.
+ * 5. Reflection API의 기능은 뛰어나지만, 약간의 오버헤드가 발생한다.
+ * (느린수행속도, 보안취약성, 권한문제등.) 그러므로, 가급적 마지막수단으로
+ * 사용하도록 고려되어야 한다.
+ *
+ */
+
+        // 첫 번째 방법 : Class.forName()이용하기
+        // 두 번째 방법 : getClass() 이용하기
+        // 세 번째 방법 : .class이용하기
+
+/*
+ * annotation에 대하여...
+ * 
+ * 프로그램 소스코드 안에서 다른 프로그램을 위한 정보를 미리 약속된 형식으로
+ * 포함시킨 것.(JDK1.5 부터 지원)
+ * 
+ * 주석처럼 프로그래밍 언어에 영향을 미치지 않으면서도 다른 프로그램에게 유용한 정보를 제공함
+ * 
+ * 종류 : 1. 표준 어노테이션
+ * 		2. 메타 어노테이션(어노테이션을 위한 어노테이션, 즉 어노테이션을 정의할 때
+ *                     사용하는 어노테이션)
+ *                     
+ * 어노테이션 타입 정의하기
+ * @interface 어노테이션이름 {
+ * 		요소타입 타입요소이름();	//	반환값이 있고 매개변수는 없는 추상메서드의 형태
+ * 		...
+ * }
+ * 
+ * 어노테이션 요소의 규칙
+ * 1. 요소의 타입은 기본형, String형, enum, annotation, class만 허용된다.
+ * 2. ()안에 매개변수를 선언할 수 없다.
+ * 3. 예외를 선언할 수 없다.
+ * 4. 요소의 타입에 타입 매개변수(제네릭타입문자)를 사용할 수 없다.
+ */
+
+@Target(ElementType.METHOD) // 적용가능한 대상을 지정함. : 정의한 어노테이션은 method에만 적용가은함
+@Retention(RetentionPolicy.RUNTIME)	//유지되는 기간 지정함. : 정의한 어노테이션은 runtime에서 유효함
+//이렇게 두개를 보통 annotation 정의할 때 붙인다.
+public @interface PrintAnnotation {
+	int id = 100;	// 상수도 선언가능
+	String value() default "-";	// 기본값을 "-"로 지정
+	int count() default 20;	//	기본값을 20으로 지정
+}
+
+<실습>
+
+public enum City { 서울, 부산, 대구, 광주, 대전};
+
+public enum Season {
+        봄("3월부터 5월까지"), 여름("6월부터 8월까지"),
+        가을("9월부터 11월까지"), 겨울("12월부터 2월까지");
+
+        // 괄호속의 값이 저장될 변수 선언
+        private String str;
+
+        // 생성자 만들기(열거형의 생성자는 제어자가 묵시적으로 'private'이다.)
+        Season(String data) {
+            this.str = data;
+        }
+
+        // 값을 반환하는 메서드 작성
+        public String getStr() {
+            return str;
+        }
+
+    }
+
+public static void main(String[] args) {
+
+        City myCity1; // 열거형 객체변수 선언
+        City myCity2; // 열거형 객체변수 선언
+        City myCity3; // 열거형 객체변수 선언
+
+        // 열거형 객체변수에 값 저장하기
+        myCity1 = City.서울;
+        myCity2 = City.valueOf("서울");
+        myCity3 = City.valueOf((City.서울).name());
+
+        System.out.println("myCity1 : " + myCity1.name()); 
+        System.out.println("myCity1의 ordinal : "
+                + myCity1.ordinal()); 
+        
+        System.out.println("myCity2 : " + myCity1.name()); 
+        System.out.println("myCity2의 ordinal : "
+                + myCity2.ordinal()); 
+        System.out.println("=================================="); 
+
+        Season ss = Season.valueOf("여름");
+        System.out.println("name => " + ss.name()); 
+        System.out.println("ordinal => " + ss.ordinal()); 
+        System.out.println("get메서드 호출 => " + ss.getStr()); 
+        System.out.println("=================================="); 
+
+        // 열거형이름.values() => 데이터를 배열로 가져온다.
+        Season[] enumArr = Season.values();
+        for(int i=0; i<enumArr.length; i++){
+            System.out.println(enumArr[i].name()
+                    + " : " + enumArr[i].getStr()); 
+        }
+        System.out.println(); 
+
+        // 배열도 향상된 for문 사용 가능
+        for(City city : City.values()){
+            System.out.println(city + " : " + city.ordinal()); 
+        }
+
+        City city = City.대구;
+
+        System.out.println(city == City.대전); 
+        System.out.println(city == City.대구); 
+
+        System.out.println("대구 => " + city.compareTo(City.대구)); 
+        System.out.println("서울 => " + city.compareTo(City.서울)); 
+        System.out.println("대전 => " + city.compareTo(City.대전)); 
+        
+    } 
+
+   public int sumArg(int...data){
+       int sum = 0;
+       for(int i = 0; i < data.length; i++){
+           sum += data[i];
+       }
+       return sum;
+   }
+
+   public String sumArg2(String name, int...data){
+       int sum = 0;
+       for(int i = 0; i < data.length; i++){
+           sum += data[i];
+       }
+       return name + "씨 점수 : " + sum;
+   }
+
+   public static void main(String[] args) {
+       ArgsTest at = new ArgsTest();
+       
+       int[] nums = {100,200,300};
+       System.out.println(at.sumArr(nums)); 
+       System.out.println(at.sumArr(new int[] {1,2,3,4,5})); 
+       System.out.println(); 
+
+       System.out.println(at.sumArg(100,200,300)); 
+       System.out.println(at.sumArg(1,2,3,4,5)); 
+       System.out.println(); 
+
+       System.out.println(at.sumArg2("홍길동",1,2,3,4,5,6)); 
+
+   } 
+}
+
+public static void main(String[] args) throws ClassNotFoundException{
+        Class<?> klass =
+            Class.forName("kr.or.ddit.reflection.T01_ClassObjectCreationExam");
+        klass = new T01_ClassObjectCreationExam().getClass();
+        klass = T01_ClassObjectCreationExam.class;
+    } 
+
+	public static void main(String[] args) {
+		Class<?> clazz = Service.class;
+		System.out.println("심플클래스명 : " + clazz.getSimpleName());
+		System.out.println("클래스명 : "
+	            + clazz.getName()); 
+	    System.out.println("상위클래스명 : "
+	            + clazz.getSuperclass().getName());
+	    Package pkg = clazz.getPackage();
+	    System.out.println("패키지 정보 : " + pkg.getName()); 
+		
+	}
+public static void main(String[] args) {
+		// Class 객체 생성
+		Class<?> klass = new Service().getClass();
+		
+		// 클래스에 선언된 모든 메서드의 메타데이터 정보 가져오기
+		Method[] methodArr = klass.getDeclaredMethods();
+		
+		for(Method m : methodArr) {
+			System.out.println("메서드명 : " + m.getName());
+			System.out.println("메서드 리턴타입 : " + m.getReturnType());
+			
+			// 해당 메서드 접근제어자 정보 가져오기
+			int modFlag = m.getModifiers();
+			System.out.println("메서드 접근제어자 : "
+					+ Modifier.toString(modFlag));
+			
+			// 해당 메서드의 파라미터 값 가져오기
+			Class<?>[] paramArr = m.getParameterTypes();
+			System.out.println("메서드 파라미터 타입 : ");
+			for(Class<?> clazz : paramArr) {
+				System.out.println(clazz.getName() + " | ");
+			}
+			System.out.println();
+
+			// 해당 메서드에 존재하는 annotaion 타입 정보 가져오기
+			Annotation[] annos =m.getAnnotations();
+			System.out.println("Annotation 타입 : ");
+			for(Annotation anno : annos) {
+				System.out.println(anno.annotationType().getName() + " | ");
+			}
+			System.out.println();
+			System.out.println("-----------------------------------------------------------------");
+			
+		}
+	}
+
+public class Service {
+    @PrintAnnotation
+    public void method1() {
+        System.out.println("메서드1에서 출력되엇습니다."); 
+    }
+
+    @PrintAnnotation(value = "%")
+    public void method2() {
+        System.out.println("메서드2에서 출력되엇습니다."); 
+    }
+
+    @PrintAnnotation(value = "#", count =25)
+    public void method3() {
+        System.out.println("메서드3에서 출력되엇습니다."); 
+    }
+
+}
+
+	public static void main(String[] args) throws IllegalAccessException, InstantiationException, IllegalArgumentException, InvocationTargetException{
+		
+		System.out.println("static 변수값 : " 
+						+ PrintAnnotation.id);
+		
+		System.out.println("------------------------------------------");
+		
+		// reflection 기능을 이용한 메서드 실행하기
+		// 선언된 메서드 목록 가져오기
+		Method[] declaredMethods =
+				Service.class.getDeclaredMethods();
+		
+		for(Method m : declaredMethods) {
+			System.out.println(m.getName()); // 메서드명 출력
+			
+			// 선언된 PrintAnnotation객체 정보 가져오기
+			PrintAnnotation printAnn = m.getAnnotation(PrintAnnotation.class);
+//			Annotation[] declaredAnnotations = m.getDeclaredAnnotations();
+			// count 수만큼 value값 출력하기
+			for(int i=0; i<printAnn.count(); i++) {
+				System.out.println(printAnn.value());
+			}
+			
+			System.out.println(); // 줄바꿈처리
+			
+			// reflection 기능을 이용한 메서드 실행하기
+			//m.invoke(new Service());
+			
+			// reflection을 이용한 객체 생성하기
+			Class<?> clazz = Service.class;
+			
+			Service service = (Service) clazz.newInstance();
+			
+			m.invoke(service);
+		}
+		
+	}
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>title</title>
+<style>
+table{
+	border : 1px solid hotpink;
+	margin : 50px;
+}
+td{
+	width : 250px;
+	height : 50px;
+	text-align : center;
+}
+  #info{
+    height : 200px;
+  }
+</style>
+</head>
+<body>
+  JSP : 클라이언트에서 전송시 데이터를 전달받는다.
+<%
+
+  request.setCharacterEncoding("UTF-8");
+
+  String sid = request.getParameter("id");
+  String sname = request.getParameter("name");
+  String saddr = request.getParameter("addr");
+  String sgender = request.getParameter("gender");
+  String[] sfood = request.getParameterValues("food");
+  String str = "";
+  if(sfood != null){
+    for(int i = 0; i < sfood.length; i++){
+      str += sfood[i] + "&nbsp;&nbsp";
+    }
+    }else{
+    str = "선택안함";
+    }
+  String sarea = request.getParameter("area");
+  // sarea속에는 엔터기호(\r\n)를 포함하고 있다
+  // 엔터기호를 <br>태그로 변경한다
+  sarea = sarea.replaceAll("\r","").replaceAll("\n","<br>");
+%>
+<table border="1">
+  <tr>
+    <td>id</td>
+    <td><%= sid %></td>
+  </tr>
+  <tr>
+    <td>name</td>
+    <td><%= sname %></td>
+  </tr>
+  <tr>
+    <td>addr</td>
+    <td><%= saddr %></td>
+  </tr>
+  <tr>
+    <td>gender</td>
+    <td><%= sgender %></td>
+  </tr>
+  <tr>
+    <td>sfood</td>
+    <td><%= str %></td>
+  </tr>
+  <tr>
+    <td id="info" colspan="2"><%= sarea %></td>
+  </tr>
+</table>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>title</title>
+<link rel="stylesheet" href="../css/mystyle.css">
+<style>
+  form{
+    width : 70%;
+    margin : 50px;
+    border : 1px dotted orange;
+    padding : 20px;
+  }
+  label{
+    width : 150px;
+    height : 30px;
+    display : inline-block;
+  }
+</style>
+</head>
+<body>
+<pre>
+input type="radio" name="gender"> :
+여러개 중에 한개의 값을 선택한다. 여러개의 요소의 name속성은 모두 같아야한다.
+input type="checkbox" name="food"> :
+여러개 중에 한개 또는 여러개의 값을 선택한다. 여러개의 요소의 name속성은 모두 같아야한다.
+</pre>
+  <form action="radiocheck.jsp" method="post">
+    <label>아이디</label>
+    <input type="text" name="id" value="asdf"><br>
+    <label>이름</label>
+    <input type="text" name="name"><br>
+    <label>주소</label>
+    <input type="text" name="addr"><br>
+    <label>성별</label>
+    <input type="radio" value="남자" name="gender">남자
+    <input type="radio" value="여자" name="gender">여자<br>
+    <label>좋아하는 음식</label>
+    <input type="checkbox" value="치킨" name="food">치킨
+    <input type="checkbox" value="떡볶이" name="food">떡볶이
+    <input type="checkbox" value="잡채" name="food">잡채
+    <input type="checkbox" value="피자" name="food">피자
+    <input type="checkbox" value="만두" name="food">만두
+    <input type="checkbox" value="피자" name="food">피자
+    <input type="checkbox" value="김밥" name="food">김밥
+    <input type="checkbox" value="불고기" name="food">불고기<br>
+    <input type="submit" name="전송">
+  </form>
+
+</body>
+</html>
+
+<TMI>
+에러는 디버깅하면 끝나지만 소스가 꼬여있으면 결과만 이상하게 나온다.
+(-축-헬게이트 오픈)
+enum을 이용하면 값 뿐만 아니라 타입까지 체크할 수 있어 type-safe한 코드를 작성할 수 있다.
+
+
