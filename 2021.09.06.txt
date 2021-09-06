@@ -1,0 +1,335 @@
+2021.09.06
+<이론>
+ * 성능 향상을 위한 보조 스트림 예제
+ * (바이트기반의 Buffered스트림 사용 예제)
+// 입출력 성능 향상을 위해서 버퍼를 이용하는 보조스트림
+try(
+FileOutputStream fos = new FileOutputStream("d:/D_Other/bufferTest.txt");
+// 버퍼의 크기를 지정하지 않으면 기본적으로 버퍼크기가 8192byte(8kb)로 설정된다.
+// 버퍼 크가가 5인 스트림 객체 생성
+BufferedOutputStream bos = new BufferedOutputStream(fos, 5);
+bos.flush();
+            // 작업을 종료하기 전에 버퍼에 남아있는 데이터를 모두 출력시킨다.
+bos.close();// (close시 자동으로 호출됨.)
+
+// 이클립스에서 만든 자바 프로그램이 실행되는 기본 위치는
+// 해당 '프로그램 폴더'가 기본위치가 된다.
+
+ * 성능향상을 위한 보조 스트림 예제
+ * (문자기반의 Bufferd스트림 사용예제)
+
+ * 기본타입 입출력 보조 스트림 예제
+ 
+ * 프린터 기능 제공 보조 스트림 예제
+
+
+// printStream은 모든 자료형을 출력할 수 있는 기능을 제고앟는
+// OutputStream의 서브클래스이다.
+
+
+// PrintWriter가 PrintStream보다 다양한 문자를 처리하는데 적합하다.
+// 둘다 기본적으로 autoflush 기능이 꺼져있음.
+// 향상된 기능의 PrintWriter가 추가되었지만PrintStream은 계속
+// 사용되고있음
+
+
+// 자바는 Serializable
+// 인터페이스를 구현한 클래스만 직렬화 할 수 있도록 제한하고 있음
+// 구현하지 않으면 직렬화 작업시 예외발생(NonSerializableException)
+// transient => 직렬화 되지 않을 멤버변수에 지정한다.
+//              (static 필드도 직렬화가 되지 않는다.)
+//              직렬화가 되지 않는 멤버변수는 기본값으로 저장된다.
+//              (참조변수 : null, 숫자형 변수 : 0)
+
+/*
+ * 부모 클래스가 Serializable 인터페이스를 구현하고 있지 않을 경우
+ * 부모객체의 필드값 처리 방법
+ *
+ * 1. 부모클래스가 Serializable 인터페이스를 구현하도록 해야 한다.
+ * 2. 자식 클래스에 writeObject()와 readObject()메서드를 이용하여
+ * 부모객체의 필드값을 처리할 수 있도록 직접 구현한다.
+ */
+
+
+ * 직렬화 될 때 자동으로 호출됨.
+ * (접근제한자가 private가 아니면 자동 호출되지 않음.)
+
+private void writeObject(ObjectOutputStream oos) 
+        throws IOException {
+
+ * 역직렬화 될 때 자동으로 호출됨
+ * (접근제한자가 private가 아니면 자동 호출되지 않음.)
+
+private void readObject(ObjectInputStream ois)
+    throws IOException, ClassNotFoundException{
+
+<실습>
+public static void main(String[] args) {
+    try(
+        FileOutputStream fos = new FileOutputStream("d:/D_Other/bufferTest.txt");
+        BufferedOutputStream bos = new BufferedOutputStream(fos, 5);
+    ){
+        for(int i='1'; i<='9'; i++){ // 숫자 자체를 문자로 지정...
+            bos.write(i);
+        }
+        bos.flush();    // 작업을 종료하기 전에 버퍼에 남아있는 데이터를 모두 출력시킨다.
+                        // (close시 자동으로 호출됨.)
+        bos.close();
+        System.out.println("작업 끝...");
+    }catch(IOException ex){
+        ex.printStackTrace();
+    }
+}
+
+/*try(
+FileReader fr = 
+    new FileReader("src/kr/or/ddit/basic/T11_BufferedIOTest.java");
+   ){
+        int c;
+        while((c = fr.read()) != -1){
+            System.out.print((char)c);
+        }
+        fr.close();
+   }catch(IOException ex){
+       ex.printStackTrace();
+    } */
+FileReader fr = 
+        new FileReader("src/kr/or/ddit/basic/T11_BufferedIOTest.java");
+BufferedReader br = new BufferedReader(fr);
+
+String temp = "";
+for(int i = 1; (temp = br.readLine()) != null; i++){
+    System.out.printf("%4d : %s\n", i, temp);
+}
+br.close();
+
+try(
+        FileOutputStream fos = new FileOutputStream("d:/D_Other/test.dat");
+        // DataOutputStream은 출력용 데이터를 자료형에 맞게 출력해준다.
+        DataOutputStream dos = new DataOutputStream(fos);
+
+        FileInputStream fis = new FileInputStream("d:/D_Other/test.dat");
+        DataInputStream dis = new DataInputStream(fis);
+   ){
+
+    dos.writeUTF("홍길동");     // 문자열 데이터 출력(UTF-8)
+    dos.writeInt(17);           // 정수형으로 데이터 출력
+    dos.writeFloat(3.14f);      // 실수형(Float)으로 출력
+    dos.writeDouble(3.14);      // 실수형(Double)으로 출력
+    dos.writeBoolean(true);     // 논리형으로 출력
+
+    System.out.println("출력 완료...");
+
+    dos.close();
+
+    // 출력한 자료 읽어오기
+    System.out.println("문자열 자료 : " + dis.readUTF());
+    System.out.println("정수형 자료 : " + dis.readInt());
+    System.out.println("실수형(double) 자료 : " + dis.readDouble());
+    System.out.println("실수형(float) 자료 : " + dis.readFloat());
+    System.out.println("논리형 자료 : " + dis.readBoolean());
+
+    dis.close();
+   }catch(IOException ex){
+       ex.printStackTrace();
+   }
+
+try(
+        FileOutputStream fos = new FileOutputStream("d:/D_Other/print.txt");
+        FileOutputStream fos2 = new FileOutputStream("d:/D_Other/print2.txt");
+        PrintStream out = new PrintStream(fos);
+        //PrintWriter pw = new PrintWriter(fos2);
+        PrintWriter pw = new PrintWriter(
+            new OutputStreamWriter(fos2, "utf8"));
+   ){
+    out.print("안녕하세요. PrintStream입니다.\n");
+    out.println("안녕하세요. PrintStream입니다2.\n");
+    out.println("안녕하세요. PrintStream입니다3.\n");
+    out.println(out); // 객체 출력
+    out.println(3.14);
+    out.println(true);
+
+    out.close();
+
+    pw.print("안녕하세요. PrintStream입니다.\n");
+    pw.println("안녕하세요. PrintStream입니다2.\n");
+    pw.println("안녕하세요. PrintStream입니다3.\n");
+    pw.println(pw); // 객체 출력
+    pw.println(3.14);
+    pw.println(true);
+
+    pw.close();
+
+   }catch(IOException ex){
+       ex.printStackTrace();
+   }
+
+public static void main(String[] args) {
+    // Member 인스턴스 생성
+    Member mem1 = new Member("홍길동", 20, "대전");
+    Member mem2 = new Member("일지매", 30, "경기");
+    Member mem3 = new Member("이몽룡", 40, "강원");
+    Member mem4 = new Member("성춘향", 20, "광주");
+
+    try(
+            // 객체를 파일에 저장하기
+            // 출력용 스트림 객체 생성
+            // Buffered보조스트림으로 감쌀 수 있음
+            ObjectOutputStream oos = 
+                new ObjectOutputStream(
+                    new BufferedOutputStream(
+                        new FileOutputStream("d:/D_Other/memObj.bin")));
+            ObjectInputStream ois = 
+                new ObjectInputStream(
+                    new BufferedInputStream(
+                        new FileInputStream("d:/D_Other/memObj.bin")));
+        
+       ){
+
+        // 쓰기작업
+        oos.writeObject(mem1); // 내부적으로 직렬화가 이루어진 후 write한다.
+        oos.writeObject(mem2);
+        oos.writeObject(mem3);
+        oos.writeObject(mem4);
+
+        System.out.println("쓰기 작업 완료...");
+
+        oos.close();
+
+        // =========================================================
+        //
+        // 저장된 객체를 읽어와 출력하기
+
+        Object obj = null;
+
+        // 마지막에 다다르면 EOF Exception 발생함.
+        while((obj=ois.readObject()) != null){
+            // 읽어온 데이터를 원래의 객체형으로 변환 후 사용한다.
+            Member mem = (Member) obj;
+            System.out.println("이름 : " + mem.getName());
+            System.out.println("나이 : " + mem.getAge());
+            System.out.println("주소 : " + mem.getAddr());
+            System.out.println("========================");
+        }
+
+        ois.close();
+
+    }catch(ClassNotFoundException ex){
+        ex.printStackTrace();
+    }catch(IOException ex){
+        ex.printStackTrace(); // 안찍으면 됨
+        System.out.println("출력 끝...");
+    }
+}
+
+class Member implements Serializable {
+    private transient String name;
+    private transient int age;
+    private String addr;
+
+    public void setName(String name){ this.name = name; }
+    public String getName() { return this.name; }
+    public int getAge() { return this.age; }
+    public String getAddr() { return this.addr; }
+    public void setAge(int age) { this.age = age; }
+    public void setAddr(String addr) { this.addr = addr; }
+
+    public Member(String name, int age, String addr){
+
+        this.name = name;
+        this.age = age;
+        this.addr = addr;
+    }
+ 
+}
+
+public static void main(String[] args) {
+    try(
+            FileOutputStream fos = new FileOutputStream(
+                "d:/D_Other/nonSerializableTest.bin");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            FileInputStream fis = new FileInputStream(
+                "d:/D_Other/nonSerializableTest.bin");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+       ){
+        Child child = new Child();
+        child.setParentName("부모");
+        child.setChildName("자식");
+        oos.writeObject(child); // 직렬화
+        oos.flush(); // 생략가능
+        oos.close();
+        fos.close(); // 생략가능
+
+        Child child2 = (Child) ois.readObject(); // 역직렬화
+        System.out.println("부모이름 : " + child2.getParentName());
+        System.out.println("자식이름 : " + child2.getChildName());
+        ois.close();
+        fis.close();
+
+       }catch(IOException ex){
+           ex.printStackTrace();
+       }catch(ClassNotFoundException ex){
+           ex.printStackTrace();
+       }
+
+}
+
+
+class Parent/* implements Serializable*/{
+    private String parentName;
+
+    public void setParentName(String parentName) { this.parentName = parentName; }
+    public String getParentName() { return this.parentName; }
+
+}
+
+class Child extends Parent implements Serializable {
+    private String childName;
+
+    public String getChildName() { return this.childName; }
+    public void setChildName(String childName) { this.childName = childName; }
+
+    private void writeObject(ObjectOutputStream oos) 
+            throws IOException {
+
+            oos.writeUTF(getParentName()); // 부모 객체 필드값 저장
+            oos.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream ois)
+        throws IOException, ClassNotFoundException{
+        setParentName(ois.readUTF()); // 부모객체 필드값 읽어서 설정
+        ois.defaultReadObject();
+
+    }
+}
+<TMI>
+FileIO를 담당하는 스트림은 크게 두가지 종류가 있다.
+1.바이트기반 스트림(InputStream/OutputStream)
+
+2.문자기반스트림(Reader/Writer)
+한 문자당 2바이트 부여
+InputStreamReader(InputStream is[, String encoding])
+OutputStreamWriter(OutputStream os[, String encoding])
+바이트기반 스트림을 문자기반 스트림으로 변환해주는 보조스트림, 인코딩 지정가능
+cp949=ms949 in euc
+
+보조스트림 : 기반스트림이 필요함
+스트림은 기본적으로 바이트기반이기 때문에 파일이 큰 경우 IO속도가 느리다. 따라서 한번에 많은 양을 읽고 쓸 수 있는 보조스트림이 나왔다.
+buffer기능을 제공하는 버퍼스트림
+
+DataStream : 
+readUTF() : 문자열의 종료글자가 나올때까지 문자열로 읽음
+readFloat()/readInt()/readDouble() : float(4), int(4), double(8)자리씩 읽어서 해당 데이터타입으로 해석하겠다.
+
+PrintStream :
+프린트를 할 수 있다.
+서브스트림이다 -> System.in을 하면 콘솔 입력을 기반스트림으로
+PrintWriter(OutputStreamWriter) : 매개변수로 OutputStreamWriter를 받을 수
+있기 때문에 인코딩 방식을 지정할 수 있음 
+
+Object를 직렬화한다는 것 : IO작업을 위하여 Object단위로 dataStream을 만들겠다는 것
+방법 : implements Serializable으로 구현
+효과 : 오브젝트 단위로 쓸 수 있게 됨. bin파일로 저장
+
+역직렬화 : 직렬화되어서 저장된 object를 파일에서 읽어서 다시 object로 변환하는 과정
