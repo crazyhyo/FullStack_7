@@ -1,11 +1,22 @@
-package util;
+package coingameIO;
 
-public class View {
-	
-	public static final int HOME = 0;
-	public static final int LOGIN = 1;
-	public static final int JOIN = 2;
-	public static final int BOARD_LIST = 3;
-	public static final int BOARD_DETAIL = 4;
-
+public enum View {
+	START,
+	MAIN,
+	TRADE,
+	BUY,
+	SELL,
+	ACCOUNT,
+	BUY_BITCOIN,
+	BUY_RIPPLE,
+	BUY_DOGECOIN,
+	SELL_BITCOIN,
+	SELL_RIPPLE,
+	SELL_DOGECOIN,
+	CHART,
+	CHART_BITCOIN,
+	CHART_RIPPLE,
+	CHART_DOGECOIN,
+	CHART_NEWS,
+	EXIT;
 }
