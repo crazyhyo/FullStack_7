@@ -1,0 +1,229 @@
+2021.09.13
+
+<이론>
+<실습>
+
+<select id="searchMember" parameterClass="memVO" resultMap="memMap">
+    SELECT * FROM MYMEMBER 
+    WHERE 1 = 1
+    <isNotEmpty property="memId">
+        AND MEM_ID = #memId# 
+    </isNotEmpty>
+    <isNotEmpty property="memName">
+        AND MEM_ID = #memName# 
+    </isNotEmpty>
+    <isNotEmpty property="memTel">
+        AND MEM_ID = #memTel# 
+    </isNotEmpty>
+    <isNotEmpty property="memAddr">
+        AND MEM_ADDR LIKE '%' || #memAddr# || '%'
+    </isNotEmpty>
+</select>
+
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration debug="true"
+  xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+	    <layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" 
+				value="%5p %C{1}.%M:%L - %m%n" />
+	    </layout>
+	</appender>
+
+	<!-- <appender name="file" class="org.apache.log4j.RollingFileAppender">
+	    <param name="file" value="d:/D_Other/log4jLogFile.log" />
+	    <param name="append" value="false" />
+	    <param name="DatePattern" value="'.'yyyy-MM-dd" />
+	    <layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" 
+				value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+	    </layout>
+	</appender> -->
+	
+<!-- 	<logger name="java.sql.Connection"> -->
+<!--         <level value="DEBUG"/> -->
+<!-- 		<appender-ref ref="console" /> -->
+<!--         <appender-ref ref="file" />  -->
+<!--     </logger> -->
+<!-- 	<logger name="java.sql.ResultSet"> -->
+<!--         <level value="DEBUG"/> -->
+<!-- 		<appender-ref ref="console" /> -->
+<!--         <appender-ref ref="file" />  -->
+<!--     </logger> -->
+<!-- 	<logger name="java.sql.PreparedStatement"> -->
+<!--         <level value="DEBUG"/> -->
+<!-- 		<appender-ref ref="console" /> -->
+<!--         <appender-ref ref="file" />  -->
+<!--     </logger> -->
+
+<!-- 	<logger name="ibatis.member.MemberMain"> -->
+<!--         <level value="DEBUG"/> -->
+<!--     </logger> -->
+    
+	<root>
+		<level value="DEBUG" />
+		<appender-ref ref="console" />
+		<!-- <appender-ref ref="file" /> -->
+	</root>
+
+</log4j:configuration>
+
+private static SqlMapClient smc;	//	SqlMapClient객체 변수 선언
+	
+	private SqlMapClientFactory() { }
+	
+	public static SqlMapClient getInstance() {
+		if(smc == null) {
+			try {
+			Charset charset = Charset.forName("UTF-8");
+            Resources.setCharset(charset);
+            
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            
+            smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+            
+            rd.close(); // Reader 객체 닫기
+			}catch(IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		return smc;
+	}
+
+private static SqlMapClient smc;
+    private MemberDaoImp1() {
+    	smc = SqlMapClientFactory.getInstance();
+    }
+
+
+    @Override
+	public int insertMember(MemberVO mv) {
+        int cnt = 0;
+        
+        try{
+            cnt = smc.update("member.insertMember", mv);
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        
+		return cnt;
+	}
+
+	@Override
+	public boolean chkMember(String memId) {
+		boolean chk = false;
+
+        try{
+               int cnt = (int)smc.queryForObject("member.chkMember", memId); 
+               if(cnt > 0) {
+            	   chk = true;
+               }
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+        return chk;
+	}
+
+	@Override
+	public List<MemberVO> getAllMemberList() {
+		
+		List<MemberVO> memList = new ArrayList<MemberVO>();
+		
+		try{
+
+            memList = (List<MemberVO>) smc.queryForList("member.selectAllMember");
+
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+		return memList;
+	}
+
+	@Override
+	public int updateMember(MemberVO mv) {
+		int cnt = 0;
+		try{
+            cnt = smc.update("member.updateMember", mv);
+
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+		
+		return cnt;
+	}
+
+	@Override
+	public int deleteMember(String memId) {
+		int cnt = 0;
+		try{
+
+            cnt = smc.delete("member.deleteMember", memId);
+
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+		return cnt;
+	}
+
+    @Override
+    public List<MemberVO> getSearchMember(MemberVO mv) {
+
+        List<MemberVO> memList = new ArrayList<>();
+
+        try{
+            memList = (List<MemberVO>) smc.queryForList("member.searchMember", mv);
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return memList;
+
+    }
+
+
+
+#appender : 로깅을 남길 장소
+#layout : 로깅 패턴(형식)
+# log4j.properties
+ 
+# 기본 로깅등급은 INFO , 기본 appender로 표준출력과 rolling 을 사용함.
+log4j.rootLogger=INFO, stdout   
+                
+# Appender 종류(ConsoleAppender, FileAppender, JDBCAppender, JMSAppender, SMTPAppender, SocketAppender, SyslogAppender 등)
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+# The target may be a console, a file, or another item depending on the appender.
+log4j.appender.stdout.Target=System.out
+# Layout 종류(DateLayout, HTMLLayout, PatternLayout, SimpleLayout, XMLLayout)
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+# 로깅등급 클래스명.메소드명:라인수 - 메시지
+log4j.appender.stdout.layout.ConversionPattern=%5p %C{1}.%M:%L - %m%n  
+
+# SqlMap logging configuration...
+# 패키지나 로거이름별로 로깅을 걸고 싶을때
+#log4j.logger.[logger-name]=level, appender1,appender..n
+                     
+log4j.logger.log4jexam.wql.Query=DUBUG
+log4j.logger.log4jexam.wql.Parmaeter=ERROR
+log4j.logger.kr.or.ddit=WARN
+
+    private static final Logger SQL_LOGGER = Logger.getLogger("log4jexam.wql.Query");
+    private static final Logger PARAM_LOGGER = Logger.getLogger("log4jexam.wql.Parameter");
+    private static final Logger RESULT_LOGGER = Logger.getLogger(T01_MemberInfoTest.class);
+
+    PARAM_LOGGER.debug("파라미터값 : " + memId + "," + memName + ","
+            + memTel + "," + memAddr);
+
+    SQL_LOGGER.info("SQL : " + sql);
+
+    int cnt = pstmt.executeUpdate();
+
+    RESULT_LOGGER.warn("결과 값 : " + cnt);
+<TMI>
+log4j를 사용할 때는 설정파일명은 반드시 log4j로 설정해야 한다.
+설정파일로 가능한 확장자는 properties와 xml이 있다.
+단, 확장자가 다른 두 확장자파일을 모두 동일한 프로젝트에서 쓰면 에러다
+둘중 하나만 써야한다.
