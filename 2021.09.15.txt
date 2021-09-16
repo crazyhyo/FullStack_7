@@ -1,0 +1,227 @@
+2021.09.15
+<이론>
+<실습>
+public void parse() throws ParserConfigurationException, SAXException, IOException {
+
+        // DOM document개겣를 생성하기 위한 메서드
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+        // DocumentBuilder 객체 생성하기
+        DocumentBuilder builder = dbf.newDocumentBuilder();
+
+        // DOM 파서로부터 입력바든 파일을 파싱하도록 요청
+        String url;
+		url = new File("./src/new_book.xml").toURI().toString();
+		
+		System.out.println(url);
+		
+        Document document = builder.parse(url);
+
+        // DOM Document 객체로부터 루트 엘리먼트 및 자식 객체 가져오기
+        Element root = document.getDocumentElement();
+        System.out.println("루트 엘리먼트 태그명 : " + root.getTagName());
+
+        // 하위 엘리먼트 접근방법1 : getElementsByTagName() 메서드 이용
+        NodeList bookNodeList = root.getElementsByTagName("book");
+        Node firstBookNode = bookNodeList.item(0);  // 첫 번째 항목
+        Element firstBookElement = (Element) firstBookNode;
+
+        // 속성 접근방법1: 엘리먼트 객체의 getAttribute() 이용
+        System.out.println("엘리먼트 객체의 getAttribute()이용 => "
+                + firstBookElement.getAttribute("isbn"));
+
+        // 속성 접근방법2: 노드 객체의 getAttribute()메서드 이용(속성노드를 접근)
+        NamedNodeMap nodeMap = firstBookNode.getAttributes();
+        System.out.println("노드 객체의 getAttribute() 이용 => "
+                + nodeMap.getNamedItem("isbn").getNodeValue());
+
+        // 하위 엘리먼트 접근방법2 : getChildNodes()메서드 이용
+        NodeList firstBookChildNodeList = firstBookNode.getChildNodes();
+        // #text노드(공백문자)때문에 인텍스 값을 1로 설정해야 함.
+        Node titleNode = firstBookChildNodeList.item(1);
+        Element titleElement = (Element) titleNode;
+        System.out.println("titleElement.getTagName() => "
+                + titleElement.getTagName());
+        System.out.println("titleElement.getContent() => "
+                + titleElement.getTextContent());
+
+        // 전체 출력하기
+        System.out.println("-------------------------------------------------------------------");
+        System.out.printf("%8s %8s %15s %10s %8s\n",
+                "ISBN", "분류", "제목", "저자", "가격");
+        System.out.println("-------------------------------------------------------------------");
+        for(int i=0; i<bookNodeList.getLength(); i++){
+            Node bookNode = bookNodeList.item(i);
+            Element element = (Element) bookNode;
+            String isbn = element.getAttribute("isbn");
+            String kind = element.getAttribute("kind");
+            String title = element.getElementsByTagName("title").item(0).getTextContent().trim();
+            String author = element.getElementsByTagName("author").item(0).getTextContent().trim();
+            String price = element.getElementsByTagName("price").item(0).getTextContent().trim();
+            String str = String.format("%8s %8s %15s %10s %8s",
+                    isbn, kind, title, author, price);
+            System.out.println(str);
+            
+        }
+        
+    }
+
+    public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
+
+        new T02_DOMParsingTest().parse();
+    }
+
+public void parse() throws ParserConfigurationException, SAXException, IOException {
+
+        // DocumentBuilder 생성
+        DocumentBuilder builder = DocumentBuilderFactory
+            .newInstance().newDocumentBuilder();
+
+        String svcKey = "Grid_20150827000000000227_1";  // 레시피 재료 정보 조회 서비스
+        String apiKey = "1df7e8571e8df3f8cbc9b87691ca7d3e4d04f03c593d477e52bf67b03f0b6e1c"; // 개인별 발급.
+        String startIdx = "1";  	// 레시피 재료 시작 순번
+        String endIdx = "5";		// 레시피 재료 종료 순번
+        String recipeId = "463";	// 래시피가 궁금한 음식 ID
+
+        URL url = new URL("http://211.237.50.150:7080/openapi/"+ apiKey
+                + "/xml/"+ svcKey + "/"+startIdx +"/" + endIdx
+                +"?RECIPE_ID=" +  recipeId);
+        
+        System.out.println("url => " + url);
+        // DOM 파서로부터 입력받은 문서내용을 파싱하도록 요청
+        Document document = builder.parse(url.toString());
+
+        // DOM Document 객체로부터 루트 엘리먼트 객체 가져오기
+        Element root = document.getDocumentElement();
+
+        System.out.println("루트 엘리멘트 태그명 : " + root.getTagName());
+
+        // 전체 레시피 수 가져오기
+        String totalCnt = root.getElementsByTagName("totalCnt")
+                            .item(0).getTextContent();
+
+        endIdx = totalCnt;
+
+        url = new URL("http://211.237.50.150:7080/openapi/"+ apiKey
+                + "/xml/"+ svcKey + "/"+startIdx +"/" + endIdx
+                +"?RECIPE_ID=" +  recipeId);
+
+        // DOM 파서로부터 입력받은 문서내용을 파싱하도록 요청
+        document = builder.parse(url.toString());
+
+        // DOM Document 객체로부터 루트 엘리먼트 객체 가져오기
+        root = document.getDocumentElement();
+
+        NodeList rowNodeList = root.getElementsByTagName("row");
+
+        String code = root.getElementsByTagName("code")
+                        .item(0).getTextContent();
+        if(code.equals("INFO-000")) {
+
+            for(int i=0; i<rowNodeList.getLength(); i++){
+                Element element = (Element) rowNodeList.item(i);
+
+                String rowNum = element.getElementsByTagName("ROW_NUM")
+                                .item(0).getTextContent();
+                String irdntNm = element.getElementsByTagName("IRDNT_NM")
+                                .item(0).getTextContent();
+                String irdntCpcty = element.getElementsByTagName("IRDNT_CPCTY")
+                                .item(0).getTextContent();
+                String irdntTyNm = element.getElementsByTagName("IRDNT_TY_NM")
+                                .item(0).getTextContent();
+
+                String str = String.format("%3s %8s %10s %10s %8s",
+                        rowNum, recipeId, irdntTyNm, irdntNm, irdntCpcty);
+                System.out.println(str);
+                System.out.println("-----------------------------------------------------");
+            }
+        }
+
+    }
+    public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
+		new T03_DOMParsingExam().parse();
+	}
+
+// InetAddress클래스 => IP주소를 다루기 위한 클래스
+        //
+        // getByName()메서드는 www.naver.com 또는 SEM-PC등과 같은 머신이름이나
+        // IP주소를 파라미터값을 이용하여 유효한 InetAddress객체를 제공한다.
+        //
+        // naver사이트의 ip정보 가져오기
+        InetAddress naverIp = InetAddress.getByName("www.naver.com");
+        System.out.println("Host Name => " + naverIp.getHostName());
+        System.out.println("Host Address => " + naverIp.getHostAddress());
+        System.out.println();
+
+        // 자기 자신 컴퓨터의 IP정보 가져오기
+        InetAddress localIp = InetAddress.getLocalHost();
+        System.out.println("내 컴퓨터의 Host Name => " + localIp.getHostName());
+        System.out.println("내 컴퓨터의 Host Address => " + localIp.getHostAddress());
+        System.out.println();
+
+        // IP주소가 여러개인 호스트의 정보 가져오기
+        InetAddress[] naverIps = InetAddress.getAllByName("www.naver.com");
+        for(InetAddress nIp : naverIps){
+            System.out.println(nIp.toString());
+        }
+
+public static void main(String[] args) throws MalformedURLException, URISyntaxException {
+        // URL클래스 => 인터넷에 존재하는 서버들의 자원에 접근할 수 있는 주소를 관리하는 클래스
+        URL url = new URL("http", "ddit.or.kr", 80, "/main/index.html?ttt=123&name=aaa#kkkk");
+        System.out.println("전체 URL주소 : " + url.toString());
+
+        System.out.println("protocol : " + url.getProtocol());
+        System.out.println("host : " + url.getHost());
+        System.out.println("query : " + url.getQuery());
+        System.out.println("file : " + url.getFile());
+        System.out.println("path : " + url.getPath());
+        System.out.println("port : " + url.getPort());
+        System.out.println("ref : " + url.getRef());
+        System.out.println();
+
+        System.out.println(url.toExternalForm());
+        System.out.println(url.toString());
+        System.out.println(url.toURI().toString());
+    }
+
+<TMI>
++ : public
+- : private
+~ : package
+# : protected
+
+association[연관관계], 사용한다 사용객체측 -> 피사용객체
+dependency[의존관계], 메서드 내부에서만 사용한다., 점선
+집합관계 중 집약관계/합성관계
+generalization[일반화관계], 자바에서의 상속관계, 자식-> 부모의 빈 화살표
+realization[실체화관계], 자바에서의 인터페이스 구현관계, 빈 점선화살표
+
+usecaseDiagram : 사용자입장에서 기능을 설명하는 다이어그램
+usecase명세서는 시나리오를 나열하는 문서
+usecaseDiagram은 그림
+
+actor와 usecase, 그리고 line으로 구성됨
+
+usecase와 usecase간의 관계를 표현해 줄 수 있는 방법:
+include표시를 표시해준다. 하나의 유즈케이스가 다른 유즈케이스기능을 반드시 포함
+extend표시를 표시해준다.
+
+local computer = local host
+remote computer = remote host
+
+IP : Internet Protocol
+프로토콜 = 약속( 특정한 상황에서 적절하게 처리하기 위한 약속)
+IP는 
+여러 호스트가 네트워크로 연결되어 있을 때 특정 호스트를 구분하기 위한 식별자
+IPv4 = IP version 4라는 의미이다. 4바이트(=32비트)의 주소로 구성 각 자리수는 0~255
+IP는 네트워크주소와 호스트 주소로 구분한다.
+서브넷 마스크는 32비트중에 몇 비트를 네트워크 주소로 사용하는지 지정한다.
+255.255.255.0 = 11111111(2).11111111(2).11111111(2).00000000(2)
+라서 앞에서부터 24자리를 네트워크 주소로 사용하겠다는 의미이다.
+그래서 IPv4 192.168.43.141 중에서 192.168.43까지가 네트워크 주소이다.주소이다
+컴퓨터는 IP주소와 서브넷마스크를 비트단위 and연산하여 네트워크 주소를 알아낸다.알아낸다
+
+URL : 특정 자원의 위치정보를 표시하는 방법(Uniform Resource Locator)
+URI가 URL을 포함한다
+URI는 식별기능을 제공하는 모든 것(?)을 뜻한다. URL도 식별기능을 제공하므로
+URL은 URI이다.

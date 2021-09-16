@@ -1,0 +1,240 @@
+2021.09.16
+<이론>
+<실습>
+// URLConnection => 어플리케이션과 URL간의 통신 연결을 위한 추상클래스
+        //
+        // 특정 서버(예:naver)의 정보와 파일 내용ㅇ르 출력하는 예제
+        URL url = new URL("https://www.naver.com/index.html");
+
+        // Header 정보 가져오기
+        //
+        // URLConnection객체 구하기
+        URLConnection urlCon = url.openConnection();
+
+        System.out.println("Content-Type : " + urlCon.getContentType());
+        System.out.println("Encoding : " + urlCon.getContentEncoding());
+        System.out.println("Content : " + urlCon.getContent());
+        System.out.println();
+
+        // 전체 Header정보 출력하기
+        Map<String, List<String>> headerMap = urlCon.getHeaderFields();
+        Iterator<String> it = headerMap.keySet().iterator();
+
+        while(it.hasNext()){
+            String key = it.next();
+            System.out.println(key + " : " + headerMap.get(key));
+        }
+        System.out.println("---------------------------------------------");
+
+        // 해당 호스트의 페이지 내용 가져오기
+        // 파일을 읽어오기 위한 스트림 객체 생성하기
+        // 방법1 => URLConnection의 getInputStream() 이용하기
+        // InputStream is = url.openConnection().getInputStream();
+        // 방법2 => URL객체의 openStream() 이용하기
+//        InputStream is = url.openConnection().getInputStream();
+        InputStream is = url.openStream();
+        InputStreamReader isr = new InputStreamReader(is, "utf-8");
+        BufferedReader br = new BufferedReader(isr);
+
+        // 내용 출력하기
+        String str = "";
+        while((str = br.readLine()) != null){
+            System.out.println(str);
+        }
+        br.close();
+    }
+
+public class Receiver extends Thread{
+
+    private DataInputStream dis;
+
+    public Receiver(Socket socket) {
+        try{
+
+            dis = new DataInputStream(socket.getInputStream());
+        }catch(IOException ex){
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public void run(){
+        while(dis != null){
+            try{
+                System.out.println(dis.readUTF());
+            }catch(IOException ex){
+                ex.printStackTrace();
+            }
+        }
+    }
+
+
+}
+
+public class Sender extends Thread{
+
+    private Scanner scan;
+    private String name;
+    private DataOutputStream dos;
+
+    public Sender(Socket socket) {
+        name = "[" + socket.getInetAddress() + " : "
+            + socket.getLocalPort() + "]";
+        scan = new Scanner(System.in);
+
+        try{
+            dos = new DataOutputStream(socket.getOutputStream());
+
+        }catch(IOException ex) {
+            ex.printStackTrace();
+        }
+
+
+    }
+
+    @Override
+    public void run(){
+        while(dos != null){
+            try{
+                dos.writeUTF(name + " >>> " + scan.nextLine());
+            }catch(IOException ex){
+                ex.printStackTrace();
+            }
+        }
+    }
+
+}
+
+public static void main(String[] args) throws IOException {
+
+        // TCP 소켓 통신을 하기 위해 ServerSocket객체 생성
+        ServerSocket server = new ServerSocket(7777);
+        System.out.println("서버가 접속을 기다립니다...");
+
+        // accept()메서드는 Client에서 연결 요청이 올 때까지 계속 기다린다.
+        // 연결 요청이 오면 Socket객체를 생성해서 Client의 Socket과 연결한다.
+        Socket socket = server.accept();
+
+        // -----------------------------------------------
+        // 이 이후는 클라이언트와 연결된 후의 작업을 진행하면 된다.
+
+        System.out.println("접속한 클라이언트 정보");
+        System.out.println("주소 : " + socket.getInetAddress());
+
+        // Client에 메시지 보내기
+        //
+        // OutputStream객체를 구성하여 전송한다.
+        // 접속한 Socket의 getOutputStream()메서드를 이용하여 구한다.
+        OutputStream os = socket.getOutputStream();
+        DataOutputStream dos = new DataOutputStream(os);
+        dos.writeUTF("어서오세요..."); // 메시지 보내기
+        System.out.println("메시지를 보냈습니다.");
+
+        dos.close();
+
+        server.close();
+        
+    }
+
+public static void main(String[] args) throws UnknownHostException, IOException {
+        String serverIp = "192.168.43.52";
+        // 자기 자신 호스트 정보를 나타내는 방법
+        // IP : 127.0.0.1
+        // 컴이름 : localhost
+
+        System.out.println(serverIp + " 서버에 접속 중 입니다.");
+
+        // 소켓을 생성해서 서버에 연결을 요청한다.
+        Socket socket = new Socket(serverIp, 7777);
+        
+        // 연결이 되면 이후의 명령이 실행된다.
+        System.out.println("연결되었습니다.");
+
+        // 서버에서 보내온 메시지 받기
+        // 메시지를 받기 위해 InputStream객체를 생성한다.
+        // Socket의 getInputStream()메서드 이용
+        InputStream is = socket.getInputStream();
+        DataInputStream dis = new DataInputStream(is);
+
+        // 서버로부터 받은 메시지 출력하기
+        System.out.println("받은 메시지 : " + dis.readUTF());
+
+        System.out.println("연결종료...");
+
+        dis.close();
+
+        socket.close(); // 소켓 종료
+    }
+
+public static void main(String[] args) {
+        // 서버 소켓을 만들고, 클라이언트가 접속하면 소켓을 만들어
+        // 데니터를 받는 스레드 클래스와 데이터를 보내는 스레드 클래스에
+        // 이 소켓을 넘겨준다.
+        ServerSocket server = null;
+        Socket socket = null;
+
+        try{
+
+            server = new ServerSocket(7777);
+            System.out.println("서버 준비 완료...");
+            socket = server.accept();
+
+            Sender sender = new Sender(socket);
+            Receiver receiver = new Receiver(socket);
+
+            sender.start();
+            receiver.start();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+	// 대화명, 클라이언트의 Socket을 저장하기 위한 Map변수 선언
+	Map<String, Socket> clients;
+	
+	// 생성자
+	public T07_MultiChatServer() {
+		clients = Collections.synchronizedMap(new HashMap<String, Socket>());
+	}
+	
+	// 서버 시작
+	public void serverStart() {
+		Socket socket = null;
+		try(ServerSocket server = new ServerSocket(7777)){
+			System.out.println("서버가 시작되었습니다.");
+			
+			while(true) {
+				// 클라이언트의 접속을 대기한다.
+				socket = server.accept();
+				
+				System.out.println("[" + socket.getInetAddress() + " : "
+						+ socket.getPort() + "] 에서 접속하였습니다.");
+				
+				//메시지 전송처리를 하는 스레드 생성 및 실행
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+ public static void main(String[] args) {
+        try{
+            Socket socket = new Socket("192.168.43.141", 7777);
+
+            System.out.println("서버에 연결되었습니다.");
+            System.out.println(socket);
+
+            Sender sender = new Sender(socket);
+            Receiver receiver = new Receiver(socket);
+
+            sender.start();
+            receiver.start();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+<TMI>
+
