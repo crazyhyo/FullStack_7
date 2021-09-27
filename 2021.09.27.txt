@@ -231,6 +231,17 @@
 
 
     }
+
+    =========
+
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/T04_ErrorHandler</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/T04_ErrorHandler</location>
+    </error-page>
 <TMI>
 현재까지 servlet의 사용이유
 >> 동적 웹페이지(dynamic webPage)를 만들기 위해
