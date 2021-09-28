@@ -1,0 +1,264 @@
+2021.09.28
+<이론>
+/*
+ * 세션(HttpSession)객체에 대하여...
+ *
+ * - 세션을 통해서 사용자(브라우저)별로 구분하여 정보를 관리할 수 있다.(세션ID이용)
+ * - 쿠키를 사용할 때 보다 보안이 향상된다.(정보가 서버에 저장되기 때문에...)
+ *
+ * - 세션객체를 가져오는 방법
+ *   HttpSession session = request.getSession(boolean값);
+ *      boolean값 : true인 경우 => 세션객체가 존재하지 않으면 새로 생성한다.
+ *                  false인 경우 => 세션객체가 존재하지 않으면 null을 리턴한다.
+ * - 세션 삭제 처리 방법
+ *   1. invalidate() 메서드 호출
+ *   2. setMaxInactiveInterval(int interval) 호출
+ *      => 일정시간(초)동안 조정이 없으면 세션 객체 삭제됨.
+ *   3. web.xml에 <session-config>설정하기 (분단위)
+ */
+
+/*
+ * 서블릿 컨텍스트 객체에 대하여...
+ *
+ * 1. 서블릿 프로그램이 컨테이너와 정보를 주고 받기 위한 메서드를 제공한다.
+ *    ex) 파일의 MIME TYPE정보 가져오기, 요청정보 보내기, 로깅 등.
+ * 2. 웹애플리케이션당 1개씩 생성된다.
+ * 3. 서블릿 컨텍스트 객체는 서블릿이 초기화 될 때 ServletConfig객체를 통해서 얻을 수 있다.
+ */
+
+/*
+ * 서블릿 필터에 대하여...
+ *
+ * 1. 사용 목적
+ *   - 클라이언트의 요청을 수행하기 전에 가로채 필요한 작업을 수행할 수 있다.
+ *   - 클라이언트에 응답정보를 제공하기 전에 응답정보에 필요한 작업을 수행할 수 있다.
+ *
+ * 2. 사용 예
+ *   - 인증필터
+ *   - 데이터 압축필터
+ *   - 인코딩 필터
+ *   - 로깅 및 감사처리 필터
+ *   - 이미지 변환 필터 등...
+ *
+ */
+<실습>
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // 세션을 가져오는데 없으면 새로 생성한다.
+        HttpSession session = req.getSession(true);
+
+        session.setMaxInactiveInterval(2);
+        // 생성시간 가져오기
+        Date createTime = new Date(session.getCreationTime());
+
+        // 마지막 접근시간 가져오기
+        Date lastAccessTime = new Date(session.getLastAccessedTime());
+
+        String title = "재방문을 환영합니다.";
+        int visitCount = 0;     //  방문 횟수
+        String userId = "sem";  //  사용자ID
+
+        if(session.isNew()){
+            title = "처음 방문을 환영합니다.";
+            session.setAttribute("userId", userId);
+        }else{
+            visitCount = (Integer) session.getAttribute("visitCount");
+            visitCount++;
+            userId = (String) session.getAttribute("userId");
+        }
+        System.out.println("visitCount : " + visitCount);
+        session.setAttribute("visitCount", visitCount);
+        
+        
+        
+//        session.invalidate();
+        
+        
+        // 응답헤더에 인코딩 및 content type 설정하기
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html");
+
+        PrintWriter out = resp.getWriter();
+
+        out.println("<!DOCTYPE html>"
+                + "<html>"
+                + "<head><title>" + title + "</title></head>"
+                + "<body>"
+                + "<h1 align=\"center\">" + title + "</h1>"
+                + "<h2 align=\"center\">세션 정보</h2>"
+                + "<table border=\"1\" align=\"center\">"
+                + "<tr bgcolor=\"orange\"><th>구분</th><th>값</th></tr>"
+                + "<tr><td>세션ID</td>" + "<td>" + session.getId() + "</td></tr>"
+                + "<tr><td>생성시간</td>" + "<td>" + createTime + "</td></tr>"
+                + "<tr><td>마지막 접근시간</td>" + "<td>" + lastAccessTime + "</td></tr>"
+                + "<tr><td>UserId</td>" + "<td>" + userId + "</td></tr>"
+                + "<tr><td>방문횟수</td>" + "<td>" + visitCount + "</td></tr>"
+                + "</table></body></html>");
+
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        ServletContext ctx = req.getServletContext();
+
+        System.out.println("서블릿컨텍스트의 기본 경로 : " + ctx.getContextPath());
+        System.out.println("서버 정보 : " + ctx.getServerInfo());
+        System.out.println("서블릿 API의 메이저 버전 정보 : " + ctx.getMajorVersion());
+        System.out.println("서블릿 API의 마이너 버전 정보 : " + ctx.getMinorVersion());
+        System.out.println("리소스 경로 목록 : " + ctx.getResourcePaths("/"));
+        System.out.println("등록된 모든 서블릿 목록 맵 : " + ctx.getServletRegistrations().toString());
+        System.out.println("파일에 대한 MIME타입 정보 : " + ctx.getMimeType("abc.mp3"));
+        System.out.println("파일시스템 상의 실제 경로 : " + ctx.getRealPath("/"));
+        System.out.println("리소스의 URL 정보 : " + ctx.getResource("/postTest.html"));
+
+        // 속성값 설정
+        ctx.setAttribute("attr1", "속성1");
+        // 속성값 변경
+        ctx.setAttribute("attr1", "속성2");
+        // 속성값 가져오기
+        System.out.println("attr1의 속성값 : " + ctx.getAttribute("attr1"));
+
+        // 로깅 작업하기(로그 파일)
+        ctx.log("서블릿 컨텍스트를 이용한 로깅 작업 중입니다...");
+
+        // 포워딩 처리
+        ctx.getRequestDispatcher("/T06_ServletSessionTest").forward(req, resp);
+
+    }
+
+    <servlet-mapping>
+		<servlet-name>T06_ServletSessionTest</servlet-name>
+		<url-pattern>/T06_ServletSessionTest.do</url-pattern>
+	</servlet-mapping>  
+
+    <servlet>
+        <servlet-name>T07_ServletContextTest</servlet-name>
+		<servlet-class>kr.or.ddit.basic.T07_ServletContextTest</servlet-class>
+	</servlet>
+
+    <servlet-mapping>
+		<servlet-name>T07_ServletContextTest</servlet-name>
+		<url-pattern>/T07_ServletContextTest</url-pattern>
+	</servlet-mapping>  
+	
+	<session-config>
+		<session-timeout>1</session-timeout>
+	</session-config>
+
+
+    <filter>
+        <filter-name>T08_ServletFilter</filter-name>
+        <filter-class>kr.or.ddit.basic.T08_ServletFilter</filter-class>
+        <init-param>
+            <param-name>init-param</param-name>
+            <param-value>asdf</param-value>
+        </init-param>
+    </filter>
+
+    <!--
+        URL-Mapping에 대하여...
+        1. /로 시작... *로 끝남 => 경로 매핑용
+        2. *로 시작             => 확장자 매핑용
+        3. /                    => 기본서블릿 매핑
+        4. 이외 나머지 규칙은 정확한 매핑을 위해 사용됨
+
+        => 매핑이 존재하지 않으면 톰캣의 기본 서블릿인 default 서블릿이 처리함.
+    -->
+    <filter-mapping>
+        <filter-name>T08_ServletFilter</filter-name>
+        <url-pattern>*.do</url-pattern>
+    </filter-mapping>
+
+
+
+public class T08_ServletFilter implements Filter{
+
+	@Override
+	public void init(FilterConfig config) throws ServletException {
+        System.out.println("T08_ServletFilter => init() 호출됨.");
+		// 초기화 파라미터정보 가져오기
+        String initParam = config.getInitParameter("init-param");
+
+        System.out.println("init-param : " + initParam);
+		
+	}
+
+	@Override
+	public void destroy() {
+		// 필터객체가 웹컨테이너에 의해 서비스로부터 제거되기 전에 호출됨.
+        System.out.println("T08_ServletFilter => destroy() 호출됨.");
+		
+	}
+
+
+	@Override
+	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain fc)
+			throws IOException, ServletException {
+	    System.out.println("T08_ServletFilter => doFilter() 시작...");	
+
+        // 클라이언트의 IP 주소 가져오기
+        String ipAddr = req.getRemoteAddr();
+
+        System.out.println("IP주소 : " + ipAddr 
+                + "\n포트번호 : " + req.getRemotePort()
+                + "\n현재시간 : " + new Date().toString());
+
+        // 필터체인을 실행한다.(req, resp 객체 전달)
+        fc.doFilter(req, resp);
+
+        System.out.println("T08_ServletFilter => doFilter() 종료...");
+	}
+
+
+}
+<TMI>
+getAttribute vs getParameter:
+getAttribute는 누군가가 세팅한 attribute를 꺼내오는 것, 사용자가 입력하지 않은 정보를 가져올 때 사용
+getParameter는 클라이언트가 설정한 parameter를 name값을 key로 접근하여 꺼내오는 것
+
+HttpServletRequest, HttpServletResponse, HttpServletSession, HttpServletContext
+
+HttpServletRequest, HttpServletResponse는 사용자의 요청이 있을 때 마다 한 쌍이 만들어져 최종 response를 할 때 소멸
+정확히는 service()를 실행하는 시점마다 생성, 최종 response이후 소멸
+HttpServletSession은 getSession이 성공할 때마다 생성되며 클라이언트당 하나씩 만들어짐
+특별한 처리를 하지 않을 시 웹 브라우저가 종료될 때 소멸
+HttpServletContext는서버가 start되는 시점에서 한개 만들어지고 서버가 내려가는 시점에 사라진다.
+더 정확히는 웹 애플리케이션이 실행되는 시점에 하나 만들어지고 웹 애플리케이션이 종료되는 시점에 사라진다. (웹 애플리케이션의 단위는 일단 하나의 프로젝트 단위라고 생각하자)
+톰캣이 알아서 만들어준다.
+
+HttpservletRequest에서 .getSession, .getServletContext로 접근가능하다.
+가장 기본적인 객체라서 그럼
+
+HttpServletContext는 HttpServlet을 이용하여 접근할 수도 있다.
+(this는 T07_ServletContextTest, 이것이 HttpServlet을 상속(확장)했기 때문에 그 메서드를 사용할 수 있음)
+
+서블릿 API의 메이저 버전 정보 : 3
+서블릿 API의 마이너 버전 정보 : 1
+>>서블릿 스펙 3.1버전을 사용하고 있다는 의미이다.
+
+웹 애플리케이션의 웹 root는 WebContent임 (contextPath로 얻은 경로)
+파일 IO작업을 할 때는 file system의 root를 가져와야 함.
+이것을 알려달라는 것이 getRealPath("/") <- "/"로 지칭되는 root의 실제 경로가 무엇이니?
+해당하는 폴더에 들어가보면 이클립스 상에서 바라보는 WebContent폴더의 내용이 나온다. 즉, WebContent폴더의 실제 위치(파일 시스템 상에서의[os에서 알고 있는 ]경로)를 반환한다.
+
+forwarding, redirect
+포워딩 : 전달하는 것, 다른 작업을 하라고 전달함. 특화된 작업을 하는 곳으로
+무엇을 전달하는가? req와 resp를 전달함. 포인터라서.
+A작업자 1/3작업완료, 내가 변화시킨 req와 resp를 B작업자에게 줄께
+B는 받은 req와 resp를 가지고 2/3작업하고 C작업자에게 전달함
+C는 받은 req와 resp를 가지고 작업을 마치고 client에게 resp를 보여줌
+
+사용자는 요청을 한번, 서버내에서 작업은 기본작업 + 포워딩 수만큼 일어남
+
+서블릿 컨텍스트에서 포워딩을 할 수 있다.
+웹 어플리케이션의 환경정보를 가져올 수 있고 속성을 설정할 수 있고 웹 어플리케이션의 경로를 가져올 수 있다. 서버정보도 얻을 수 있음
+결국 어떻게 쓰이느냐? 웹 어플리케이션을 대표하는 정보를 저장할 때 쓰인다.
+포워딩을 통해 서블릿들의 협업을 관리할 수 있고 웹 어플리케이션의 경로를 통해 가지고 있는 파일들에 대해서 정보를 가져올 수 도 있다.
+Session은 defalut는 브라우저 단위(브라우저가 종료될 때 까지)유지된다.
+
+필터의 역할 : 넌 못지나간다 / 권한에 따른 분기 실행 가능
+
+필터 뿐만 아니라 서블릿도 init-param을 설정할 수 있다.
+설정정보 수준에서 파라미터 설정 가능 필요시 써먹어라
