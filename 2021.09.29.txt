@@ -1,0 +1,149 @@
+2021.09.29
+<이론>
+<실습>
+	@Override
+	public void init(FilterConfig config) throws ServletException {
+        System.out.println("T09_ServletFilter => init() 호출됨.");
+		// 초기화 파라미터정보 가져오기
+        String initParam = config.getInitParameter("init-param");
+
+        System.out.println("init-param : " + initParam);
+		
+	}
+
+	@Override
+	public void destroy() {
+		// 필터객체가 웹컨테이너에 의해 서비스로부터 제거되기 전에 호출됨.
+        System.out.println("T09_ServletFilter => destroy() 호출됨.");
+		
+	}
+
+
+	@Override
+	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain fc)
+			throws IOException, ServletException {
+	    System.out.println("T09_ServletFilter => doFilter() 시작...");	
+
+        // 서블릿 수행시간 계산하기
+        long startTime = System.nanoTime();
+
+        // 필터체인을 실행한다.(req, resp 객체 전달)
+        fc.doFilter(req, resp);
+
+        System.out.println("수행시간(ns) : " + (System.nanoTime() - startTime));
+
+        System.out.println("T09_ServletFilter => doFilter() 종료...");
+	}
+
+public class CustomCharacterEncoding implements Filter{
+
+    private String encoding = "";
+
+    @Override
+    public void init(FilterConfig config) throws ServletException {
+        if(config.getInitParameter("encoding") == null){
+            this.encoding = "UTF-8";
+        }else{
+            this.encoding = config.getInitParameter("encoding");
+        }
+    }
+
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain fc)
+			throws IOException, ServletException {
+        System.out.println("인코딩 정보 설정 : " + encoding);
+
+        req.setCharacterEncoding(encoding); // 요청 인코딩 정보 설정
+        resp.setCharacterEncoding(encoding); // 응답 인코딩 정보 설정
+
+        fc.doFilter(req, resp);
+    }
+
+	@Override
+	public void destroy() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}
+
+public class MyServletRequestListener implements 
+                    ServletRequestListener,
+                    ServletRequestAttributeListener{
+
+    @Override
+    public void requestDestroyed(ServletRequestEvent arg){
+        System.out.println("[MyServletRequestListener] requestDestroyed");
+    }
+
+    @Override
+    public void requestInitialized(ServletRequestEvent arg){
+        System.out.println("[MyServletRequestListener] requestInitialized");
+    }
+
+	@Override
+	public void attributeAdded(ServletRequestAttributeEvent arg0) {
+        System.out.println("[MyServletRequestListener] attributeAdded");
+        System.out.println("=> " + arg0.getName());
+	}
+
+	@Override
+	public void attributeRemoved(ServletRequestAttributeEvent arg0) {
+        System.out.println("[MyServletRequestListener] attributeRemoved");
+        System.out.println("=> " + arg0.getName());
+	}
+
+	@Override
+	public void attributeReplaced(ServletRequestAttributeEvent arg0) {
+        System.out.println("[MyServletRequestListener] attributeReplaced");
+        System.out.println("=> " + arg0.getName());
+	}
+}
+
+public class T10_ServletRequestListenerTest extends HttpServlet{
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("ATTR1", "arrt1");     // 속성값 추가
+        req.setAttribute("ATTR1", "arrt10");     // 속성값 변경
+        req.setAttribute("ATTR2", "arrt2");     // 속성값 추가
+        req.setAttribute("ATTR3", "arrt3");     // 속성값 추가
+
+        req.removeAttribute("ATTR1");           // 속성값 제거
+    }
+
+}
+
+    <filter>
+        <filter-name>CustomCharacterEncoding</filter-name>
+        <filter-class>kr.or.ddit.cmm.filter.CustomCharacterEncoding</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>CustomCharacterEncoding</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>T10_ServletRequestListenerTest</servlet-name>
+		<servlet-class>kr.or.ddit.basic.T10_ServletRequestListenerTest</servlet-class>
+	</servlet>
+
+    <servlet-mapping>
+		<servlet-name>T10_ServletRequestListenerTest</servlet-name>
+		<url-pattern>/T10_ServletRequestListenerTest</url-pattern>
+	</servlet-mapping>  
+    
+    <listener>
+        <listener-class>kr.or.ddit.basic.MyServletRequestListener</listener-class>
+    </listener>
+<TMI>
