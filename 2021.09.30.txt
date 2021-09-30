@@ -1,0 +1,401 @@
+2021.09.30
+<이론>
+<실습>
+public class MyHttpSessionListener implements HttpSessionListener
+									,	HttpSessionAttributeListener{
+
+	@Override
+	public void attributeAdded(HttpSessionBindingEvent arg0) {
+		System.out.println("[MyHttpSessionListener] attributeAdded() 호출됨."
+				+ " => " + arg0.getName() + ":" + arg0.getValue());
+	}
+
+	@Override
+	public void attributeRemoved(HttpSessionBindingEvent arg0) {
+		System.out.println("[MyHttpSessionListener] attributeRemoved() 호출됨."
+				+ " => " + arg0.getName() + ":" + arg0.getValue());
+		
+	}
+
+	@Override
+	public void attributeReplaced(HttpSessionBindingEvent arg0) {
+		System.out.println("[MyHttpSessionListener] attributeReplaced() 호출됨."
+				+ " => " + arg0.getName() + ":" + arg0.getValue());
+	}
+
+	@Override
+	public void sessionCreated(HttpSessionEvent arg0) {
+		System.out.println("[MyHttpSessionListener] sessionCreated() 호출됨."
+				+ " => " + arg0.getSession().getId());
+	}
+
+	@Override
+	public void sessionDestroyed(HttpSessionEvent arg0) {
+		System.out.println("[MyHttpSessionListener] sessionDestroyed() 호출됨."
+				+ " => " + arg0.getSession().getId());
+	}
+
+}
+
+public class MyImageServlet extends HttpServlet{
+
+  @Override
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    doGet(req, resp);
+  }
+
+  @Override
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+    resp.setContentType("image/jpeg"); // 컨텐츠 타입 설정
+
+    ServletOutputStream out = resp.getOutputStream();
+
+    FileInputStream fis = new FileInputStream("d:/D_Other/Koala.jpg");
+
+    BufferedInputStream bis = new BufferedInputStream(fis);
+    BufferedOutputStream bos = new BufferedOutputStream(out);
+
+    int c = 0; // 읽은 바이트 수
+    while((c = bis.read()) != -1){
+      bos.write(c);
+    }
+
+    bis.close();
+    bos.close();
+  }
+
+}
+
+public class MyServletContextListener implements ServletContextListener
+                                        , ServletContextAttributeListener{
+
+	@Override
+	public void contextDestroyed(ServletContextEvent arg0) {
+		System.out.println("[MyServletContextListener] contextDestroyed() 호출됨."
+				+ " => " + arg0.getServletContext().getContextPath());
+		
+	}
+
+	@Override
+	public void contextInitialized(ServletContextEvent arg0) {
+		System.out.println("[MyServletContextListener] contextInitialized() 호출됨."
+				+ " => " + arg0.getServletContext().getContextPath());
+		
+	}
+
+	@Override
+	public void attributeAdded(ServletContextAttributeEvent arg0) {
+		System.out.println("[MyServletContextListener] attributeAdded() 호출됨."
+				+ " => " + arg0.getName() + ":" + arg0.getValue());
+		
+	}
+
+	@Override
+	public void attributeRemoved(ServletContextAttributeEvent arg0) {
+		System.out.println("[MyServletContextListener] attributeRemoved() 호출됨."
+				+ " => " + arg0.getName() + ":" + arg0.getValue());
+		
+	}
+
+	@Override
+	public void attributeReplaced(ServletContextAttributeEvent arg0) {
+		System.out.println("[MyServletContextListener] attributeReplaced() 호출됨."
+				+ " => " + arg0.getName() + ":" + arg0.getValue());
+		
+	}
+
+}
+
+public class MySessionBindingListener implements
+                HttpSessionBindingListener{
+
+	@Override
+	public void valueBound(HttpSessionBindingEvent arg0) {
+
+    String attrName = arg0.getName();
+    System.out.println("[MySessionBindingListener] valueBound() 호출됨."
+        + " => " + this.hashCode() + " 객체가 "
+        + attrName + "으로 바인딩 됨...");
+		
+	}
+
+	@Override
+	public void valueUnbound(HttpSessionBindingEvent arg0) {
+    
+    String attrName = arg0.getName();
+    System.out.println("[MySessionBindingListener] valueUnbound() 호출됨."
+        + " => " + this.hashCode() + " 객체가 "
+        + attrName + "으로 언바인딩 됨...");
+	}
+
+}
+
+public class T11_HttpSessionListenerTest extends HttpServlet{
+
+  @Override
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+    // HttpSession 객체 생성 및 소멸관련 테스트
+    HttpSession session = req.getSession(); // req.getSession(true)와 같음
+
+    session.setAttribute("ATTR1", "attr1");
+    session.setAttribute("ATTR1", "attr11");
+    session.setAttribute("ATTR2", "attr2");
+
+    session.removeAttribute("ATTR1");
+
+    // HTTP 세션 영역 내에 HttpSessionBindingListener를 구현한 객체가
+    // 바인딩 되면 호출됨.
+    MySessionBindingListener bindingListener
+      = new MySessionBindingListener();
+    session.setAttribute("obj", bindingListener);
+    session.removeAttribute("obj");
+
+    session.invalidate(); // 세션객체 삭제
+    
+
+  }
+
+  /*
+   * 이 메서드가 있는 것과 없는 것의 차이점:
+   * 이 메서드가 있으면 200 code가 나오고
+   * 이 메서드가 없으면 [post로 서블릿이 요청될 때] 405 code가 나온다(not supported method)
+   */
+  @Override
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    doGet(req, resp);
+  }
+
+}
+
+public class T12_ServletContextListenerTest extends HttpServlet{
+
+  @Override
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    doGet(req, resp);
+  }
+
+  @Override
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+    req.getServletContext().setAttribute("ATTR1", "attr1");
+    req.getServletContext().setAttribute("ATTR1", "attr11");
+    req.getServletContext().setAttribute("ATTR2", "attr2");
+
+    this.getServletContext().removeAttribute("ATTR1");
+
+  }
+
+}
+
+
+    <listener>
+        <listener-class>kr.or.ddit.basic.MyHttpSessionListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>kr.or.ddit.basic.MyServletContextListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>T11_HttpSessionListenerTest</servlet-name>
+		<servlet-class>kr.or.ddit.basic.T11_HttpSessionListenerTest</servlet-class>
+	</servlet>
+
+    <servlet-mapping>
+		<servlet-name>T11_HttpSessionListenerTest</servlet-name>
+		<url-pattern>/T11_HttpSessionListenerTest</url-pattern>
+	</servlet-mapping>  
+
+  <servlet>
+        <servlet-name>T12_ServletContextListenerTest</servlet-name>
+		<servlet-class>kr.or.ddit.basic.T12_ServletContextListenerTest</servlet-class>
+	</servlet>
+
+  <servlet-mapping>
+		<servlet-name>T12_ServletContextListenerTest</servlet-name>
+		<url-pattern>/T12_ServletContextListenerTest</url-pattern>
+	</servlet-mapping>  
+
+  <servlet>
+        <servlet-name>MyImageServlet</servlet-name>
+		<servlet-class>kr.or.ddit.basic.MyImageServlet</servlet-class>
+	</servlet>
+
+  <servlet-mapping>
+		<servlet-name>MyImageServlet</servlet-name>
+		<url-pattern>/MyImageServlet</url-pattern>
+	</servlet-mapping>  
+
+======
+
+
+@WebServlet(value="/member/insert.do")
+public class InsertMemberServlet extends HttpServlet{
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		req.getRequestDispatcher("/views/member/insertForm.jsp").forward(req, resp);
+
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		// 1. 요청 파라미터 정보 가져오기
+		String memId = req.getParameter("memId");
+		String memName = req.getParameter("memName");
+		String memTel = req.getParameter("memTel");
+		String memAddr = req.getParameter("memAddr");
+		
+		// 2. 서비스 객체 생성하기
+		IMemberService memService = MemberServiceImp1.getInstance();
+		
+		// 3. 회원정보 등록
+		MemberVO mv = new MemberVO();
+		mv.setMemAddr(memAddr);
+		mv.setMemId(memId);
+		mv.setMemName(memName);
+		mv.setMemTel(memTel);
+		
+		int cnt = memService.registerMember(mv);
+		
+		String msg = cnt > 0 ? "success" : "fail";
+		
+		req.setAttribute("msg", msg);
+
+		// 4. 목록 화면으로 이동
+//		req.getRequestDispatcher("/member/list.do").forward(req, resp);
+		
+		String redirectUrl = req.getContextPath() + "/member/list.do?msg=" + URLEncoder.encode(msg,"UTF-8");
+		
+		resp.sendRedirect(redirectUrl);	// 목록조회화면으로 리다이렉트
+		
+	}
+
+}
+
+public class ListMemberServlet extends HttpServlet{
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 1. 서비스 객체 생성하기
+		IMemberService memService = MemberServiceImp1.getInstance();
+		
+		// 2. 회원정보 조회
+		List<MemberVO> memList = memService.getAllMemberList();
+		
+		req.setAttribute("memList", memList);
+		
+		// 3. 뷰페이지로 전달
+		req.getRequestDispatcher("/views/member/list.jsp").forward(req, resp);
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		doGet(req, resp);
+	}
+	
+	
+}
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>신규 회원 등록</title>
+</head>
+<body>
+	<form action="insert.do" method="post">
+		<table>
+			<tr>
+				<td>I D :</td>
+				<td><input type="text" name="memId"></td>
+			</tr>
+			<tr>
+				<td>이름 : </td>
+				<td><input type="text" name="memName"></td>
+			</tr>
+			<tr>
+				<td>Tel :</td>
+				<td><input type="text" name="memTel"></td>
+			</tr>
+			<tr>
+				<td>주소 :</td>
+				<td><input type="text" name="memAddr"></td>
+			</tr>
+		</table>
+		
+		<input type="submit" value="회원 등록">
+	</form>
+
+</body>
+</html>
+
+
+
+=====
+
+
+
+<%
+	List<MemberVO> memList = (List<MemberVO>)request.getAttribute("memList");
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>회원 목록</title>
+</head>
+<body>
+	<table border="1">
+		<tr>
+			<th>ID</th>
+			<th>이름</th>
+			<th>전화번호</th>
+			<th>주소</th>
+		</tr>
+<%
+	int memSize = memList.size();
+	if(memSize > 0) {
+		for(int i=0; i<memSize; i++){
+%>
+		<tr>
+			<th><%= memList.get(i).getMemId() %></th>
+			<th><%= memList.get(i).getMemName() %></th>
+			<th><%= memList.get(i).getMemTel() %></th>
+			<th><%= memList.get(i).getMemAddr() %></th>
+		</tr>
+<%
+		}
+	}else{
+%>
+		
+		<tr>
+			<td colspan="4">회원정보가 없습니다.</td>
+		</tr>
+
+<%
+	}
+%>
+		<tr align="center">
+			<td colspan="4"><a href="insert.do">[회원등록]</a></td>
+		</tr>
+	</table>
+</body>
+</html>
+	<servlet>
+		<servlet-name>ListMemberServlet</servlet-name>
+		<servlet-class>kr.or.ddit.member.controller.ListMemberServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ListMemberServlet</servlet-name>
+		<url-pattern>/member/list.do</url-pattern>
+	</servlet-mapping>
+<TMI>
