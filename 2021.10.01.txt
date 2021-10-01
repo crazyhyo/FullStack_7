@@ -1,0 +1,543 @@
+2021.10.01
+<이론>
+<실습>
+/*
+ * 21/10/01 
+ * author : Lee KwangHyo
+ */
+
+package kr.or.ddit.member.controller;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import kr.or.ddit.member.service.IMemberService;
+import kr.or.ddit.member.service.MemberServiceImp1;
+
+@WebServlet("/member/delete.do")
+public class DeleteMemberServlet extends HttpServlet{
+
+  @Override
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+  }
+
+  @Override
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    String memId = req.getParameter("memId");
+
+    // 1. 서비스 객체 생성하기
+    IMemberService memService = MemberServiceImp1.getInstance();
+
+    // 2. 회원정보 조회
+    int cnt = memService.deleteMember(memId);
+
+    String msg = cnt > 0 ? "success" : "fail";
+
+    // 3. View 화면으로 이동
+    String redirectUrl = req.getContextPath() 
+      + "/member/list.do?msg="
+      + URLEncoder.encode(msg, "utf-8");
+    resp.sendRedirect(redirectUrl);	// 목록조회화면으로 리다이렉트
+  }
+
+}
+
+package kr.or.ddit.member.controller;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import kr.or.ddit.member.service.IMemberService;
+import kr.or.ddit.member.service.MemberServiceImp1;
+import kr.or.ddit.member.vo.MemberVO;
+
+@WebServlet(value="/member/insert.do")
+public class InsertMemberServlet extends HttpServlet{
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		req.getRequestDispatcher("/WEB-INF/views/member/insertForm.jsp").forward(req, resp);
+
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		// 1. 요청 파라미터 정보 가져오기
+		String memId = req.getParameter("memId");
+		String memName = req.getParameter("memName");
+		String memTel = req.getParameter("memTel");
+		String memAddr = req.getParameter("memAddr");
+		
+		// 2. 서비스 객체 생성하기
+		IMemberService memService = MemberServiceImp1.getInstance();
+		
+		// 3. 회원정보 등록
+		MemberVO mv = new MemberVO();
+		mv.setMemAddr(memAddr);
+		mv.setMemId(memId);
+		mv.setMemName(memName);
+		mv.setMemTel(memTel);
+		
+		int cnt = memService.registerMember(mv);
+		
+		String msg = cnt > 0 ? "success" : "fail";
+		
+		req.setAttribute("msg", msg);
+
+		// 4. 목록 화면으로 이동
+//		req.getRequestDispatcher("/member/list.do").forward(req, resp);
+		
+		String redirectUrl = req.getContextPath() + "/member/list.do?msg=" + URLEncoder.encode(msg,"UTF-8");
+		
+		resp.sendRedirect(redirectUrl);	// 목록조회화면으로 리다이렉트
+		
+	}
+
+}
+
+
+package kr.or.ddit.member.controller;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import kr.or.ddit.member.service.IMemberService;
+import kr.or.ddit.member.service.MemberServiceImp1;
+import kr.or.ddit.member.vo.MemberVO;
+
+public class ListMemberServlet extends HttpServlet{
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 1. 서비스 객체 생성하기
+		IMemberService memService = MemberServiceImp1.getInstance();
+		
+		// 2. 회원정보 조회
+		List<MemberVO> memList = memService.getAllMemberList();
+		
+		req.setAttribute("memList", memList);
+		
+		// 3. 뷰페이지로 전달
+		req.getRequestDispatcher("/WEB-INF/views/member/list.jsp").forward(req, resp);
+		
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		doGet(req, resp);
+	}
+	
+	
+}
+
+/*
+ * 21/10/01 
+ * author : Lee KwangHyo
+ */
+
+package kr.or.ddit.member.controller;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import kr.or.ddit.member.service.IMemberService;
+import kr.or.ddit.member.service.MemberServiceImp1;
+import kr.or.ddit.member.vo.MemberVO;
+
+@WebServlet("/member/detail.do")
+public class SelectMemberServlet extends HttpServlet{
+
+  @Override
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    doGet(req, resp);
+  }
+
+  @Override
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+    String memId = req.getParameter("memId");
+
+    // 1. 서비스 객체 생성하기
+    IMemberService memService = MemberServiceImp1.getInstance();
+
+    // 2. 회원정보 조회
+    MemberVO mv = memService.getMember(memId);
+
+    // 3. request개겣에 회원정보 저장
+    req.setAttribute("mv", mv);
+
+    // 4. View 화면으로 이동
+		req.getRequestDispatcher("/WEB-INF/views/member/detail.jsp").forward(req, resp);
+
+  }
+
+}
+
+package kr.or.ddit.member.controller;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import kr.or.ddit.member.service.IMemberService;
+import kr.or.ddit.member.service.MemberServiceImp1;
+import kr.or.ddit.member.vo.MemberVO;
+
+@WebServlet("/member/update.do")
+public class UpdataMemberServlet extends HttpServlet{
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+    String memId = req.getParameter("memId");
+
+    // 1. 서비스 객체 생성하기
+    IMemberService memService = MemberServiceImp1.getInstance();
+
+    // 2. 회원정보 조회
+    MemberVO mv = memService.getMember(memId);
+
+    // 3. request개겣에 회원정보 저장
+    req.setAttribute("mv", mv);
+
+    // 4. View 화면으로 이동
+		req.getRequestDispatcher("/WEB-INF/views/member/updateForm.jsp").forward(req, resp);
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+    // 1. 요청 파라미터 정보 가져오기
+    String memId = req.getParameter("memId");
+    String memName = req.getParameter("memName");
+    String memTel = req.getParameter("memTel");
+    String memAddr = req.getParameter("memAddr");
+
+    // 2. 서비스 객체 생성하기
+    IMemberService memService = MemberServiceImp1.getInstance();
+
+    // 3. 회원정보 수정하기
+    MemberVO mv = new MemberVO();
+    mv.setMemTel(memTel);
+    mv.setMemName(memName);
+    mv.setMemId(memId);
+    mv.setMemAddr(memAddr);
+
+    int cnt = memService.updateMember(mv);
+
+    String msg = cnt > 0 ? "success" : "fail";
+
+    // 4. 목록 조회화면으로 이동(리다이렉트 처리)
+    String redirectUrl = req.getContextPath() 
+      + "/member/list.do?msg="
+      + URLEncoder.encode(msg, "utf-8");
+
+    resp.sendRedirect(redirectUrl);
+
+	}
+}
+
+<%@page import="kr.or.ddit.member.vo.MemberVO"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<%
+	MemberVO mv = (MemberVO)request.getAttribute("mv");
+	String memAddr = mv.getMemAddr().replaceAll(System.lineSeparator(), "<br>");
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>회원 상세정보</title>
+</head>
+<body>
+	<table border="1">
+		<tr>
+			<td>I D:</td>
+			<td><%= mv.getMemId() %></td>
+		</tr>
+		<tr>
+			<td>이름:</td>
+			<td><%= mv.getMemName() %></td>
+		</tr>
+		<tr>
+			<td>전화번호:</td>
+			<td><%= mv.getMemTel() %></td>
+		</tr>
+		<tr>
+			<td>주소:</td>
+			<td><%= memAddr %></td>
+		</tr>
+
+    <tr>
+      <td colspan="2">
+        <a href="list.do">[목록으로]</a>
+        <a href="update.do?memId=<%=mv.getMemId()%>">[회원정보 수정]</a>
+        <a href="delete.do?memId=<%=mv.getMemId()%>">[회원정보 삭제]</a>
+      </td>
+    </tr>
+	</table>
+
+</body>
+</html>
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>신규 회원 등록</title>
+</head>
+<body>
+	<form action="insert.do" method="post">
+		<table>
+			<tr>
+				<td>I D :</td>
+				<td><input type="text" name="memId"></td>
+			</tr>
+			<tr>
+				<td>이름 : </td>
+				<td><input type="text" name="memName"></td>
+			</tr>
+			<tr>
+				<td>Tel :</td>
+				<td><input type="text" name="memTel"></td>
+			</tr>
+			<tr>
+				<td>주소 :</td>
+				<td><input type="text" name="memAddr"></td>
+			</tr>
+		</table>
+		
+		<input type="submit" value="회원 등록">
+	</form>
+
+</body>
+</html>
+
+<%@page import="kr.or.ddit.member.vo.MemberVO"%>
+<%@page import="java.util.List"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<%
+    	List<MemberVO> memList = (List<MemberVO>) request.getAttribute("memList");
+    	String msg = request.getParameter("msg") == null ?
+    			"" : request.getParameter("msg");
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>회원 목록</title>
+</head>
+<body>
+	<table border="1">
+		<tr>
+			<th>ID</th>
+			<th>이름</th>
+			<th>전화번호</th>
+			<th>주소</th>
+		</tr>
+<%
+	int memSize = memList.size();
+	if(memSize > 0) {
+		for(int i=0; i<memSize; i++){
+%>
+		<tr>
+			<th><%= memList.get(i).getMemId() %></th>
+      <th><a href="detail.do?memId=<%= memList.get(i).getMemId() %>"><%= memList.get(i).getMemName() %></a></th>
+			<th><%= memList.get(i).getMemTel() %></th>
+			<th><%= memList.get(i).getMemAddr().replaceAll(System.lineSeparator(), "<br>") %></th>
+		</tr>
+<%
+		}
+	}else{
+%>
+		
+		<tr>
+			<td colspan="4">회원정보가 없습니다.</td>
+		</tr>
+
+<%
+	}
+%>
+		<tr align="center">
+			<td colspan="4"><a href="insert.do">[회원등록]</a></td>
+		</tr>
+	</table>
+<%
+  if(msg.equals("success")){
+%>
+  <script> alert("your request got success!")</script>
+<%
+  }
+%>
+</body>
+</html>
+
+
+<%@page import="kr.or.ddit.member.vo.MemberVO"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<%	
+	MemberVO mv = (MemberVO) request.getAttribute("mv");
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>회원정보 수정</title>
+</head>
+<body>
+	<form action="update.do" method="post">
+    <input type="hidden" name="memId" value="<%= mv.getMemId() %>">
+		<table>
+			<tr>
+				<td>I D :</td>
+				<td><%= mv.getMemId() %></td>
+			</tr>
+			<tr>
+				<td>이름 : </td>
+				<td><input type="text" name="memName" value="<%= mv.getMemName() %>"></td>
+			</tr>
+			<tr>
+				<td>Tel :</td>
+				<td><input type="text" name="memTel" value="<%= mv.getMemTel() %>"></td>
+			</tr>
+			<tr>
+				<td>주소 :</td>
+        <td><textarea name="memAddr" rows="3" cols="15"><%= mv.getMemAddr() %></textarea></td>
+			</tr>
+		</table>
+		
+		<input type="submit" value="회원정보 수정">
+	</form>
+</body>
+</html>
+
+package kr.or.ddit.basic;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+
+public class FileUploadServlet extends HttpServlet{
+	
+	private static final String UPLOAD_DIR = "upload_files";
+	// 메모리 임계크기(이 크기가 넘어가면 레파지토리 위치에 임시파일로 저장됨.) 바이트단위, 3메가바이트임
+	private static final int MEMORY_THRESHOLD = 1024 * 1024 * 3;
+	// 파일 1개당 최대 크기
+	private static final long MAX_FILE_SIZE = 1024 * 1024 * 40;
+	// 요청 파일 최대 크기
+	private static final long MAX_REQUEST_SIZE = 1024 * 1024 * 50;
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		// 인코딩 타입이 multipart/form-data인 경우
+		if(ServletFileUpload.isMultipartContent(req)) {
+			Map<String, String> formMap = new HashMap<String, String>();
+			
+			DiskFileItemFactory factory = new DiskFileItemFactory();
+			factory.setSizeThreshold(MEMORY_THRESHOLD);
+			factory.setRepository(new File("d:/D_Other/temp"));
+			
+			ServletFileUpload upload = new ServletFileUpload(factory);
+			upload.setFileSizeMax(MAX_FILE_SIZE);
+			upload.setSizeMax(MAX_REQUEST_SIZE);
+			
+			// 웹 애플리케이션 루트 디렉토리 기준 업로드 설정하기
+			String uploadPath = getServletContext().getRealPath("")
+					+ File.separator + UPLOAD_DIR;
+			System.out.println("uploadPath => " + uploadPath);
+			
+			File uploadDir = new File(uploadPath);
+			if(!uploadDir.exists()) {
+				uploadDir.mkdir();
+			}
+			
+			try {
+				List<FileItem> formItems =upload.parseRequest(req);
+				
+				if(formItems != null && formItems.size() > 0) {
+					for(FileItem item : formItems) {
+						if(!item.isFormField()) {	// 파일인 경우
+							// 전체 경로를 제외한 파일명만 추가하기
+							String fileName = new File(item.getName()).getName();
+							String filePath = uploadPath + File.separator + fileName;
+							File storeFile = new File(filePath);
+							item.write(storeFile);	// 업로드 파일 저장
+						}else {	// 폼데이터인 경우...
+							// 폼필드의 값이 한글인 경우에는 해당 문자열을 적절히 변환해주어야 한다.
+							formMap.put(item.getFieldName(), item.getString("UTF-8"));
+							
+						}
+						
+					}
+				}
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+			
+			for(Entry<String, String> entry : formMap.entrySet()) {
+				System.out.println("파라미터 명 : " + entry.getKey());
+				System.out.println("파라미터 값 : " + entry.getValue());
+			}
+			
+			resp.setContentType("text/html");
+			resp.getWriter().print("업로드 완료 됨.");
+		}
+	}
+
+}
+
+
+
+<TMI>
+리다이렉트가 일어나면 사용자의 요청 url이 내가 지정한 리다이렉트 url로 바뀐다.
+포워드는 사용자의 요청 url은 바뀌지 않는다, 그리고 사용자가 바라보는 url도 바뀌지 않는다
+화면만 바뀐다.

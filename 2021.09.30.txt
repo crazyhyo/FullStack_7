@@ -1,5 +1,25 @@
 2021.09.30
 <이론>
+
+Controller: 자바 로직 프로세스 처리
+  -service, dao
+
+Model : Controller와 View사이의 데이터 처리
+      각종 VO classes
+      넓은 의미의 model : service와 dao포함
+
+View : 프로세스 처리 후 결과를 출력하는 페이지, jsp파일
+
+요청
+html에서 비동기 방식으로 전송(controller에게 전송)
+
+forward : 한번의 요청에서 일어나는 작업으로 controller가 forward로
+        req와 resp를 해당 페이지에 파라미터로 넘겨주고 넘겨받는 방식
+redirect : redirect를 하는 순간 client에게 response를 제공하여 요청이
+          완료되고 바로 다음에 redirect에 해당하는 요청을 간격없이
+          수행하는 방식, req와 resp가 한 번의 비지니스 로직에서 공유되지
+          않는다(정확히는 redirect를 기준으로 나뉜다)
+
 <실습>
 public class MyHttpSessionListener implements HttpSessionListener
 									,	HttpSessionAttributeListener{
