@@ -1,0 +1,25 @@
+2021.10.08
+<이론>
+<실습>
+<TMI>
+svn 사용법
+중앙 svn
+
+-명령어
+1. import & checkout
+: import로 svn 레퍼지토리에 저장, checkout으로 레퍼지토리의 내용을 로컬피시로 저장
+import나 checkout이 한번은 일어나야 svn 서버의 관련 설정이 로컬에 생김
+
+2. update
+3. commit
+
+svn서버에 있는 파일을 내 로컬 피시에서 최신화하는 것이 update
+내가 작업한 파일을 모두에게 공유하는 것이 commit
+
+d:/A_TeachingMaterial/4.MiddleProject>
+other : 산출물 관리 (우클릭 후 https://192.168.43.130/svn/projects/202107M/team3/documents를 URL of repository에 넣고 OK)
+-> 위에꺼 선택 -> username, password 입력(password는 java)
+workspace : 코딩작업
+
+워크스페이스 변경 직후 설정
+-> prefer
