@@ -1,0 +1,120 @@
+2021.10.28
+<이론>
+<실습>
+
+print('HELLO PYTHON')
+
+a = 1
+b = '2.2'
+c = "hello"
+d = "world"
+e = True
+f = False
+
+# print(str(a) + c)
+# print(a+float(b))
+# print(a+int(b))
+# print(not not not e)
+# print(e and f)
+# print(e or f)
+# print(e and not f)
+# print(e or not f)
+# print(not e or f)
+
+# print(a,b,c,d,e,f)
+# print(a, end='')
+# print(b)
+# print(e & f)
+
+a = 70
+
+if a >= 90:
+    print("수")
+elif a >= 80:
+    print("우")
+elif a >= 70:
+    print("미")
+elif a >= 60:
+    print("양")
+else:
+    print("가")
+    
+a = input("원하는 수를 넣으세요")
+print("a", a)
+
+# arr = ["강건", "하기재", "이동근", "이민영"]
+
+# print(arr[0])
+# print(arr[1])
+# print(arr[2])
+# print(arr[-3]) # 다른 언어와 다른 독특한 점
+#
+# for i in arr:
+#     print(i)
+
+
+arr = range(1, 5)
+
+# print(arr[0])
+
+print(arr)
+
+for i in arr:
+    print(i)
+
+arr = range(1, 10+1)
+
+sum = 0
+
+for i in arr:
+    sum += i
+
+print("sum", sum)
+
+# arr = range(1,10+1)
+# arr2 = arr * 2
+#
+# for i in arr2:
+#     print(i)
+
+arr = range(1, 10+1, 2)
+for i in arr:
+    print(i)
+
+num1 = int(input("첫번째 수를 입력하세요"))
+num2 = int(input("두번째 수를 입력하세요"))
+
+print("두 수의 합은 ", int(num1) + int(num2), " 입니다.")
+print("두 수의 합은 ", num1 + num2, " 입니다.")
+<TMI>
+
+파이썬 시작
+인공지능의 발전과 함께 급격히 성장
+-> 인공지능과 관련된 라이브러리는 하위호환성이 잘 안됨. 
+: 버전마다 지원하는 기능을 잘 봐야 함
+
+개발자로서 제일 먼저 공부해라
+진짜 돈되는 거는 기술은 나만 알아보게 블로깅
+
+psython / Anaconda IDE
+pycharm(InteliJ 기반), vscode, eclipse, spyder
+
+c/c++ : 72, 83
+====
+성능/속도 차이
+개발속도 차이남
+====
+java : 95(90년대 초)
+
+====모뎀에서 인터넷으로====
+1993년도 window가 생겨남
+1996년 넷스케이프, www.***.com 사용
+=> 버블닷컴
+===========================
+
+javascript : 99년
+c# : 2000년
+python : 2008년
+
+===========================================================================
+그걸 업체한테 줬을 때 바로 쓸 수 있지 않으면 잘 못 만든 거임

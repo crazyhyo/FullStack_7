@@ -1,0 +1,507 @@
+2021.10.29
+<이론>
+<실습>
+
+# input : 1~9의 서로다른 세 숫자, string answer
+# output : strike, ball, out, result
+
+import random
+
+def baseball(first, second, third, answer):
+    strike = 0
+    ball = 0
+    out = 0
+    result = ""
+
+    a1 = answer[0]
+    a2 = answer[1]
+    a3 = answer[2]
+
+    if a1 == str(first):
+        strike += 1
+    if a2 == str(second):
+        strike += 1
+    if a3 == str(third):
+        strike += 1
+
+    if a1 == str(second):
+        ball += 1
+    if a2 == str(third):
+        ball += 1
+    if a3 == str(first):
+        ball += 1
+    if a1 == str(third):
+        ball += 1
+    if a2 == str(first):
+        ball += 1
+    if a3 == str(second):
+        ball += 1
+
+    out = 3 - strike - ball
+
+    result = "{}S {}B {}O".format(strike, ball, out)
+
+    return strike, ball, out, result
+
+arr = list(range(1, 9 + 1))
+temp = []
+while True:
+    rnd = int(random.random() * 9)
+    if arr[rnd] == -1:
+        continue
+    else:
+        temp.insert(len(temp), arr[rnd])
+        arr[rnd] = -1
+    if len(temp) == 3:
+        break
+
+
+answer = str(temp[0]) + str(temp[1]) + str(temp[2])
+print(answer)
+
+# 랜덤 세자리수 설정 완료
+
+count = 0
+
+while True:
+    mine = input("세 자리 자연수를 입력해주세요>\n")
+    first = int(mine[0])
+    second = int(mine[1])
+    third = int(mine[2])
+    tot = baseball(first, second, third, answer)
+    count = count + 1
+    if tot[0] == 3:
+        print(tot)
+        print(count)
+        break;
+    print(tot[3])
+
+vnum = int(input("출력할 단수를 입력하세요 > (2~9만 넣어주세요)"))
+
+for i in range(1, 9 + 1):
+    print(str(vnum) + " * " + str(i) + " = " + str(vnum * i))
+
+vnum2 = int()
+
+
+dan = input("출력할 단수를 입력하시오.")
+idan = int(dan)
+# for i in range(1, 9+1):
+print("{}*{}={}".format(idan, 1, idan * 1))
+print("{}*{}={}".format(idan, 2, idan * 2))
+print("{}*{}={}".format(idan, 3, idan * 3))
+print("{}*{}={}".format(idan, 4, idan * 4))
+print("{}*{}={}".format(idan, 5, idan * 5))
+print("{}*{}={}".format(idan, 6, idan * 6))
+print("{}*{}={}".format(idan, 7, idan * 7))
+print("{}*{}={}".format(idan, 8, idan * 8))
+print("{}*{}={}".format(idan, 9, idan * 9))
+import random
+
+for i in range(0,100):
+    rnd = random.random()
+    print(str(i + 1) + "번째 랜덤값 :" + str(rnd))
+import random
+
+com = ''
+mine = input('odd or even>')
+result = ''
+
+rnd= random.random()
+if rnd > 0.5:
+    com = 'odd'
+else:
+    com = 'even'
+
+if com == mine:
+    result = 'you win'
+else:
+    result = 'you lose'
+
+print("mine " + mine)
+print("com " + com)
+print("result " + result)
+import random
+
+arr = list(range(1,45+1))
+
+lotto = list()
+
+# lotto = []
+
+# print(len(lotto))
+# lotto.insert(len(lotto),1)
+# print(lotto)
+
+temp = 0
+
+while True:
+    rnd = int(random.random() * len(arr))
+    temp = arr[rnd]
+    if temp == -1:
+        continue
+    else:
+        lotto.insert(len(lotto), temp)
+        arr[rnd] = -1
+
+    if len(lotto) == 6:
+        break
+
+print(lotto)
+#1 ~ 45개중 6개를 고르자
+import random
+#
+# lotto = range(1,45 + 1)
+#
+# arr = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,
+#        21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,
+#        41,42,43,44,45]
+# temp = 0
+#
+# for i in range(100):
+#     rnd1 = int(random.random() * 45)
+#     rnd2 = int(random.random() * 45)
+#     temp = arr[rnd1]
+#     arr[rnd1] = arr[rnd2]
+#     arr[rnd2] = temp
+#
+# for i in range(6):
+#     print(arr[i])
+#
+
+# lotto = list(range(1,45 + 1))
+#
+# temp = 0
+#
+# for i in range(100):
+#     rnd1 = int(random.random() * 45)
+#     rnd2 = int(random.random() * 45)
+#     temp = lotto[rnd1]
+#     lotto[rnd1] = lotto[rnd2]
+#     lotto[rnd2] = temp
+#
+# for i in range(6):
+#     print(lotto[i], end =' ')
+#
+# print(lotto[0:6])
+
+lotto = list(range(1,45 + 1))
+
+lottoList = list();
+temp = 0
+
+for i in range(6):
+    for j in range(100):
+        rnd1 = int(random.random() * 45)
+        rnd2 = int(random.random() * 45)
+        temp = lotto[rnd1]
+        lotto[rnd1] = lotto[rnd2]
+        lotto[rnd2] = temp
+    lottoList.append(lotto.pop())
+
+for i in range(6):
+    print(lotto[i], end =' ')
+
+print(lotto[0:6])
+
+print(lottoList)
+import random
+
+rsp = ['가위', '바위', '보']
+
+mine = input('가위, 바위, 보를 입력하세요\n')
+com = rsp[int(random.random() * 3)]
+
+if com == "가위" and mine == "가위":
+    result = "비김"
+if com == "바위" and mine == "가위":
+    result = "짐"
+if com == "보" and mine == "가위":
+    result = "이김"
+
+if com == "가위" and mine == "바위":
+    result = "이김"
+if com == "바위" and mine == "바위":
+    result = "비김"
+if com == "보" and mine == "바위":
+    result = "짐"
+
+if com == "가위" and mine == "보":
+    result = "짐"
+if com == "바위" and mine == "보":
+    result = "이김"
+if com == "보" and mine == "보":
+    result = "비김"
+
+if result == "이김":
+    result = "짐"
+    print("???")
+elif result == "짐":
+    result = "이김"
+    print("!!!")
+
+print('mine : ' + mine)
+print('com : ' + com)
+print('result : ' + result)
+import random
+
+rsp = ['가위', '바위', '보']
+
+mine = input('가위, 바위, 보를 입력하세요\n')
+com = rsp[int(random.random() * 3)]
+
+if mine == '가위' and com == '가위' \
+        or mine == '바위' and com == '바위' \
+        or mine == '보' and com == '보':
+    result = '비겼습니다'
+elif mine == '가위' and com == '보' \
+        or mine == '바위' and com == '가위' \
+        or mine == '보' and com == '바위':
+    result = '이겼습니다'
+elif mine == '가위' and com == '바위' \
+        or mine == '바위' and com == '보' \
+        or mine == '보' and com == '가위':
+    result = '졌습니다'
+
+print('mine : ' + mine)
+print('com : ' + com)
+print('result : ' + result)
+
+
+if com == "가위" and mine == "가위":
+    result = "비김"
+if com == "바위" and mine == "가위":
+    result = "짐"
+if com == "보" and mine == "가위":
+    result = "이김"
+
+if com == "가위" and mine == "바위":
+    result = "이김"
+if com == "바위" and mine == "바위":
+    result = "비김"
+if com == "보" and mine == "바위":
+    result = "짐"
+
+if com == "가위" and mine == "보":
+    result = "짐"
+if com == "바위" and mine == "보":
+    result = "이김"
+if com == "보" and mine == "보":
+    result = "비김"
+    
+print('mine : ' + mine)
+print('com : ' + com)
+print('result : ' + result)
+def addminmuldiv(a,b):
+    return a+b, a-b, a*b, a/b
+
+sum, min, mul, div = addminmuldiv(3,4)
+
+print(sum, min, mul, div)
+
+tot = addminmuldiv(3,4)
+
+print(tot)
+
+def show(dan):
+    print("{} * {} = {}".format(dan, 1, dan * 1))
+    print("{} * {} = {}".format(dan, 2, dan * 2))
+    print("{} * {} = {}".format(dan, 3, dan * 3))
+    print("{} * {} = {}".format(dan, 4, dan * 4))
+    print("{} * {} = {}".format(dan, 5, dan * 5))
+
+    print("{} * {} = {}".format(dan, 6, dan * 6))
+    print("{} * {} = {}".format(dan, 7, dan * 7))
+    print("{} * {} = {}".format(dan, 8, dan * 8))
+    print("{} * {} = {}".format(dan, 9, dan * 9))
+
+
+show(5)
+arr = list(range(5))
+
+# arr.pop()
+# print(arr)
+# arr.pop()
+# print(arr)
+# arr.pop()
+# print(arr)
+# arr.pop()
+# print(arr)
+
+# arr_cut = arr[0:3]
+# print(arr_cut)
+
+arr = [1,2,3]
+arr.append(4)
+arr.insert(len(arr),5)
+print(len(arr))
+print(arr)
+# input : 1~9의 서로다른 세 숫자, string answer
+
+# output : strike, ball, out, result
+
+import random
+
+def baseball(first, second, third, answer):
+    strike = 0
+    ball = 0
+    out = 0
+    result = ""
+
+    a1 = answer[0]
+    a2 = answer[1]
+    a3 = answer[2]
+
+    if a1 == str(first):
+        strike += 1
+    if a2 == str(second):
+        strike += 1
+    if a3 == str(third):
+        strike += 1
+
+    if a1 == str(second):
+        ball += 1
+    if a2 == str(third):
+        ball += 1
+    if a3 == str(first):
+        ball += 1
+    if a1 == str(third):
+        ball += 1
+    if a2 == str(first):
+        ball += 1
+    if a3 == str(second):
+        ball += 1
+
+    out = 3 - strike - ball
+
+    result = "{}S {}B {}O".format(strike, ball, out)
+
+    return strike, ball, out, result
+
+arr = list(range(1, 9 + 1))
+temp = []
+while True:
+    rnd = int(random.random() * 9)
+    if arr[rnd] == -1:
+        continue
+    else:
+        temp.insert(len(temp), arr[rnd])
+        arr[rnd] = -1
+    if len(temp) == 3:
+        break
+
+
+answer = str(temp[0]) + str(temp[1]) + str(temp[2])
+print(answer)
+
+# 랜덤 세자리수 설정 완료
+
+count = 0
+
+while True:
+    mine = input("세 자리 자연수를 입력해주세요>\n")
+    first = int(mine[0])
+    second = int(mine[1])
+    third = int(mine[2])
+    tot = baseball(first, second, third, answer)
+    count = count + 1
+    if tot[0] == 3:
+        print(tot)
+        print(count)
+        break;
+    print(tot[3])
+
+<TMI>
+코드는 나 혼자 짜는 것이 아니다.
+구구단 정도까지는 for문대신 직접 써라
+외국에서는 코딩규약을 안지키면 잘린다
+다른 사람이 알아볼 수 있는 코드를 짜라
+3~4개는 for문 대신 직접 써라
+for문은 될수있으면 쓰지 마라 대신 메서드를 써라
+
+신입때는 가만히 있어라
+그냥 가만히
+가만히
+가만히
+가만히
+
+
+현실세계의 요청은 유동적이다.
+유동적으로 요청을 처리할 수 있도록 코드를 짜라
+
+직관이 중요하다.
+전등스위치가 당연히 여기 있을 것이라고 생각하는 곳에 없으면
+그때부터는 찾아야 된다.
+직관은 경험에서 생긴다.
+
+ui/ux
+user interface
+user experience
+ux가 더 중요하다
+
+====================================================================
+객체지향 리뷰
+절차지향 프로그래밍 -> 객체지향 프로그래밍
+절차지향의 한계점:
+변화에 유연하지 못함, 한번에 모두를 실행시키기 때문에
+책임소재를 찾기 어려움
+기능별로 분리하자. -> 모듈, 함수, 메서드 기능단위 분리 시작
+
+=> 객체지향 프로그래밍은 분업과 닮았다.
+그래서 분업의 효과도 그대로 가져온다.
+전문화되고 능률적으로 속도가 빨라진다.
+코드의 재사용성, 유연성, 신뢰성 향상, 생상성
+
+분업이 제대로 돌아가기 위해서는 규약이 필요하다
+계약에 기반한 프로그래밍(Contract Based Programming)
+이를 위해서는 메서드의 프로토타입 즉, 인풋 타입과
+리턴 타입에 대한 규약이 필요하다. 이 계약만 지켜진다면
+각 모듈단위로 개발할 수 있다.
+
+다만 이를 위해서는 많은 인프라가 필요했다
+인프라는 프레임워크를 이야기함
+
+같은 것이 생기고 규격/인터페이스에 대한 이야기 출현
+
+여기까지는 c/c++도 모두 할 수 있는 내용
+그런데 객체만이 할 수 있는 건 주체를 정해줄 수 있다는 점
+
+이 주체를 클래스라고 한다.
+클래스로 구분되어지는 개념의 핵심적인 요소와 기능의 집합체
+이 요소들은 클래스 내부의 변수로 관리되며, 클래스 내부 변수의 종류는
+크게 인스턴스 변수와 스태틱 변수가 있다.
+
+스태틱 변수는 모든 인스턴스가 공유하는 변수로서, 가장 중요한 단어는
+인스턴스에 관계없이 라는 말이다.(항등식과 비슷)
+인스턴스 변수는, 인스턴스 변수를 선언했다는 말은 각 인스턴스마다
+다르거나 다를 수 있는 변수라는 의미이다. db에서의 각 속성에 대응하며
+각 인스턴스마다 그 값이 다를 수 있다. 스태틱 변수의 예는 고스톱의
+각 카드를 생각하면 편하다. 각 카드의 그림과 숫자(월)은 각 카드 고유의
+변수로 인스턴스 변수가 적당하지만 카드의 모양을 나타내는 가로와 세로는
+모든 카드가 공유하기 때문에 스태틱 변수가 적당하다.
+
+인스턴스 메서드와 스태틱 메서드는 인스턴스변수를 사용하는가로 구분될 수 있다.
+클래스의 메서드가 인스턴스 변수를 사용한다면 사용자는 메서드 사용 시점에서
+어떤 일이 일어날 지 짐작 할 수 없다. 그 중간 과정에서의 인스턴스 변수의 변화를
+예측할 수 없기 때문이다. 그리고 성격상 인스턴스 변수를 사용하지 않는 메서드는
+스태틱 메서드로 선언하는 것이 논리에 맞다.
+
+객체지향 프로그래밍은 분해 후 조립하는 과정이다.
+이 조립의 과정에서 interface가 나타난다. 
+interface는 규격을 제시한다.
+
+클래스는 타입이다. 클래스 타입이라는 문맥으로 쓰이는 경우가 많다.
+상속은 분류다. extends보다는 classify가 더 맞는 단어일 것 같다고 생각한다.
+하위 클래스는 상위 클래스여야 한다. 서브타입 클래스는 항상 슈퍼타입 클래스이다.
+여기에서 다형성이 생긴다. 왜냐하면 사용자 입장에서는 편하기 때문이다(?)
+
+슈퍼타입에서 서브타입으로는 classify, 서브타입에서 슈퍼타입으로는 expand의 관계가 성립한다
+
+List<Object>는 너무 많은 것을 담을 수 있다. 담을 때는 편하지만 뺄 때는 아니란다.
+특정한 타입으로 제한시킬 필요가 있다. 제한은 타입에 extends나 super 등을 사용한다.
+그것이 자바의 방식, 객체지향의 방식, 재사용이니까
+왜냐하면 최적화를 시킬 것이기 때문이다.
+왜냐하면 최적화는 상황이 주어져있기 때문이다. 
+
+항상 서비스와 다오는 새로 만든다
+
