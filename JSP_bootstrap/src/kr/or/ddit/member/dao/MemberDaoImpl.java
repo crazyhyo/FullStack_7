@@ -80,6 +80,7 @@ public class MemberDaoImpl implements IMemberDao{
 		RowBounds rowBounds = new RowBounds(offset, limit);
 		
 		List<MemberDTO> memberList = session.selectList(nameSpace + "getMemberListPage", cri, rowBounds);
+		
 		return memberList;
 	}
 

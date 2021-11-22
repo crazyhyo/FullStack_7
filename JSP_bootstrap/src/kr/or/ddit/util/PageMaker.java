@@ -17,7 +17,7 @@ public class PageMaker {
 	private void setData() {
 		endPage = (int) (Math.ceil(cri.getPage() / (double)displayPageNum) * displayPageNum);
 		startPage = (endPage - displayPageNum) + 1;
-		realEndPage = (int) (Math.ceil(totalCount / cri.getPerPageNum()));
+		realEndPage = (int) (Math.ceil(totalCount / (double)cri.getPerPageNum()));
 		
 		if(startPage <= 0) {
 			startPage = 1;

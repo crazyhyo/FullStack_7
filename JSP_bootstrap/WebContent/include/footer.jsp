@@ -38,11 +38,6 @@
 	})
 </script>
 <script>
-
-function list_go(page, url){
-	
-}
-
 //모든 조건이 만족했을 때만 버튼을 활성화 시키기 위해
 //각 정규식의 결과를 저장하는 배열
 let testResults = [];

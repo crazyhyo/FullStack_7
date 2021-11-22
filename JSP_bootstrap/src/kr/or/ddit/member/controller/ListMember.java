@@ -46,7 +46,8 @@ public class ListMember extends HttpServlet{
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // 인코딩 설정
+        
+		// 인코딩 설정
 		req.setCharacterEncoding("UTF-8");
 		resp.setCharacterEncoding("UTF-8");
 		
@@ -69,46 +70,13 @@ public class ListMember extends HttpServlet{
 			
 			req.setAttribute("dataMap", dataMap);
 			
-			req.getRequestDispatcher("/memberList.jsp?page=" + page).forward(req, resp);
+			req.getRequestDispatcher("/memberList.jsp").forward(req, resp);
 			
 		} catch(Exception e) {
 			
 			e.printStackTrace();
 			req.getRequestDispatcher("/error.jsp").forward(req, resp);
 		}
-/*		
-        // getSearchCount를 수행하기 위한 pagingVO 설정
-        // 이를 통해 페이징에 필요한 numMember를 얻는다
-		PagingVO pagingVO = new PagingVO();
-		
-		pagingVO.setCurrentPageNo(page);
-		pagingVO.setSearchKey(searchKey);
-		pagingVO.setSearchWord(searchWord);
-		*/
-		
-		
-		/*
-		int numMember;
-		try {
-			numMember = memberService.getSearchCount(pagingVO);
-			pagingVO.setTotalCount(numMember);
-			
-	        // 현재 페이지에 출력되는 회원들
-			List<MemberDTO> members = memberService.searchMemberList(pagingVO);
-			
-	        // 출력
-			req.setAttribute("searchKey", searchKey);
-			req.setAttribute("searchWord", searchWord);
-			req.setAttribute("pagingVO", pagingVO);
-			req.setAttribute("members", members);
-			req.setAttribute("page", page);
-			
-	        req.getRequestDispatcher("/memberList.jsp?page=" + page).forward(req, resp);		
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
 			
 	}
 }

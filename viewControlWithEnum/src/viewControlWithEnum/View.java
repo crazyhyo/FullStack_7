@@ -21,15 +21,11 @@ public enum View {	//	뷰를 담은 enum, 각각은 자신의 화면에서 출�
 		if(this.name().equals("BOARD_LIST")) {	//	메인화면에서는 종료선택지를 추가로 넣어준다.
 			str += (choices.size() + 2) + ".종료\t";
 		}
-		
-		System.out.println(str);
-		
+			System.out.println(str);
 		return choices.size() + 1;
 	}
 	
-	public View selectChoices() {	//	현재 화면의 이름과 선택지를 출력하고 사용자의 입력을 받는다.
-		int back = printChoices();
-		int input = ScanUtil.nextInt();
+	public View select(int input, int back) {
 		if(input == back) {
 			return Controller.back();		//	돌아가기 실행(Stack으로 구현)
 		}else if(this.name().equals("BOARD_LIST") && input == back + 1){	//	메인화면에서 종료선택지를 받을 수 있게 함
@@ -47,6 +43,7 @@ public enum View {	//	뷰를 담은 enum, 각각은 자신의 화면에서 출�
 			System.out.println("선택지 중에서 결정해주세요");
 			return this;
 		}
+		
 	}
 	
 	View(List<ViewChoices> choices){	//	생성자

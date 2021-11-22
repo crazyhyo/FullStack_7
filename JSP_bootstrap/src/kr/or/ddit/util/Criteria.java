@@ -47,7 +47,7 @@ public class Criteria {
 	}
 
 	public int getStartRowNum() {
-		return startRowNum;
+		return startRowNum = (page - 1) * perPageNum;
 	}
 
 	public void setStartRowNum(int startRowNum) {

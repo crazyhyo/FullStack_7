@@ -8,6 +8,12 @@
 
 <c:set var="members" value="${dataMap.members }" />
 <c:set var="pageMaker" value="${dataMap.pageMaker }" />
+<c:if test="${pageMaker.cri.page * pageMaker.cri.perPageNum > pageMaker.totalCount}">
+<c:set var="endRecord" value="${pageMaker.totalCount }" />
+</c:if>
+<c:if test="${pageMaker.cri.page * pageMaker.cri.perPageNum <= pageMaker.totalCount}">
+<c:set var="endRecord" value="${pageMaker.cri.page * pageMaker.cri.perPageNum }" />
+</c:if>
 
 <body>
   <div class="content-wrapper">
@@ -21,7 +27,7 @@
 		</div>
 		<div class="row">
 			<select class="form-control col-sm-2" name="perPageNum"
-				id="perPageNum">
+				id="perPageNum" onchange="list_go(1);">
 				<option value="10">정렬개수</option>
 				<option value="2"
 					${pageMaker.cri.perPageNum == 2 ? 'selected' : '' }>2개씩</option>
@@ -33,17 +39,23 @@
 			<div class="form-group col-sm-2">
 			<select name="searchKey" id="sltSearchTag" class="form-control toggle">
 				<option value=''>검색구분</option>
-				<option value="id" >id</option>
-				<option value="name" >이름</option>
-				<option value="email" >이메일</option>
-				<option value="phone" >전화번호</option>
+				<option value="id" 
+						${pageMaker.cri.searchKey == 'id' ? 'selected' :  ''}>id</option>
+				<option value="name" 
+						${pageMaker.cri.searchKey == 'name' ? 'selected' :  ''}>이름</option>
+				<option value="email" 
+						${pageMaker.cri.searchKey == 'email' ? 'selected' :  ''}>이메일</option>
+				<option value="phone" 
+						${pageMaker.cri.searchKey == 'phone' ? 'selected' :  ''}>전화번호</option>
 			</select>
 	        </div>
 			<div class="form-group col-sm-3">
-				<input type="text" class="form-control toggle" name="searchWord"  id="inputSearch">
+				<input type="text" class="form-control toggle" name="searchWord"  id="inputSearch"
+						value="${pageMaker.cri.searchWord == null ? '' :  pageMaker.cri.searchWord}">
 	        </div>
 	        <div style="display:inline" class="col-md-1">
-				<input type="submit" value="검색" id="btnSearch" class="btn btn-primary toggle">
+				<input type="submit" value="검색" id="btnSearch" class="btn btn-primary toggle" 
+						onclick="list_go(1);">
 			</div>
         </div>	
 		
@@ -56,6 +68,7 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body p-0">
+              	<label>총 ${pageMaker.totalCount } 중 ${endRecord - pageMaker.cri.perPageNum + 1}/${endRecord }</label>
                 <table class="table table-sm toggle">
                 	<thead>
 						<tr>
@@ -78,7 +91,8 @@
 			                <c:set var="status" value="휴직" />
 			            </c:if>
 							<tr>
-			                    <td><a href="/JSP_bootstrap/detail?id=${member.id}&page=${page}">${member.name}</a></td>
+			               <!--     <td><a href="/JSP_bootstrap/detail?id=${member.id}&page=${page}">${member.name}</a></td>  -->
+			                    <td><a href="javascript:detail_go('${member.id }', '${pageMaker.cri.page }')">${member.name}</a></td>
 								<td>${member.id}</td>
 								<td>${member.email}</td>
 								<td>${member.phone}</td>
@@ -87,6 +101,25 @@
 		            </c:forEach>
 					</tbody>
                 </table>
+				<form id="detailForm">
+					<input type='hidden' name='page' value="" />
+					<input type='hidden' name='id' value="" />
+				</form>
+				<script>
+					function detail_go(id, page){
+						if(!page) page = 1;
+						
+						var detailForm = $('#detailForm');
+						detailForm.find("[name='page']").val(page);
+						detailForm.find("[name='id']").val(id);
+						
+						detailForm.attr({
+							action:'detail',
+							method:'get'
+						}).submit();
+					}
+				</script>
+				
                	<div class="card-footer">
 	    			<nav aria-label="Navigation">
 	    				<ul class="pagination justify-content-center m-0">
@@ -101,8 +134,8 @@
 	    						</a>
 	    					</li>
 	    					<c:forEach begin="${pageMaker.startPage }" end="${pageMaker.endPage }" var="i" >
-	    					<li class="page-item">
-	    						<a class="page-link" href="javascript:list_go(${pageMaker.endPage + 1});">
+	    					<li class="page-item ${pageMaker.cri.page == i ? 'active' : '' }">
+	    						<a class="page-link" href="javascript:list_go(${i});">
 	    							${i }
 	    						</a>
 	    					</li>	    						
@@ -200,13 +233,16 @@
 
 		<script>
 		function list_go(page, url){
+			
+			console.log("list_go");
+			
 			if(!url) url="list";
 			
 			var listForm=$('#listForm');
 			
 			listForm.find("[name='page']").val(page);
 			listForm.find("[name='perPageNum']").val($('select[name="perPageNum"]').val());
-			listForm.find("[name='searchKey']").val($('select[name="searchType"]').val());
+			listForm.find("[name='searchKey']").val($('select[name="searchKey"]').val());
 			listForm.find("[name='searchWord']").val($('#inputSearch').val());
 			
 			listForm.attr({

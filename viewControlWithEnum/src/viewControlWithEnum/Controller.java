@@ -16,10 +16,104 @@ public class Controller {
 		View view = View.BOARD_LIST;
 		viewStack.push(view);		//	스택에 메인화면을 넣고 시작
 		while(true) {	//	무한반복
-				view = view.selectChoices();	//	각 뷰마다 자신의 이름과 선택지를 출력하고 사용자의 입력을 받아서 뷰를 업데이트하는 메서드
+				switch(view) {
+				case BOARD_LIST: view = boardList(); break;
+				case SEARCHED_LIST: view = searchedList(); break;
+				case BOARD_DETAIL: view = boardDetail(); break;
+				}
 			}
 		}
 	
+	private View boardDetail() {
+		System.out.println("currentBoard참조한 현재 board출력");
+		
+		View temp = viewStack.peek();
+		boolean flag = true;
+		int back = temp.printChoices();
+		
+		int input = ScanUtil.nextInt();
+		switch(input) {	//	추가적인 행동을 위한 switch
+		case 1: flag = change(); break;
+		case 2: flag = delete(); break;
+		}
+		if(flag) {
+			return viewStack.peek().select(input, back);
+		}else {
+			return temp;
+		}
+	}
+	private boolean delete() {
+		System.out.println("정말로 삭제");
+		int input = ScanUtil.nextInt();
+		System.out.println("삭제진행, currentBoard = null");
+		
+		return true;
+	}
+	private boolean change() {
+		System.out.println("제목입력");
+		System.out.println("내용입력");
+		System.out.println("수정");
+		return false;
+	}
+	private View searchedList() {
+		System.out.println("currentOption참조한 목록 출력");
+		System.out.println("=================");
+		System.out.println("검색내용 출력");
+		System.out.println("=================");
+		
+		View temp = viewStack.peek();
+		boolean flag = true;
+		int back = temp.printChoices();
+		
+		int input = ScanUtil.nextInt();
+		switch(input) {	//	추가적인 행동을 위한 switch
+		case 1: flag = lookup(); break;
+		case 2: register(); break;
+		case 3: flag = search(); break;
+		}
+		if(flag) {
+			return viewStack.peek().select(input, back);
+		}else {
+			return temp;
+		}
+	}
+	private View boardList() {
+		System.out.println("=================");
+		System.out.println("board내용 출력");
+		System.out.println("=================");
+		
+		View temp = viewStack.peek();
+		boolean flag = true;
+		int back = temp.printChoices();
+		
+		int input = ScanUtil.nextInt();
+		switch(input) {	//	추가적인 행동을 위한 switch
+		case 1: flag = lookup(); break;
+		case 2: register(); break;
+		case 3: flag = search(); break;
+		}
+		if(flag) {
+			return viewStack.peek().select(input, back);
+		}else {
+			return temp;
+		}
+	}
+	private boolean search() {
+		System.out.println("검색어 입력");
+		System.out.println("currentOption = ...");
+		return false;
+	}
+	private void register() {
+		System.out.println("제목입력");
+		System.out.println("내용입력");
+		System.out.println("작성자입력");
+		System.out.println("currentBoard = ...");
+	}
+	private boolean lookup() {
+		System.out.println("글번호 입력");
+		System.out.println("currentBoard = ...");
+		return true;
+	}
 	public static View back() {		//	stack을 이용한 돌아가기 구현
 		System.out.println("before");
 		for(View v : viewStack) {

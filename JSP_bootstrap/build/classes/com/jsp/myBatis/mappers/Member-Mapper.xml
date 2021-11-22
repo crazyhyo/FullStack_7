@@ -15,7 +15,7 @@
 		ADDRESS,     AUTHORITY
 
 		FROM
-		MEMBER
+		MEMBER2
 		WHERE
 		1=1
 		<if test='searchKey=="id"'>
@@ -38,7 +38,7 @@
 		SELECT
 		COUNT(*)
 		FROM
-		MEMBER
+		MEMBER2
 		WHERE 1 = 1
  		<if test='searchKey=="id"'>
  			AND INSTR(ID, #{searchWord}) > 0 
@@ -58,12 +58,12 @@
 	<select id="getMember" parameterType="String"
 			resultType="kr.or.ddit.member.vo.MemberDTO">
 		SELECT *
-		  FROM MEMBER
+		  FROM MEMBER2
 		 WHERE ID = #{id}			
 	</select>
 	
 	<insert id="registerMember" parameterType="kr.or.ddit.member.vo.MemberDTO">
-		INSERT  INTO MEMBER
+		INSERT  INTO MEMBER2
 		        (ID,        PWD,        EMAIL,
 		         PHONE,      NAME,      ADDRESS,
 		         AUTHORITY,		ENABLED,	REGISTER,
@@ -75,7 +75,7 @@
 	</insert>
 	
 	<update id="updateMember" parameterType="kr.or.ddit.member.vo.MemberDTO">
-		UPDATE MEMBER
+		UPDATE MEMBER2
 		   SET PWD      = #{pwd},
 		       EMAIL    = #{email}, 
 		       PHONE    = #{phone},
@@ -88,7 +88,7 @@
 	</update>
 	
 	<delete id="deleteMember" parameterType="String">
-		DELETE FROM MEMBER
+		DELETE FROM MEMBER2
 		 WHERE ID = #{id}		
 	</delete>
 	
@@ -100,7 +100,7 @@
 		       AA.ADDRESS,     AA.AUTHORITY
 		  FROM (SELECT A.*, ROWNUM AS RNUM
 		  		  FROM (SELECT * 
-		  	 	  		  FROM MEMBER
+		  	 	  		  FROM MEMBER2
 		 		 		 WHERE 1 = 1
 		 		<if test='searchKey=="id"'>
 		 			AND INSTR(ID, #{searchWord}) > 0 
@@ -120,7 +120,7 @@
 	
 	<select id="getSearchCount" parameterType="kr.or.ddit.member.vo.PagingVO" resultType="Integer">
 		SELECT COUNT(*)
-		  FROM MEMBER
+		  FROM MEMBER2
 		 WHERE 1 = 1
 		 		<if test='searchKey=="id"'>
 		 			AND INSTR(ID, #{searchWord}) > 0 
@@ -138,7 +138,7 @@
 	
 	<select id="idCheck" parameterType="String" resultType="Integer">
 		SELECT COUNT(*)
-		  FROM MEMBER
+		  FROM MEMBER2
 		 WHERE ID = #{id}	
 	</select>
 
