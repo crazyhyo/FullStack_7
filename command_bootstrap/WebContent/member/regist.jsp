@@ -45,7 +45,7 @@
 								<div class="mailbox-attachment-icon has-img" id="pictureView" style="border: 1px solid green; height: 200px; width: 140px; margin: 0 auto;"></div>
 								<div class="mailbox-attachment-info">
 									<div class="input-group input-group-sm">
-										<label for="inputFile" class=" btn btn-warning btn-sm btn-flat input-group-addon">파일선택</label>
+										<label for="inputFile" class=" btn btn-warning btn-sm btn-flat input-group-addon" onclick="trigger_file()">파일선택</label>
 										<input id="inputFileName" class="form-control" type="text" name="tempPicture" disabled/>
 										<span class="input-group-append-sm">											
 											<button type="button" class="btn btn-info btn-sm btn-append" onclick="upload_go();">업로드</button>											
@@ -107,7 +107,7 @@
 							<label for="phone" class="col-sm-3 control-label">전화번호</label>
 							<div class="col-sm-9">	
 								<div class="input-group-sm">
-									<select style="width:75px;" name="phone" id="phone" class="form-control float-left">
+									<select style="width:75px;" name="phone1" id="phone" class="form-control float-left">
 										<option value="">-선택-</option>
 										<option value="010">010</option>
 										<option value="011">011</option>
@@ -115,9 +115,9 @@
 										<option value="018">018</option>
 									</select>							
 									<label class="float-left" style="padding: 0; text-align: center;">&nbsp;-&nbsp;</label>										
-									<input style="width:68px;" name="phone" type="text" class="form-control float-left" />
+									<input style="width:68px;" name="phone2" type="text" class="form-control float-left" />
 									<label class="float-left" style="padding: 0; text-align: center;">&nbsp;-</label>
-									<input style="width:68px;" name="phone" type="text" class="form-control float-right" />						
+									<input style="width:68px;" name="phone3" type="text" class="form-control float-right" />						
 								</div>
 							</div>
 						</div>
@@ -142,4 +142,75 @@
 	</section>		<!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+
+<form id="fileForm" style="display: none">
+	<input type="file" name="file" accept="image/*" onchange="set_file(event);">
+	<input type="text" name="filename">
+</form>
+
+<form id="registForm">
+	<input type="text" name="id">
+	<input type="text" name="pwd">
+	<input type="text" name="name">
+	<input type="text" name="authority">
+	<input type="text" name="email">
+	<input type="text" name="phone">
+	<input type="text" name="file">
+</form>
+
+<script>
+
+function regist_go(){
+	var url = "regist";
+	
+	var registForm = $('registForm');
+	
+	var phone1 = $('form[role="form"] select[name="phone1"]').val();
+	var phone2 = $('form[role="form"] input[name="phone2"]').val();
+	var phone3 = $('form[role="form"] input[name="phone3"]').val();
+	var phone = phone1 + phone2 + phone3;
+	
+	$("#registForm>input[name='id']").val($('#id').val());
+	$("#registForm>input[name='pwd']").val($('#pwd').val());
+	$("#registForm>input[name='email']").val($('#email').val());
+	$("#registForm>input[name='name']").val($('#name').val());
+	$("#registForm>input[name='authority']").val($('form[role="form"] select[name="authority"]').val());
+	$("#registForm>input[name='file']").val($('#fileForm>input[name="filename"]').val());
+	$("#registForm>input[name='phone']").val(phone);
+	
+	registForm.attr({
+		action:url,
+		method:'post'
+	}).submit();
+}
+
+function upload_go(){
+	
+}
+
+function trigger_file(){
+	var fileForm = $('#fileForm');
+	fileForm.find("[name='file']").trigger('click');
+}
+function set_file(event){
+	var fileForm = $('#fileForm');
+	var file = event.target.files[0];
+	var filename = fileForm.find("[name='file']").val();
+	var chars = filename.split('\\');
+	$('#inputFileName').val(chars[2]);
+	fileForm.find("[name='filename']").val(chars[2]);
+	if(file){
+		var reader = new FileReader();
+		console.log('reader loading start');
+		reader.addEventListener("load", function(){
+		    document.getElementById("pictureView").style.backgroundImage = "url('" + this.result + "')";
+		    document.getElementById("pictureView").style.backgroundSize = "200px 140px";
+		}, false);
+		reader.readAsDataURL(file);
+	}
+}
+
+
+</script>
+
 </body>

@@ -3,17 +3,19 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="Member-Mapper">
+    
+    
     <select id="selectMemberList" resultType="com.jsp.dto.MemberVO">
         SELECT
         *
         FROM
-        MEMBER
+        MEMBER2
     </select>
     <select id="selectMemberListCount" resultType="int">
         SELECT
         COUNT(*)
         FROM
-        MEMBER
+        MEMBER2
     </select>
     
     <sql id="search">
@@ -34,7 +36,7 @@
     <select id="selectSearchMemberList" resultType="com.jsp.dto.MemberVO">
         SELECT
         *
-        FROM MEMBER
+        FROM MEMBER2
         WHERE ID IS NOT NULL
         <include refid="search" />
         ORDER BY REGDATE DESC
@@ -42,7 +44,7 @@
     <select id="selectSearchMemberListCount" resultType="int">
         SELECT
         COUNT(*)
-        FROM MEMBER
+        FROM MEMBER2
         WHERE ID IS NOT NULL
         <include refid="search" />
         ORDER BY REGDATE DESC
