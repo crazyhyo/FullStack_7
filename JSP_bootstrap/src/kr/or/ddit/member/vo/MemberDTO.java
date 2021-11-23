@@ -12,7 +12,6 @@ public class MemberDTO {
 	private String register;
 	private String address;
 	private String authority;
-	
 	public String getId() {
 		return id;
 	}

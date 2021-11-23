@@ -13,6 +13,7 @@ import kr.or.ddit.member.vo.MemberDTO;
 import kr.or.ddit.member.vo.PagingVO;
 import kr.or.ddit.util.Criteria;
 import kr.or.ddit.util.PageMaker;
+import kr.or.ddit.util.SearchCriteria;
 
 public class MemberServiceImpl implements IMemberService{
 	
@@ -78,7 +79,7 @@ public class MemberServiceImpl implements IMemberService{
 	}
 	
 	@Override
-	public Map<String, Object> getMemberListPage(Criteria cri) throws Exception {
+	public Map<String, Object> getMemberListPage(SearchCriteria cri) throws Exception {
 		
 		Map<String, Object> dataMap = null;
 		
@@ -111,6 +112,40 @@ public class MemberServiceImpl implements IMemberService{
 		return dataMap;
 	}
 	
+	/*@Override
+	public Map<String, Object> getMemberListPage(Criteria cri) throws Exception {
+		
+		Map<String, Object> dataMap = null;
+		
+		SqlSession session = factory.openSession();
+		
+		try {
+			
+			List<MemberDTO> members = null;
+			PageMaker pageMaker = null;
+			
+			members = memberDao.getMemberListPage(session, cri);
+			pageMaker = new PageMaker();
+			pageMaker.setCri(cri);
+			pageMaker.setTotalCount(memberDao.getMemberListCount(session, cri));
+			
+			dataMap = new HashMap<String, Object>();
+			
+			dataMap.put("members", members);
+			dataMap.put("pageMaker", pageMaker);
+			
+			session.commit();
+		} catch(Exception e) {
+			session.rollback();
+			e.printStackTrace();
+			throw e;
+		} finally {
+			session.close();
+		}
+		
+		return dataMap;
+	}
+	*/
 	
 	
 }

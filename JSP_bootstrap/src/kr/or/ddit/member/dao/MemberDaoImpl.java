@@ -11,6 +11,7 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 import kr.or.ddit.member.vo.MemberDTO;
 import kr.or.ddit.member.vo.PagingVO;
 import kr.or.ddit.util.Criteria;
+import kr.or.ddit.util.SearchCriteria;
 import kr.or.ddit.util.SqlMapClientFactory;
 
 public class MemberDaoImpl implements IMemberDao{
@@ -67,20 +68,19 @@ public class MemberDaoImpl implements IMemberDao{
 	}
 
 	@Override
-	public int getMemberListCount(SqlSession session, Criteria cri) throws Exception {
+	public int getMemberListCount(SqlSession session, SearchCriteria cri) throws Exception {
 		int listCount = session.selectOne(nameSpace + "getMemberListCount", cri);
 		return listCount;
 	}
 
 	@Override
-	public List<MemberDTO> getMemberListPage(SqlSession session, Criteria cri) throws Exception {
+	public List<MemberDTO> getMemberListPage(SqlSession session, SearchCriteria cri) throws Exception {
 		
 		int offset = cri.getStartRowNum();
 		int limit = cri.getPerPageNum();
 		RowBounds rowBounds = new RowBounds(offset, limit);
 		
 		List<MemberDTO> memberList = session.selectList(nameSpace + "getMemberListPage", cri, rowBounds);
-		
 		return memberList;
 	}
 

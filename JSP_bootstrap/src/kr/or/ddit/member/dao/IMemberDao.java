@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import kr.or.ddit.member.vo.MemberDTO;
 import kr.or.ddit.member.vo.PagingVO;
 import kr.or.ddit.util.Criteria;
+import kr.or.ddit.util.SearchCriteria;
 
 public interface IMemberDao {
 	
@@ -23,9 +24,12 @@ public interface IMemberDao {
 	
 	public List<MemberDTO> searchMemberList(PagingVO pagingVO, SqlSession session)  throws Exception;
 	
-	public int getMemberListCount(SqlSession session, Criteria cri) throws Exception;
+/*	public int getMemberListCount(SqlSession session, Criteria cri) throws Exception;
 
-	public List<MemberDTO> getMemberListPage(SqlSession session, Criteria cri) throws Exception;
+	public List<MemberDTO> getMemberListPage(SqlSession session, Criteria cri) throws Exception;*/
+	public int getMemberListCount(SqlSession session, SearchCriteria cri) throws Exception;
+	
+	public List<MemberDTO> getMemberListPage(SqlSession session, SearchCriteria cri) throws Exception;
 	
 	public int getSearchCount(PagingVO pagingVO, SqlSession session)  throws Exception;
 	

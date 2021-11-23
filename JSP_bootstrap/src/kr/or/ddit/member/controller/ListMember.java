@@ -22,6 +22,7 @@ import kr.or.ddit.member.vo.PagingVO;
 import kr.or.ddit.util.Criteria;
 import kr.or.ddit.util.InitMemberService;
 import kr.or.ddit.util.OracleMyBatisSqlSessionFactory;
+import kr.or.ddit.util.SearchCriteria;
 import kr.or.ddit.util.SingletonOracleMyBatisSqlSessionFactory;
 
 // 회원 목록 화면을  출력한다
@@ -60,11 +61,12 @@ public class ListMember extends HttpServlet{
 				10 : Integer.parseInt(req.getParameter("perPageNum"));
 		
 		try {
-			Criteria cri = new Criteria();
-			cri.setPage(page);
-			cri.setSearchKey(searchKey);
-			cri.setSearchWord(searchWord);
-			cri.setPerPageNum(perPageNum);
+//			Criteria cri = new Criteria();
+			SearchCriteria cri = new SearchCriteria(page, perPageNum, searchKey, searchWord);
+//			cri.setSearchKey(searchKey);
+//			cri.setSearchWord(searchWord);
+//			cri.setPage(page);
+//			cri.setPerPageNum(perPageNum);
 			
 			Map<String, Object> dataMap = memberService.getMemberListPage(cri);
 			

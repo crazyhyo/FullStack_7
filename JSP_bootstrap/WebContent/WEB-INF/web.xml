@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 	<servlet>
+		<servlet-name>IndexServlet</servlet-name>
+		<servlet-class>kr.or.ddit.controller.common.IndexServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>IndexServlet</servlet-name>
+		<url-pattern>/index.do</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
 		<servlet-name>DeleteMember</servlet-name>
 		<servlet-class>kr.or.ddit.member.controller.DeleteMember</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>DeleteMember</servlet-name>
-		<url-pattern>/delete</url-pattern>
+		<url-pattern>/member/remove</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>IdCheck</servlet-name>
@@ -16,7 +26,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>IdCheck</servlet-name>
-		<url-pattern>/idCheck</url-pattern>
+		<url-pattern>/member/idCheck</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>DetailMember</servlet-name>
@@ -25,7 +35,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>DetailMember</servlet-name>
-		<url-pattern>/detail</url-pattern>
+		<url-pattern>/member/detail</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>ListMember</servlet-name>
@@ -34,7 +44,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>ListMember</servlet-name>
-		<url-pattern>/list</url-pattern>
+		<url-pattern>/member/list</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>RegisterMember</servlet-name>
@@ -43,7 +53,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>RegisterMember</servlet-name>
-		<url-pattern>/regist</url-pattern>
+		<url-pattern>/member/regist</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -53,7 +63,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>UpdateMember</servlet-name>
-		<url-pattern>/update</url-pattern>
+		<url-pattern>/member/modify</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>SendMessage</servlet-name>
@@ -62,7 +72,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>SendMessage</servlet-name>
-		<url-pattern>/message</url-pattern>
+		<url-pattern>/member/message</url-pattern>
 	</servlet-mapping>
 
   <filter>

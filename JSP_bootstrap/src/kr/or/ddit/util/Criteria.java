@@ -1,31 +1,32 @@
 package kr.or.ddit.util;
 
+import kr.or.ddit.exception.NotANumberException;
+
 public class Criteria {
 
 	private int page = 1;
 	private int perPageNum = 10;
 	
-	private String searchKey;
-	private String searchWord;
-	
-	public String getSearchKey() {
-		return searchKey;
-	}
-
-	public void setSearchKey(String searchKey) {
-		this.searchKey = searchKey;
-	}
-
-	public String getSearchWord() {
-		return searchWord;
-	}
-
-	public void setSearchWord(String searchWord) {
-		this.searchWord = searchWord;
-	}
-
 	private int startRowNum = 0;
 
+	public Criteria () {}
+	public Criteria (int page, int perPageNum) {
+		this.page = page;
+		this.perPageNum = perPageNum;
+		calcStartRowNum();
+	}
+	public Criteria (String page, String perPageNum) throws NotANumberException{
+		
+		try {
+			this.page = Integer.parseInt(page);
+			this.perPageNum = Integer.parseInt(perPageNum);
+			calcStartRowNum();
+		}catch(NumberFormatException e) {
+			throw new NotANumberException();
+		}
+		
+	}
+	
 	public int getPage() {
 		return page;
 	}
@@ -47,11 +48,10 @@ public class Criteria {
 	}
 
 	public int getStartRowNum() {
-		return startRowNum = (page - 1) * perPageNum;
-	}
-
-	public void setStartRowNum(int startRowNum) {
-		this.startRowNum = startRowNum;
+		return startRowNum;
 	}
 	
+	private void calcStartRowNum() {
+		this.startRowNum = (page - 1) * perPageNum;
+	}
 }
