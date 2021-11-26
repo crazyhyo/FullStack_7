@@ -146,3 +146,23 @@ adminlte 참고
   ALTER TABLE "JSP"."MEMBER" MODIFY ("EMAIL" NOT NULL ENABLE);
   ALTER TABLE "JSP"."MEMBER" MODIFY ("PWD" NOT NULL ENABLE);
   ALTER TABLE "JSP"."MEMBER" MODIFY ("ID" NOT NULL ENABLE);
+
+
+<sql id="noticeSearch">
+	<if test="searchType.contains('c')">
+		OR INSTR(CONTENT, #{searchKey}) >0
+	</if>
+	<if test="searchType.contains('w')">
+		OR INSTR(WRITER, #{searchKey}) >0
+	</if>
+	<if test="searchType.contains('t')">
+		OR INSTR(TITLE, #{searchKey}) >0
+	</if>
+</sql>
+
+'t'
+'w'
+'c'
+'tc'
+'tw'
+'twc'
