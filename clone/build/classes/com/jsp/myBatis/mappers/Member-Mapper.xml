@@ -4,8 +4,17 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="Member-Mapper">
 	
+	<select id="selectAuthorizedMemberList" resultType="com.jsp.dto.MemberVO">
+		SELECT	ID,				PWD,			EMAIL,
+				PICTURE,		ENABLED,		REGDATE,
+				PHONE,			NAME,			REGISTER,
+				ADDRESS,		AUTHORITY
+		FROM	MEMBER2
+		WHERE	AUTHORITY IN ('ROLE_MANAGER', 'ROLE_ADMIN')
+	</select>
+	
 	<insert id="insertMember" parameterType="com.jsp.dto.MemberVO">
-		INSERT	INTO MEMBER
+		INSERT	INTO MEMBER2
 				(ID,			PWD,			EMAIL,
 				 PICTURE,		PHONE,			NAME,
 				 AUTHORITY)
@@ -20,7 +29,7 @@
 				PICTURE,		ENABLED,		REGDATE,
 				PHONE,			NAME,			REGISTER,
 				ADDRESS,		AUTHORITY
-		FROM	MEMBER
+		FROM	MEMBER2
 		WHERE	ID = #{id}
 	</select>
 	
@@ -28,13 +37,13 @@
         SELECT
         *
         FROM
-        MEMBER
+        MEMBER2
     </select>
     <select id="selectMemberListCount" resultType="int">
         SELECT
         COUNT(*)
         FROM
-        MEMBER
+        MEMBER2
     </select>
     
     <sql id="search">
@@ -55,7 +64,7 @@
     <select id="selectSearchMemberList" resultType="com.jsp.dto.MemberVO">
         SELECT
         *
-        FROM MEMBER
+        FROM MEMBER2
         WHERE ID IS NOT NULL
         <include refid="search" />
         ORDER BY REGDATE DESC
@@ -63,7 +72,7 @@
     <select id="selectSearchMemberListCount" resultType="int">
         SELECT
         COUNT(*)
-        FROM MEMBER
+        FROM MEMBER2
         WHERE ID IS NOT NULL
         <include refid="search" />
         ORDER BY REGDATE DESC

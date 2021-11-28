@@ -72,5 +72,11 @@ public class MemberDAOImpl implements MemberDAO{
 		return insertNum;
 	}
 
+	@Override
+	public List<MemberVO> selectAuthorizedMemberList(SqlSession session) throws Exception {
+		List<MemberVO> members = session.selectList("Member-Mapper.selectAuthorizedMemberList");
+		return members;
+	}
+
 
 }

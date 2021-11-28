@@ -52,6 +52,11 @@ function list_go(page, url){
 	jobForm.find("[name='searchType']").val($('select[name="searchType"]').val());
 	jobForm.find("[name='keyword']").val($('div.input-group>input[name="keyword"]').val());
 	
+	alert('list_go(' + page + ')' + '\n' + 'page is : ' + page + '\n'
+			+ 'perPageNum is : ' + $('select[name="perPageNum"]').val() + '\n'
+			+ 'searchType is : ' + $('select[name="searchType"]').val() + '\n'
+			+ 'keyword is : ' + $('div.input-group>input[name="keyword"]').val() + '\n')
+	
 	jobForm.attr({
 		action:url,
 		method:'get'

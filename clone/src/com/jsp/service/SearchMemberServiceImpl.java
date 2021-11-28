@@ -1,5 +1,6 @@
 package com.jsp.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,5 +82,27 @@ public class SearchMemberServiceImpl extends MemberServiceImpl{
 			session.close();
 		}
 		return registNum;
+	}
+
+	@Override
+	public List<MemberVO> getAuthorizedMemberList() throws Exception {
+		SqlSession session = sqlSessionFactory.openSession(false);
+		List<MemberVO> memberList = new ArrayList<MemberVO>();
+		try {
+			
+			memberList = memberDAO.selectAuthorizedMemberList(session);
+			
+			session.commit();
+			
+		}catch(Exception e) {
+			
+			session.rollback();
+			e.printStackTrace();
+			
+			throw e;
+		}finally {
+			session.close();
+		}
+		return memberList;
 	}
 }

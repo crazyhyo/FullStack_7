@@ -4,7 +4,7 @@
 <title></title>
 <body>
 	<div class="content-wrapper" style="background-color : #fff">
-		<iframe name="ifr" src="<%=request.getContextPath() %>/member/list" frameborder="0"
+		<iframe name="ifr" src="<%=request.getContextPath() %>/notice/list" frameborder="0"
 				style="width:100%;height:85vh;"></iframe>
 	</div>
 </body>

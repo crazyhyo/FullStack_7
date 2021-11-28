@@ -17,4 +17,6 @@ public interface MemberService {
   public MemberVO getMember(String id) throws Exception;
   
   public int registMember(MemberVO member) throws Exception;
+  
+  public List<MemberVO> getAuthorizedMemberList() throws Exception;
 }

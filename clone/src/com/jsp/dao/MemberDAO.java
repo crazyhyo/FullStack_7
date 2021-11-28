@@ -25,4 +25,7 @@ public interface MemberDAO {
   
   // 회원 등록
   int insertMember(SqlSession session, MemberVO member) throws Exception;
+  
+  // 공지사항 등록 가능 회원
+  List<MemberVO> selectAuthorizedMemberList(SqlSession session) throws Exception;
 }

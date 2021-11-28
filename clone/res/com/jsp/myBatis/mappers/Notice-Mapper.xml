@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Notice-Mapper">
+	
+	<select id="selectNoticeByNno" parameterType="java.lang.String"
+			resultType="com.jsp.dto.NoticeVO">
+		SELECT NNO,				TITLE,			WRITER,
+		       CONTENT,			REGDATE,		VIEWCNT,
+			   POINT,			STARTDATE,		ENDDATE,
+			   UPDATEDATE,		DIST
+		  FROM NOTICE
+		 WHERE NNO = #{nno}
+	</select>
+	
+	<select id="selectPointNoticeList" resultType="com.jsp.dto.NoticeVO">
+		SELECT *
+		FROM(
+		SELECT NNO,				TITLE,			WRITER,
+		       CONTENT,			REGDATE,		VIEWCNT,
+			   POINT,			STARTDATE,		ENDDATE,
+			   UPDATEDATE,		DIST
+		  FROM NOTICE
+		 WHERE SYSDATE BETWEEN STARTDATE AND ENDDATE
+		UNION
+		SELECT A.NNO,				A.TITLE,			A.WRITER,
+		       A.CONTENT,			A.REGDATE,		    A.VIEWCNT,
+			   A.POINT,				A.STARTDATE,		A.ENDDATE,
+			   A.UPDATEDATE,		A.DIST
+		  FROM NOTICE A, (SELECT NNO
+		                    FROM NOTICE
+		                   WHERE ENDDATE IS NULL) B
+		 WHERE A.NNO IN B.NNO
+		       AND SYSDATE > A.STARTDATE
+		)
+		WHERE POINT = 1
+		ORDER BY REGDATE DESC
+	</select>
+	
+	<select id="selectPointNoticeListCount" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM(
+		SELECT NNO,				TITLE,			WRITER,
+		       CONTENT,			REGDATE,		VIEWCNT,
+			   POINT,			STARTDATE,		ENDDATE,
+			   UPDATEDATE,		DIST
+		  FROM NOTICE
+		 WHERE SYSDATE BETWEEN STARTDATE AND ENDDATE
+		UNION
+		SELECT A.NNO,				A.TITLE,			A.WRITER,
+		       A.CONTENT,			A.REGDATE,		    A.VIEWCNT,
+			   A.POINT,				A.STARTDATE,		A.ENDDATE,
+			   A.UPDATEDATE,		A.DIST
+		  FROM NOTICE A, (SELECT NNO
+		                    FROM NOTICE
+		                   WHERE ENDDATE IS NULL) B
+		 WHERE A.NNO IN B.NNO
+		       AND SYSDATE > A.STARTDATE
+		)
+		WHERE POINT = 1
+		ORDER BY REGDATE DESC
+	</select>
+	
+	<select id="selectNoticeList" parameterType="com.jsp.command.SearchCriteria" 
+			resultType="com.jsp.dto.NoticeVO">
+		SELECT *
+		FROM(
+		SELECT NNO,				TITLE,			WRITER,
+		       CONTENT,			REGDATE,		VIEWCNT,
+			   POINT,			STARTDATE,		ENDDATE,
+			   UPDATEDATE,		DIST
+		  FROM NOTICE
+		 WHERE SYSDATE BETWEEN STARTDATE AND ENDDATE
+		UNION
+		SELECT A.NNO,				A.TITLE,			A.WRITER,
+		       A.CONTENT,			A.REGDATE,		    A.VIEWCNT,
+			   A.POINT,				A.STARTDATE,		A.ENDDATE,
+			   A.UPDATEDATE,		A.DIST
+		  FROM NOTICE A, (SELECT NNO
+		                    FROM NOTICE
+		                   WHERE ENDDATE IS NULL) B
+		 WHERE A.NNO IN B.NNO
+		       AND SYSDATE > A.STARTDATE
+		)
+		<include refid="search"/>
+		ORDER BY REGDATE DESC
+	</select>
+	
+	<select id="selectNoticeListCount" parameterType="com.jsp.command.SearchCriteria" 
+			resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM(
+		SELECT NNO,				TITLE,			WRITER,
+		       CONTENT,			REGDATE,		VIEWCNT,
+			   POINT,			STARTDATE,		ENDDATE,
+			   UPDATEDATE,		DIST
+		  FROM NOTICE
+		 WHERE SYSDATE BETWEEN STARTDATE AND ENDDATE
+		UNION
+		SELECT A.NNO,				A.TITLE,			A.WRITER,
+		       A.CONTENT,			A.REGDATE,		    A.VIEWCNT,
+			   A.POINT,				A.STARTDATE,		A.ENDDATE,
+			   A.UPDATEDATE,		A.DIST
+		  FROM NOTICE A, (SELECT NNO
+		                    FROM NOTICE
+		                   WHERE ENDDATE IS NULL) B
+		 WHERE A.NNO IN B.NNO
+		       AND SYSDATE > A.STARTDATE
+		)
+		<include refid="search"/>
+		ORDER BY REGDATE DESC
+	</select>
+    
+    <sql id="search">
+    	<if test='searchType != null and searchType != ""'>
+    	WHERE	1 = 0
+	    	<if test='searchType.contains("w")'>
+	    		OR INSTR(WRITER, #{keyword}) > 0
+	    	</if>
+	    	<if test='searchType.contains("t")'>
+	    		OR INSTR(TITLE, #{keyword}) > 0
+	    	</if>
+	    	<if test='searchType.contains("c")'>
+	    		OR INSTR(CONTENT, #{keyword}) > 0
+	    	</if>
+	    </if>
+    </sql>
+    
+</mapper>
