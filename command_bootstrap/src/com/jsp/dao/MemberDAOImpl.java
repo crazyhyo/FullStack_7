@@ -1,7 +1,9 @@
 package com.jsp.dao;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
@@ -58,7 +60,39 @@ public class MemberDAOImpl implements MemberDAO{
 		return totalCount;
 	}
 
+	@Override
+	public MemberVO selectMemberById(SqlSession session, String id) throws SQLException {
+		MemberVO member = null;
+		member = session.selectOne("Member-Mapper.selectMemberById", id);
+		return member;
+	}
 
-	
+	@Override
+	public void insertMember(SqlSession session, MemberVO member) throws SQLException {
+		session.update("Member-Mapper.insertMember", member);
+	}
+
+	@Override
+	public void updateMember(SqlSession session, MemberVO member) throws SQLException {
+		session.update("Member-Mapper.updateMember", member);
+	}
+
+/*	@Override
+	public void enabledMember(SqlSession session, MemberVO member) throws SQLException {
+		session.update("Member-Mapper.enabledMember", member);
+	}*/
+	@Override
+	public void enabledMember(SqlSession session, String id, int enabled) throws SQLException {
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		dataMap.put("id", id);
+		dataMap.put("enabled", enabled);
+		session.update("Member-Mapper.enabledMember", dataMap);
+	}
+
+	@Override
+	public void deleteMember(SqlSession session, String id) throws SQLException {
+		session.update("Member-Mapper.deleteMember", id);
+	}
+
 
 }

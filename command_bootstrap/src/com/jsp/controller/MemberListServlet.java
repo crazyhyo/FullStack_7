@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -15,6 +16,7 @@ import com.jsp.command.SearchCriteria;
 import com.jsp.dao.MemberDAO;
 import com.jsp.dao.MemberDAOImpl;
 import com.jsp.dataSource.OracleMyBatisSqlSessionFactory;
+import com.jsp.dto.MemberVO;
 import com.jsp.exception.NotNumberException;
 import com.jsp.service.MemberService;
 import com.jsp.service.MemberServiceImpl;
@@ -44,6 +46,9 @@ public class MemberListServlet extends HttpServlet{
 		
 		
 		try {
+//			MemberVO loginUser = memberService.getMember("test");
+//			HttpSession session = request.getSession();
+//			session.setAttribute("loginUser", loginUser);
 			
 			Criteria cri = null;
 			if(pageParam != null && perPageNumParam != null) {

@@ -49,5 +49,40 @@ public class SearchMemberServiceImpl extends MemberServiceImpl{
 		return dataMap;
 
 	}
+	
+	@Override
+	public MemberVO getMember(String id) throws Exception {
+		MemberVO member = null;
+		SqlSession session = sqlSessionFactory.openSession();
+		
+		try {
+			member = memberDAO.selectMemberById(session, id);
+			session.commit();
+		}finally {
+			session.close();
+		}
+		
+		return member;
+	}
 
+	@Override
+	public void registMember(MemberVO member) throws Exception {
+		
+		SqlSession session = sqlSessionFactory.openSession();
+		/*try {
+			memberDAO.insertMember(session, member);
+			session.commit();
+		} catch(Exception e) {
+			session.rollback();
+			e.printStackTrace();
+			throw e;
+		} finally {
+			session.close();
+		}*/
+		try {
+			memberDAO.insertMember(session, member);
+		}finally {
+			session.close();
+		}
+	}
 }

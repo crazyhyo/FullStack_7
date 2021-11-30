@@ -5,7 +5,7 @@
 <configuration>
     <properties resource="com/jsp/properties/db.properties" />
     <typeAliases>
-        <typeAlias type="java.lang.String" 		alias="string" />
+        <typeAlias type="java.lang.String" 		alias="str" />
         <typeAlias type="java.lang.Integer" 	alias="int" />
         <typeAlias type="com.jsp.dto.MemberVO" 	alias="member" />
     </typeAliases>

@@ -37,7 +37,7 @@
 	   	<section class="content">
 	   		<div class="card">
 	   			<div class="card-header with-border">
-	   				<button type="button" class="btn btn-primary" onclick="OpenWindow('regist','회원등록',800,850);" >회원등록</button>
+	   				<button type="button" class="btn btn-primary" onclick="OpenWindow('regist?cw=t','회원등록',800,850);" >회원등록</button>
 	   				<div id="keyword" class="card-tools" style="width:550px;">
 	   					 <div class="input-group row">
 	   					 	<!-- search bar -->
@@ -75,7 +75,7 @@
 	   			<div class="card-body" style="text-align:center;">
 	    		  <div class="row">
 		             <div class="col-sm-12">	
-			    		<table class="table table-bordered">
+			    		<table class="table table-bordered table-hover">
 			    			<tr>
 			                	<th>아이디</th>
 			                	<th>패스워드</th>
@@ -94,13 +94,13 @@
 			            	<c:if test="${!empty memberList }">
 			            	
 			            		<c:forEach items="${memberList }" var="member">
-			            			<tr>
+			            			<tr onclick="OpenWindow('detail?id=${member.id}','','800','900');"
+			            				style="cursor:pointer;">
 			            				<td>${member.id }</td>
 			            				<td>${member.pwd }</td>
 			            				<td>${member.name }</td>
 			            				<td>${member.email }</td>
 			            				<c:set var="phone" value="${member.phone.replace('-','') }" />
-			            				
 			            				<td>${phone.substring(0,3) }-${phone.substring(3,7) }-${phone.substring(7) }</td>
 			            				<td>
 			            					<fmt:formatDate value="${member.regDate }" pattern="yyyy-MM-dd" />

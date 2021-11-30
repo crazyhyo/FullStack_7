@@ -13,4 +13,8 @@ public interface MemberService {
   public List<MemberVO> getMemberList(Criteria cri) throws Exception;
   
   public Map<String, Object> getMemberListPage(Criteria cri) throws Exception;
+  
+  public MemberVO getMember(String id) throws Exception;
+  
+  public void registMember(MemberVO member) throws Exception;
 }

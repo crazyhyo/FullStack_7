@@ -13,7 +13,7 @@ import com.jsp.dao.MemberDAO;
 import com.jsp.dao.MemberDAOImpl;
 import com.jsp.dto.MemberVO;
 
-public class MemberServiceImpl implements MemberService {
+public abstract class MemberServiceImpl implements MemberService {
 
   protected SqlSessionFactory sqlSessionFactory;
   public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
@@ -104,4 +104,6 @@ public class MemberServiceImpl implements MemberService {
 
 	}
 
+	@Override
+	public abstract MemberVO getMember(String id) throws Exception;
 }
