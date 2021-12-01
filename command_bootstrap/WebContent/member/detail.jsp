@@ -121,9 +121,11 @@ function stop_go(){
 	document.getElementById("stopBtn").style.display = "none";
 	document.getElementById("activeBtn").style.display = "";
 }
+
 function active_go(){
 	document.getElementById("stopBtn").style.display = "";
 	document.getElementById("activeBtn").style.display = "none";
 }
+
 </script>
 </body>

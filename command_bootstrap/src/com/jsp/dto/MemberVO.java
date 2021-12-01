@@ -22,12 +22,12 @@ public class MemberVO {
 		this.pwd = pwd;
 	}
 	
-	@Override
+	/*@Override
 	public String toString() {
 		return "MemberVO [id=" + id + ", pwd=" + pwd + ", name=" + name + ", phone=" + phone + ", email=" + email
 				+ ", picture=" + picture + ", regDate=" + regDate + ", authority=" + authority + ", enabled=" + enabled
 				+ ", register=" + register + ", address=" + address + "]";
-	}
+	}*/
 
 	public String getId() {
 		return id;

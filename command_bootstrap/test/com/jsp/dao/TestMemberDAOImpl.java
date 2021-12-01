@@ -2,6 +2,7 @@ package com.jsp.dao;
 
 import java.io.Reader;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -12,28 +13,25 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.jsp.context.ApplicationContext;
+import com.jsp.dataSource.MockApplicationContextListener;
 import com.jsp.dto.MemberVO;
 
 
 public class TestMemberDAOImpl {
-	
+	/*
 	private SqlSessionFactory sqlSessionFactory;
-	private MemberDAO memberDAO = new MemberDAOImpl();
+	private MemberDAO memberDAO;
 	
 	private SqlSession session;
 	
 	{
-        String config = "com/jsp/myBatis/config/sqlConfig.xml";
-
-        try {
-            Reader reader = Resources.getResourceAsReader(config);
-
-            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-            reader.close();
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-
+		MockApplicationContextListener mockListener = new MockApplicationContextListener();
+		mockListener.contextInitialized("classpath:com/jsp/context/application-context.xml");
+		
+		Map<String, Object> container = ApplicationContext.getApplicationContext();
+		this.sqlSessionFactory = (SqlSessionFactory) container.get("sqlSessionFactory");
+		this.memberDAO = (MemberDAO) container.get("memberDAO");
     }
 	
 	@Before
@@ -45,11 +43,17 @@ public class TestMemberDAOImpl {
 	public void closeSqlSession() {
 		session.close();
 	}
-	
+	*/
 	@Test
 	public void testSelectMemberList() throws Exception{
-		List<MemberVO> memberList = memberDAO.selectMemberList(session);
+		/*List<MemberVO> memberList = memberDAO.selectMemberList(session);
 		
-		Assert.assertEquals(7, memberList.size());
+		Assert.assertEquals(23, memberList.size());*/
+		
+		Object member = new MemberVO();
+		System.out.println((MemberVO)member.setId());
+//		System.out.println(member.toString());
+		
+		
 	}
 }
