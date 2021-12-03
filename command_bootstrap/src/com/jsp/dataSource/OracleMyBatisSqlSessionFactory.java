@@ -13,28 +13,27 @@ import org.apache.ibatis.session.TransactionIsolationLevel;
 
 public class OracleMyBatisSqlSessionFactory implements SqlSessionFactory {
 
-    private SqlSessionFactory sqlSessionFactory;
+	private SqlSessionFactory sqlSessionFactory;
+	
+	{
+		String config = "com/jsp/myBatis/config/sqlConfig.xml";
 
-    {
-        String config = "com/jsp/myBatis/config/sqlConfig.xml";
+		try {
+			Reader reader = Resources.getResourceAsReader(config);
 
-        try {
-            Reader reader = Resources.getResourceAsReader(config);
+			sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+			reader.close();
 
-            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-            reader.close();
-
-            System.out.println("sqlSessionFactory 성공했습니다");
-
-        } catch(Exception e){
-            System.out.println("sqlSessionFactory 실패했습니다");
-            e.printStackTrace();
-        }
-
-    }
-    
+			System.out.println("sqlSessionFactory 성공했습니다.");
+		} catch (Exception e) {
+			System.out.println("sqlSessionFactory 실패했습니다.");
+			e.printStackTrace();
+		}
+	}
+	
+	
 	@Override
-	public Configuration getConfiguration() {
+	public Configuration getConfiguration() {		
 		return sqlSessionFactory.getConfiguration();
 	}
 
@@ -44,12 +43,12 @@ public class OracleMyBatisSqlSessionFactory implements SqlSessionFactory {
 	}
 
 	@Override
-	public SqlSession openSession(boolean arg0) {
+	public SqlSession openSession(boolean arg0) {		
 		return sqlSessionFactory.openSession(arg0);
 	}
 
 	@Override
-	public SqlSession openSession(Connection arg0) {
+	public SqlSession openSession(Connection arg0) {		
 		return sqlSessionFactory.openSession(arg0);
 	}
 
@@ -64,17 +63,17 @@ public class OracleMyBatisSqlSessionFactory implements SqlSessionFactory {
 	}
 
 	@Override
-	public SqlSession openSession(ExecutorType arg0, boolean arg1) {
+	public SqlSession openSession(ExecutorType arg0, boolean arg1) {	
 		return sqlSessionFactory.openSession(arg0, arg1);
 	}
 
 	@Override
-	public SqlSession openSession(ExecutorType arg0, TransactionIsolationLevel arg1) {
+	public SqlSession openSession(ExecutorType arg0, TransactionIsolationLevel arg1) {		
 		return sqlSessionFactory.openSession(arg0, arg1);
 	}
 
 	@Override
-	public SqlSession openSession(ExecutorType arg0, Connection arg1) {
+	public SqlSession openSession(ExecutorType arg0, Connection arg1) {		
 		return sqlSessionFactory.openSession(arg0, arg1);
 	}
 

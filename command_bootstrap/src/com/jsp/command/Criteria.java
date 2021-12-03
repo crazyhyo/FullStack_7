@@ -7,56 +7,59 @@ public class Criteria {
 	private int page=1;
 	private int perPageNum=10;
 	
-	private int startRowNum = 0;
+	private int startRowNum=0;
+	
 	
 	public Criteria() {}
 	public Criteria(int page, int perPageNum) {
 		super();
-		this.page 		= page;
+		this.page = page;
 		this.perPageNum = perPageNum;
 		setStartRowNum();
 	}
-	public Criteria(String pageStr, String perPageNumStr) 
-										throws NotNumberException{
+	public Criteria(String pageStr,String perPageNumStr) 
+									throws NotNumberException{	
 		try {
-			this.page 		= Integer.parseInt(pageStr);
-			this.perPageNum = Integer.parseInt(perPageNumStr);
-			setStartRowNum();
+		this.page = Integer.parseInt(pageStr);
+		this.perPageNum = Integer.parseInt(perPageNumStr);	
+		setStartRowNum();
 		}catch(NumberFormatException e) {
 			throw new NotNumberException();
 		}
 	}
 	
-	public int getPage() {
+	
+	
+	public int getPage() {		
 		return page;
 	}
 	public void setPage(int page) {
-		if(page < 1) {
-			this.page = 1;
+		if(page<1) {
+			this.page=1;
 		}else {
 			this.page = page;
 		}
 		setStartRowNum();
-//		this.page = page < 1? 1 : page;
 	}
 	public int getPerPageNum() {
 		return perPageNum;
 	}
 	public void setPerPageNum(int perPageNum) {
-		if(perPageNum < 0) {
+		if(perPageNum < 1) {
 			this.perPageNum = 10;
 		}else {
 			this.perPageNum = perPageNum;
 		}
 		setStartRowNum();
-//		this.perPageNum = perPageNum < 0? 10 : perPageNum;
 	}
 	
 	private void setStartRowNum() {
-		this.startRowNum = (this.page - 1) * perPageNum;
+		this.startRowNum=(this.page-1)*perPageNum;		
 	}
 	
 	public int getStartRowNum() {
 		return this.startRowNum;
 	}
+	
+	
 }

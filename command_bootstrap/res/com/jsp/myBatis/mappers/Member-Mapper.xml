@@ -2,95 +2,102 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="Member-Mapper">
-	
-	<select id="selectMemberById" parameterType="str"
-			resultType="com.jsp.dto.MemberVO">
-		SELECT	ID,				PWD,			EMAIL,
-				PICTURE,		ENABLED,		REGDATE,
-				PHONE,			NAME,			REGISTER,
-				ADDRESS,		AUTHORITY
-		FROM	MEMBER
-		WHERE	ID = #{id}
-		ORDER BY REGDATE DESC
+	<select id="selectMemberList" resultType="member">
+		select 
+		*
+		from
+		member
+		order by regDate desc 		
 	</select>
 	
-    <select id="selectMemberList" resultType="com.jsp.dto.MemberVO">
-        SELECT
-        *
-        FROM
-        MEMBER
-        ORDER BY REGDATE DESC
-    </select>
-    <select id="selectMemberListCount" resultType="int">
-        SELECT
-        COUNT(*)
-        FROM
-        MEMBER
-        ORDER BY REGDATE DESC
-    </select>
-    
-    <sql id="search">
-    	<if test="searchType == 'i'.toString()">
-    		AND ID LIKE '%'||#{keyword}||'%'
-    	</if>
-    	<if test="searchType == 'p'.toString()">
-    		AND PHONE LIKE '%'||#{keyword}||'%'
-    	</if>
-    	<if test="searchType == 'e'.toString()">
-    		AND EMAIL LIKE '%'||#{keyword}||'%'
-    	</if>
-    	<if test="searchType == 'n'.toString()">
-    		AND NAME LIKE '%'||#{keyword}||'%'
-    	</if>
-    </sql>
-    
-    <select id="selectSearchMemberList" resultType="com.jsp.dto.MemberVO">
-        SELECT
-        *
-        FROM MEMBER
-        WHERE ID IS NOT NULL
-        <include refid="search" />
-        ORDER BY REGDATE DESC
-    </select>
-    <select id="selectSearchMemberListCount" resultType="int">
-        SELECT
-        COUNT(*)
-        FROM MEMBER
-        WHERE ID IS NOT NULL
-        <include refid="search" />
-        ORDER BY REGDATE DESC
-    </select>
-    
-    <update id="insertMember" parameterType="com.jsp.dto.MemberVO">
-    	INSERT INTO
-    	MEMBER(ID, PWD, EMAIL, PHONE, PICTURE, NAME, AUTHORITY)
-    	VALUES(#{id},#{pwd},#{email},#{phone},#{picture},#{name},#{authority})
-    </update>
-    
-    <update id="updateMember" parameterType="com.jsp.dto.MemberVO">
-    	UPDATE MEMBER
-    	SET
-    	PWD=#{pwd},EMAIL=#{email},PHONE=#{phone},NAME=#{name},
-    	PICTURE=#{picture}
-    	
-    	<if test="authority != null">
-    		,AUTHORITY=#{authority}
-    	</if>
-    	
-    	WHERE ID=#{id}
-    </update>
-    
-    <update id="deleteMember" parameterType="java.lang.String">
-    	DELETE
-    	  FROM MEMBER
-    	 WHERE ID = #{id}
-    </update>
-    
-    <update id="enabledMember" parameterType="java.util.Map">
-    	UPDATE MEMBER
-    	   SET ENABLED = #{enabled}
-    	 WHERE ID = #{id}
-    </update>
-    
-</mapper>
+	<select id="selectMemberListCount" resultType="int" >
+		select
+		count(*)
+		from
+		member
+		order by regDate desc
+	</select>
+	
+	<sql id="search">	
+		<if test="searchType == 'i'.toString()">
+			and id like '%'||#{keyword}||'%'			
+		</if>
+		<if test="searchType == 'p'.toString()">
+			and phone like '%'||#{keyword}||'%'			
+		</if>
+		<if test="searchType == 'e'.toString()">
+			and email like '%'||#{keyword}||'%'			
+		</if>
+		<if test="searchType == 'n'.toString()">
+			and name like '%'||#{keyword}||'%'			
+		</if>			
+	</sql>	
+	<select id="selectSearchMemberList" resultType="member">
+		select
+		* 
+		from member
+		where id is not null
+		<include refid="search" />
+		order by regDate desc
+	</select>
+	<select id="selectSearchMemberListCount" resultType="int">
+		select
+		count(*) 
+		from member
+		where id is not null
+		<include refid="search" />
+	</select>
+	
+	<select id="selectMemberById" parameterType="str" resultType="member">
+		select
+		*
+		from member
+		where id=#{id}
+	</select>
+	<update id="insertMember" parameterType="member">
+		insert into 
+		member(id, pwd, email, phone,picture,name,authority)
+		values(#{id},#{pwd},#{email},#{phone},#{picture},#{name},#{authority})
+	</update>
+	
+	<update id="updateMember" parameterType="member">
+		update member 
+		set 
+		pwd=#{pwd},email=#{email},phone=#{phone},name=#{name},
+		picture=#{picture}
+		
+		<if test="authority != null">
+			,authority=#{authority}
+		</if>
+		
+		where id=#{id}
+	</update>
+	
+	<update id="deleteMember" parameterType="str" >
+		delete 
+		from member 
+		where id=#{id}		
+	</update>
+		
+	<update id="enabledMember">
+		update member
+		set enabled=#{enabled}
+		where id=#{id}
+	</update>
+	
+	
+	<select id="selectLoginMember" resultType="com.jsp.dto.MemberVO">
+		SELECT	ID,					PWD,		EMAIL,
+				PICTURE,			ENABLED,	REGDATE,
+				PHONE,				NAME,		REGISTER,
+				ADDRESS,			AUTHORITY
+		  FROM	MEMBER
+		 WHERE	ID = #{id}
+		 		AND	PWD = #{pwd}
+	</select>
+	
+</mapper>  
+
+

@@ -10,74 +10,75 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import com.jsp.command.Criteria;
 import com.jsp.command.PageMaker;
 import com.jsp.dao.MemberDAO;
-import com.jsp.dao.MemberDAOImpl;
 import com.jsp.dto.MemberVO;
 
-public abstract class MemberServiceImpl implements MemberService {
-
-  protected SqlSessionFactory sqlSessionFactory;
-  public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-    this.sqlSessionFactory = sqlSessionFactory;
-  }
-
-  protected MemberDAO memberDAO;
-
-  public void setMemberDAO(MemberDAO memberDAO) {
-    this.memberDAO = memberDAO;
-  }
-
+public abstract class MemberServiceImpl implements MemberService{
+	protected SqlSessionFactory sqlSessionFactory;
+	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+		this.sqlSessionFactory = sqlSessionFactory;
+	}
+	
+	protected MemberDAO memberDAO;
+	public void setMemberDAO(MemberDAO memberDAO) {
+		this.memberDAO = memberDAO;
+	}
+	
+	
 	@Override
 	public List<MemberVO> getMemberList() throws Exception {
-		SqlSession session = sqlSessionFactory.openSession(false);
+		SqlSession session= sqlSessionFactory.openSession(false);
+		
 		List<MemberVO> memberList = null;
 		try {
 			memberList = memberDAO.selectMemberList(session);
 			
 			session.commit();
 			
-		}catch(Exception e) {
-			
+		}catch(Exception e) {			
 			session.rollback();
 			e.printStackTrace();
-			
+			//......
 			throw e;
 		}finally {
 			session.close();
 		}
+		
 		return memberList;
 	}
 
+
 	@Override
 	public List<MemberVO> getMemberList(Criteria cri) throws Exception {
-		SqlSession session = sqlSessionFactory.openSession(false);
+		SqlSession session= sqlSessionFactory.openSession(false);
+		
 		List<MemberVO> memberList = null;
 		try {
-			memberList = memberDAO.selectMemberList(session, cri);
+			memberList = memberDAO.selectMemberList(session,cri);
 			
 			session.commit();
 			
-		}catch(Exception e) {
-			
+		}catch(Exception e) {			
 			session.rollback();
 			e.printStackTrace();
-			
+			//......
 			throw e;
 		}finally {
 			session.close();
 		}
-		return memberList;	
+		
+		return memberList;
 	}
+
 
 	@Override
 	public Map<String, Object> getMemberListPage(Criteria cri) throws Exception {
 		
-		Map<String, Object> dataMap = null;
+		Map<String,Object> dataMap =null;
 		
-		SqlSession session = sqlSessionFactory.openSession(false);
+		SqlSession session= sqlSessionFactory.openSession(false);
 		
 		try {
-			
-			List<MemberVO> memberList = null;
+			List<MemberVO> memberList=null;
 			PageMaker pageMaker = null;
 			
 			memberList = memberDAO.selectMemberList(session, cri);
@@ -85,25 +86,29 @@ public abstract class MemberServiceImpl implements MemberService {
 			pageMaker.setCri(cri);
 			pageMaker.setTotalCount(memberDAO.selectMemberListCount(session));
 			
-			dataMap = new HashMap<String, Object>();
+			
+			dataMap = new HashMap<String,Object>();
 			dataMap.put("memberList", memberList);
-			dataMap.put("pageMaker", pageMaker);
+			dataMap.put("pageMaker",pageMaker);
 			
 			session.commit();
-			
-		}catch(Exception e) {
-			
+		}catch(Exception e) {			
 			session.rollback();
 			e.printStackTrace();
-			
+			//......
 			throw e;
 		}finally {
 			session.close();
 		}
+		
 		return dataMap;
-
 	}
 
-	@Override
-	public abstract MemberVO getMember(String id) throws Exception;
+
 }
+
+
+
+
+
+

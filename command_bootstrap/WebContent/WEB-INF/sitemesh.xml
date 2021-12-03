@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <sitemesh>
-  <property name="decorators-file" value="/WEB-INF/decorators.xml" />
+	<property name="decorators-file" value="/WEB-INF/decorators.xml" />
 	<excludes file="${decorators-file}" />
 
 	<page-parsers>
@@ -14,4 +15,5 @@
 			<param name="config" value="${decorators-file}" />
 		</mapper>
 	</decorator-mappers>
+
 </sitemesh>

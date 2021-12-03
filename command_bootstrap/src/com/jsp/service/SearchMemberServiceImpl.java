@@ -12,77 +12,65 @@ import com.jsp.command.SearchCriteria;
 import com.jsp.dto.MemberVO;
 
 public class SearchMemberServiceImpl extends MemberServiceImpl{
-
+		
+	
 	@Override
 	public Map<String, Object> getMemberListPage(Criteria cri) throws Exception {
 		
 		SearchCriteria searchCri = (SearchCriteria)cri;
-		Map<String, Object> dataMap = null;
+		Map<String,Object> dataMap =null;
 		
-		SqlSession session = sqlSessionFactory.openSession(false);
+		SqlSession session= sqlSessionFactory.openSession(false);
 		
 		try {
-			
-			List<MemberVO> memberList = null;
+			List<MemberVO> memberList=null;
 			PageMaker pageMaker = null;
 			
 			memberList = memberDAO.selectMemberList(session, searchCri);
 			pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
-			pageMaker.setTotalCount(memberDAO.selectMemberListCount(session, searchCri));
+			pageMaker.setTotalCount(memberDAO.selectMemberListCount(session,searchCri));
 			
-			dataMap = new HashMap<String, Object>();
+			
+			dataMap = new HashMap<String,Object>();
 			dataMap.put("memberList", memberList);
-			dataMap.put("pageMaker", pageMaker);
+			dataMap.put("pageMaker",pageMaker);
 			
 			session.commit();
-			
-		}catch(Exception e) {
-			
+		}catch(Exception e) {			
 			session.rollback();
 			e.printStackTrace();
-			
+			//......
 			throw e;
 		}finally {
 			session.close();
 		}
+		
 		return dataMap;
-
 	}
-	
+
 	@Override
 	public MemberVO getMember(String id) throws Exception {
-		MemberVO member = null;
 		SqlSession session = sqlSessionFactory.openSession();
-		
 		try {
-			member = memberDAO.selectMemberById(session, id);
-			session.commit();
-		}finally {
+
+			MemberVO member = memberDAO.selectMemberById(session, id);
+			return member;
+		} finally {
 			session.close();
-		}
-		
-		return member;
+		}	
 	}
 
 	@Override
-	public void registMember(MemberVO member) throws Exception {
-		
+	public void regist(MemberVO member) throws Exception {
 		SqlSession session = sqlSessionFactory.openSession();
-		/*try {
+		try {
+
 			memberDAO.insertMember(session, member);
-			session.commit();
-		} catch(Exception e) {
-			session.rollback();
-			e.printStackTrace();
-			throw e;
 		} finally {
 			session.close();
-		}*/
-		try {
-			memberDAO.insertMember(session, member);
-		}finally {
-			session.close();
 		}
+		
 	}
+
 }

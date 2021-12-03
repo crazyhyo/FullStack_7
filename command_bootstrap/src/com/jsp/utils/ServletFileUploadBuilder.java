@@ -10,14 +10,16 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import com.jsp.exception.NotMultipartFormDataException;
 
 public class ServletFileUploadBuilder {
+
 	
-	public static ServletFileUpload build(int MEMORY_THRESHOLD, int MAX_FILE_SIZE,
-										  int MAX_REQUEST_SIZE) {
-		// 업로드를 위한 upload 환경설정
+	public static ServletFileUpload build(int MEMORY_THRESHOLD, int MAX_FILE_SIZE, 
+		      							  int MAX_REQUEST_SIZE) {
+
+		// 업로드를 위한 upload 환경설정 적용.
 		DiskFileItemFactory factory = new DiskFileItemFactory();
-		// 저장을 위한 threshold memory 적용
+		// 저장을 위한 threshold memory 적용.
 		factory.setSizeThreshold(MEMORY_THRESHOLD);
-		// 임시 저장 위치 결정
+		// 임시 저장 위치 결정.
 		factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
 		
 		ServletFileUpload upload = new ServletFileUpload(factory);
@@ -28,19 +30,22 @@ public class ServletFileUploadBuilder {
 		upload.setSizeMax(MAX_REQUEST_SIZE);
 		
 		return upload;
-		
 	}
 	
-	public static ServletFileUpload build(HttpServletRequest request,
-										  int MEMORY_THRESHOLD,
+	public static ServletFileUpload build(HttpServletRequest request, 
+										  int MEMORY_THRESHOLD, 
 										  int MAX_FILE_SIZE,
-										  int MAX_REQUEST_SIZE) 
-												throws NotMultipartFormDataException{
+										  int MAX_REQUEST_SIZE)
+												  	throws NotMultipartFormDataException{
+		
 		// request 파일 첨부 여부 확인.
-		if(!ServletFileUpload.isMultipartContent(request)) {
+		if (!ServletFileUpload.isMultipartContent(request)) {
 			throw new NotMultipartFormDataException();
 		}
 		
-		return build(MEMORY_THRESHOLD, MAX_FILE_SIZE, MAX_REQUEST_SIZE);
+		return build(MEMORY_THRESHOLD,MAX_FILE_SIZE,MAX_REQUEST_SIZE);
 	}
 }
+	
+	
+	

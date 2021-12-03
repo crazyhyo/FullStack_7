@@ -3,18 +3,20 @@ package com.jsp.command;
 import com.jsp.exception.NotNumberException;
 
 public class SearchCriteria extends Criteria {
-	
+
 	private String searchType="";
 	private String keyword="";
 	
+	
+	
 	public SearchCriteria() {}
 	public SearchCriteria(String pageStr, String perPageNumStr,
-						  String searchType, String keyword) throws NotNumberException {
+						  String searchType, String keyword) 
+											throws NotNumberException {
 		super(pageStr, perPageNumStr);
-		this.searchType = searchType;
 		this.keyword = keyword;
+		this.searchType = searchType;
 	}
-	
 	public String getSearchType() {
 		return searchType;
 	}
@@ -28,5 +30,5 @@ public class SearchCriteria extends Criteria {
 		this.keyword = keyword;
 	}
 	
-
+	
 }

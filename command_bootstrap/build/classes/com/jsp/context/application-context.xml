@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans>
-
 	<!-- dataSource -->
-	<bean id="sqlSessionFactory" class="com.jsp.dataSource.OracleMyBatisSqlSessionFactory" />
+	<bean id="sqlSessionFactory" 
+	      class="com.jsp.dataSource.OracleMyBatisSqlSessionFactory" />
+	      
+	<!-- Repository Layer -->      
+	<bean id = "memberDAO" class="com.jsp.dao.MemberDAOImpl" />	
+	<bean id = "menuDAO" class="com.jsp.dao.MenuDAOImpl" />
 	
-	<!-- Repository Layer -->
-	<bean id="memberDAO" class="com.jsp.dao.MemberDAOImpl" />
-	
-	<!-- Service Layer -->
+	<!-- Service layer -->
 	<bean id="memberService" class="com.jsp.service.SearchMemberServiceImpl" >
 		<property name="sqlSessionFactory" ref-value="sqlSessionFactory" />
 		<property name="memberDAO" ref-value="memberDAO" />
 	</bean>
 	
+	<bean id="memberServiceForModify" class="com.jsp.service.MemberServiceForModifyImpl" >
+		<property name="sqlSessionFactory" ref-value="sqlSessionFactory" />
+		<property name="memberDAO" ref-value="memberDAO" />
+	</bean>
+	
+	<bean id="menuService" class="com.jsp.service.MenuServiceImpl">
+		<property name="sqlSessionFactory" ref-value="sqlSessionFactory"/>
+		<property name="menuDAO" ref-value="menuDAO"/>
+	</bean>
 </beans>
+
+
+

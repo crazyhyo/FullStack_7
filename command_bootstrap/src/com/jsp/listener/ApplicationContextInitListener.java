@@ -18,30 +18,28 @@ import org.w3c.dom.NodeList;
 
 import com.jsp.context.ApplicationContext;
 
-
 @WebListener
-public class ApplicationContextInitListener implements ServletContextListener{
+public class ApplicationContextInitListener implements ServletContextListener {
 
-	@Override
-	public void contextDestroyed(ServletContextEvent sce) {}
+	public void contextDestroyed(ServletContextEvent arg0) {
+	}
 
-	@Override
 	public void contextInitialized(ServletContextEvent ctxEvent) {
-		
-		System.out.println("contextInitialized");
-		
+		System.out.println("Listener start!!!");
+
 		ServletContext ctx = ctxEvent.getServletContext();
-		
+
 		String beanConfigXml = ctx.getInitParameter("contextConfigLocation");
 		
-//		System.out.println("context param : " + beanConfigXml);
+		//System.out.println("context param : "+beanConfigXml);
 		
-		if (beanConfigXml == null) return;
+
+		if (beanConfigXml == null) return;		
 		
 		beanConfigXml = ctx.getRealPath("/")
-				+ beanConfigXml.replace("classpath:","WEB-INF/classes/").replace("/", File.separator);
+		+ beanConfigXml.replace("classpath:", "WEB-INF/classes/").replace("/", File.separator);
 		
-//		System.out.println(beanConfigXml);
+		//System.out.println(beanConfigXml);
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -50,78 +48,86 @@ public class ApplicationContextInitListener implements ServletContextListener{
 			
 			Element root = document.getDocumentElement();
 			
-//			System.out.println(root.getTagName());
-			
+			//System.out.println(root.getTagName());
 			if(root == null || !root.getTagName().equals("beans")) return;
 			
-			// <beans> <bean id="identify" class="class Type" ></bean> </beans> 
-			NodeList beans = root.getElementsByTagName("bean");
-
-			Map<String, Object> applicationContext = ApplicationContext.getApplicationContext();
+			// <beans> <bean id="identify" class="class Type"></bean> </beans>
+			NodeList beans = root.getElementsByTagName("bean"); 
 			
-			for(int i = 0; i < beans.getLength(); i ++) {
-//				System.out.println(beans.item(i).getNodeName());
+			Map<String, Object> applicationContext = 
+					ApplicationContext.getApplicationContext(); // application contex
+			
+			for (int i = 0; i < beans.getLength(); i++) { // bean instance 생성
+				//System.out.println(beans.item(i).getNodeName());
 				
-				Node bean = (Node) beans.item(i);
-				if(bean.getNodeType() == Node.ELEMENT_NODE) {
+				Node bean = beans.item(i);
+				if (bean.getNodeType() == Node.ELEMENT_NODE) {
 					Element ele = (Element) bean;
 					String id = ele.getAttribute("id");
 					String classType = ele.getAttribute("class");
-
-//					System.out.printf("id : %s, classType : %s \n", id, classType);
 					
+					//System.out.printf("id : %s,class=%s\n",id,classType);
+					
+					// map instance put
 					Class<?> cls = Class.forName(classType);
-					Object targetObj = cls.newInstance();
+					Object targetObj = cls.newInstance(); //single tone
 					applicationContext.put(id, targetObj);
 					
-					System.out.println("id : " + id + " targetObj : " + targetObj);
-
-				}else {
-					System.out.println("elementnode가 아닌게 있음");
+					System.out.println("id : " + id + ", class : " + targetObj);
 				}
 			}
+			
 			//의존 주입
-			for(int i = 0; i < beans.getLength(); i++) {
+			for (int i = 0; i < beans.getLength(); i++) {
 				Node bean = beans.item(i);
-				if(bean.getNodeType() == Node.ELEMENT_NODE) {
+				if (bean.getNodeType() == Node.ELEMENT_NODE) {
+					Element eleBean = (Element)bean;
 					
-					Element eleBean = (Element) bean;
 					NodeList properties = bean.getChildNodes();
-					
-					for(int j = 0; j < properties.getLength(); j++) {
+					for (int j = 0; j < properties.getLength(); j++) {
 						Node property = properties.item(j);
-						if(property.getNodeType() == Node.ELEMENT_NODE) {
+						if(!property.getNodeName().equals("property")) continue;
+						
+						if (property.getNodeType() == Node.ELEMENT_NODE) {
 							Element ele = (Element) property;
-							if(!ele.getNodeName().equals("property")) continue;
-							
 							String name = ele.getAttribute("name");
 							String ref = ele.getAttribute("ref-value");
 							
-//							System.out.printf("name : %s, ref-value : %s \n", name, ref);
-							
-							String setMethodName = "set" + name.substring(0,1).toUpperCase() + name.substring(1);
+							//System.out.printf("name = %s,ref-value=%s\n",name,ref);
+							String setMethodName = "set" + name.substring(0, 1).toUpperCase() 
+									+ name.substring(1);
 							
 							String className = eleBean.getAttribute("class");
 							Class<?> classType = Class.forName(className);
 							
 							Method[] methods = classType.getMethods();
-							for(Method method : methods) {
+							for (Method method : methods) {
 								// 의존성 여부 확인
-								if(method.getName().equals(setMethodName)) {
+								if (method.getName().equals(setMethodName)) {
 									method.invoke(applicationContext.get(eleBean.getAttribute("id")),
 											applicationContext.get(ref));
 									
 									System.out.println("[invoke]"
-											+ applicationContext.get(eleBean.getAttribute("id"))
-											+ ":" + applicationContext.get(ref));
+											+applicationContext.get(eleBean.getAttribute("id"))
+											+":"+applicationContext.get(ref));
 								}
 							}
 						}
 					}
+					
 				}
 			}
-		} catch(Exception e) {
+			
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
+
 }
+
+
+
+
+
+
+

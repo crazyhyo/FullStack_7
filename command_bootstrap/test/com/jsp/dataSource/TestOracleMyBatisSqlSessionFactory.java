@@ -1,7 +1,5 @@
 package com.jsp.dataSource;
 
-import static org.junit.Assert.*;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -15,44 +13,54 @@ import org.junit.Test;
 
 import com.jsp.context.ApplicationContext;
 import com.jsp.dto.MemberVO;
+import com.jsp.listener.MockApplicationContextInitListener;
 
 public class TestOracleMyBatisSqlSessionFactory {
-	
+
+
 	private SqlSessionFactory sqlSessionFactory;
 	private SqlSession session;
-		
+	
 	{
-		MockApplicationContextListener mockListener = new MockApplicationContextListener();
+		MockApplicationContextInitListener mockListener 
+							= new MockApplicationContextInitListener();
 		mockListener.contextInitialized("classpath:com/jsp/context/application-context.xml");
-		
-		Map<String, Object> container = ApplicationContext.getApplicationContext();
-		this.sqlSessionFactory = (SqlSessionFactory) container.get("sqlSessionFactory");
+		Map<String,Object> container = ApplicationContext.getApplicationContext();
+		this.sqlSessionFactory = (SqlSessionFactory)container.get("sqlSessionFactory");
 	}
 	
 	@Before
 	public void init() {
-		session = sqlSessionFactory.openSession();
+		session = sqlSessionFactory.openSession();				
 	}
-
-	@Test
-    public void testNotNullSession() {
-        Assert.assertNotNull(session);
-    }
-	@Test
-    public void testNotNullConnection() {
-		Assert.assertNotNull(session.getConnection());
-    }
-	@Test
-    public void testSQL() throws SQLException {
-
-        List<MemberVO> memberList
-            = session.selectList("Member-Mapper.selectMemberList");
-        Assert.assertEquals(23, memberList.size());
-    }
 	
 
+	@Test
+	public void testNotNullSession() {
+		Assert.assertNotNull(session);
+	}
+	
+	@Test
+	public void testNotNullConnection() {
+		Assert.assertNotNull(session.getConnection());
+	}
+	
+	@Test
+	public void testSQL() throws SQLException {
+		List<MemberVO> memberList 
+			= session.selectList("Member-Mapper.selectMemberList");
+		Assert.assertEquals(4, memberList.size());
+	}
+	
 	@After
 	public void complete() {
 		session.close();
 	}
 }
+
+
+
+
+
+
+
