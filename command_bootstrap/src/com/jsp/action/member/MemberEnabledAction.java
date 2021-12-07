@@ -14,11 +14,11 @@ public class MemberEnabledAction implements Action{
 
 
 	private MemberServiceForModify memberServiceForModify;
-	public void setMemberServiceForModify(MemberServiceForModify memberServiceModify) {
+	public void setMemberServiceForModify(MemberServiceForModify memberServiceForModify) {
 		this.memberServiceForModify = memberServiceForModify;
 	}
-	
-	
+
+
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -35,7 +35,7 @@ public class MemberEnabledAction implements Action{
 			
 			out.println("<script>");
 			out.println("alert('"+id+"님의 상태가 변경되었습니다.');");
-			out.println("location.href='detail?id="+id+"';");
+			out.println("location.href='detail.do?id="+id+"';");
 			out.println("</script>");
 			
 			url=null;

@@ -37,9 +37,6 @@ public interface MemberDAO {
 	// 회원 활성화
 	void enabledMember(SqlSession session,String id, int enabled) throws SQLException;	
 
-	
-	// 회원 로그인
-	MemberVO selectLoginMember(SqlSession session, String id, String pwd) throws SQLException;
 }
 
 

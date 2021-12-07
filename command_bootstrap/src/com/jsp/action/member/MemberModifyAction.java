@@ -19,11 +19,14 @@ import com.jsp.utils.GetUploadPath;
 
 public class MemberModifyAction implements Action{
 
-	private MemberServiceForModify memberServiceModify;
-	public void setMemberServiceForModify(MemberServiceForModify memberServiceModify) {
-		this.memberServiceModify = memberServiceModify;
-	}
+	private MemberServiceForModify memberServiceForModify;
 	
+	public void setMemberServiceForModify(MemberServiceForModify memberServiceForModify) {
+		this.memberServiceForModify = memberServiceForModify;
+	}
+
+
+
 	// 업로드 파일 환경 설정
 	private static final int MEMORY_THRESHOLD = 1024 * 500; // 500KB
 	private static final int MAX_FILE_SIZE = 1024 * 1024 * 1; // 1MB
@@ -84,8 +87,8 @@ public class MemberModifyAction implements Action{
 
 			// DB처리
 			System.out.println(member);
-			System.out.println(memberServiceModify);
-			memberServiceModify.modify(member);
+			System.out.println(memberServiceForModify);
+			memberServiceForModify.modify(member);
 			request.setAttribute("member", member);
 
 			// 로그인 사용자 확인
@@ -95,7 +98,7 @@ public class MemberModifyAction implements Action{
 			MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
 			if (loginUser!=null && member.getId().equals(loginUser.getId())) {
 				// request.setAttribute("parentReload",true);
-				session.setAttribute("loginUser", memberServiceModify.getMember(member.getId()));
+				session.setAttribute("loginUser", memberServiceForModify.getMember(member.getId()));
 			}	
 			
 		} catch (NotMultipartFormDataException e) {

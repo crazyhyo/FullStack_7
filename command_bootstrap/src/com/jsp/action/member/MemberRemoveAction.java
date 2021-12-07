@@ -14,11 +14,11 @@ public class MemberRemoveAction implements Action {
 
 
 	private MemberServiceForModify memberServiceForModify;
-	public void setMemberServiceForModify(MemberServiceForModify memberServiceModify) {
+	public void setMemberServiceForModify(MemberServiceForModify memberServiceForModify) {
 		this.memberServiceForModify = memberServiceForModify;
 	}
-	
-	
+
+
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {

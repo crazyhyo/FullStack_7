@@ -1,6 +1,8 @@
 package com.jsp.service;
 
 import com.jsp.dto.MemberVO;
+import com.jsp.exception.InvalidPasswordException;
+import com.jsp.exception.NotFoundIDException;
 
 public interface MemberServiceForModify extends MemberService {
 
@@ -15,5 +17,5 @@ public interface MemberServiceForModify extends MemberService {
 	void enabled(String id, int enabled)throws Exception;
 	
 	// 회원 로그인
-	MemberVO login(String id, String pwd) throws Exception;
+	void login(String id, String pwd) throws NotFoundIDException, InvalidPasswordException, Exception;
 }

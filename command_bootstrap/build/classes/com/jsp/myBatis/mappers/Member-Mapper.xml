@@ -87,17 +87,6 @@
 		where id=#{id}
 	</update>
 	
-	
-	<select id="selectLoginMember" resultType="com.jsp.dto.MemberVO">
-		SELECT	ID,					PWD,		EMAIL,
-				PICTURE,			ENABLED,	REGDATE,
-				PHONE,				NAME,		REGISTER,
-				ADDRESS,			AUTHORITY
-		  FROM	MEMBER
-		 WHERE	ID = #{id}
-		 		AND	PWD = #{pwd}
-	</select>
-	
 </mapper>  
 
 

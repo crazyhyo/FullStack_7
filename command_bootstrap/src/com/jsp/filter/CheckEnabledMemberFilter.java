@@ -20,6 +20,8 @@ import com.jsp.dto.MemberVO;
 
 public class CheckEnabledMemberFilter implements Filter {
 
+	private Set<String> checkUrlsSet = new HashSet<String>();
+	
 	public void destroy() {
 	}
 
@@ -40,7 +42,6 @@ public class CheckEnabledMemberFilter implements Filter {
 				result += "<script>"
 						+"alert('로그인이 필요합니다.');"
 						+"location.href='"+httpReq.getContextPath()+"/common/loginForm.do"
-						+ "?redirectURL="+requestURI+ "';"
 						+"</script>";
 			}else {			
 				int enabled = member.getEnabled();
@@ -72,8 +73,6 @@ public class CheckEnabledMemberFilter implements Filter {
 			chain.doFilter(request, response);
 		}
 	}
-
-	private Set<String> checkUrlsSet = new HashSet<String>();
 
 	public void init(FilterConfig fConfig) throws ServletException {
 		String checkUrlsParam = fConfig.getInitParameter("checkUrl");

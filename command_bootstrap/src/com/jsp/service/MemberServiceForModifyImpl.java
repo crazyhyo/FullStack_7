@@ -2,7 +2,10 @@ package com.jsp.service;
 
 import org.apache.ibatis.session.SqlSession;
 
+import com.jsp.dao.MemberDAO;
 import com.jsp.dto.MemberVO;
+import com.jsp.exception.InvalidPasswordException;
+import com.jsp.exception.NotFoundIDException;
 
 public class MemberServiceForModifyImpl extends SearchMemberServiceImpl 
 										implements MemberServiceForModify {
@@ -45,16 +48,20 @@ public class MemberServiceForModifyImpl extends SearchMemberServiceImpl
 	}
 
 	@Override
-	public MemberVO login(String id, String pwd) throws Exception {
-		
+	public void login(String id, String pwd) throws NotFoundIDException, InvalidPasswordException, Exception {
 		SqlSession session = sqlSessionFactory.openSession();
-		MemberVO member = null;
 		try {
-			member = memberDAO.selectLoginMember(session, id, pwd);
+
+			MemberVO member = memberDAO.selectMemberById(session, id);
+			if(member == null)
+				throw new NotFoundIDException();
+			if(!pwd.equals(member.getPwd()))
+				throw new InvalidPasswordException();
+			
 		} finally {
 			session.close();
 		}
-		return member;
 	}
+
 
 }

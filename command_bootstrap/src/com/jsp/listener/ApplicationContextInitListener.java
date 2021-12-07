@@ -104,6 +104,7 @@ public class ApplicationContextInitListener implements ServletContextListener {
 							for (Method method : methods) {
 								// 의존성 여부 확인
 								if (method.getName().equals(setMethodName)) {
+									
 									method.invoke(applicationContext.get(eleBean.getAttribute("id")),
 											applicationContext.get(ref));
 									

@@ -21,7 +21,7 @@
     </section>
 
     <!-- Main content -->
-    <section class="content">
+    <section class="content" style="padding:40px 40px;">
       <div class="error-page">
         <h2 class="headline text-warning"> 404</h2>
 

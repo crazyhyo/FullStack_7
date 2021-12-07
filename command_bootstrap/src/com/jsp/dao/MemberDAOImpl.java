@@ -93,19 +93,6 @@ public class MemberDAOImpl implements MemberDAO {
 		
 	}
 
-	@Override
-	public MemberVO selectLoginMember(SqlSession session, String id, String pwd) throws SQLException {
-		MemberVO member = null;
-		
-		Map<String, Object> dataMap = new HashMap<String, Object>();
-		dataMap.put("id", id);
-		dataMap.put("pwd", pwd);
-		
-		member = (MemberVO)session.selectOne("Member-Mapper.selectLoginMember", dataMap);
-		
-		return member;
-	}
-
 }
 
 
