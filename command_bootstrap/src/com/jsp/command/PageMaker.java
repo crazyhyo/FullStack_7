@@ -2,6 +2,13 @@ package com.jsp.command;
 
 public class PageMaker {
 	
+	@Override
+	public String toString() {
+		return "PageMaker [totalCount=" + totalCount + ", startPage=" + startPage + ", endPage=" + endPage
+				+ ", realEndPage=" + realEndPage + ", prev=" + prev + ", next=" + next + ", displayPageNum="
+				+ displayPageNum + ", cri=" + cri + "]";
+	}
+
 	private int totalCount; // 전체 행의 개수
 	private int startPage = 1; // 시작 페이지 번호
 	private int endPage = 1; // 마지막 페이지 번호

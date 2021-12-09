@@ -42,27 +42,28 @@ function subMenu_go(mCode){
 	if(mCode != 'M000000'){
 // 		$.ajax({
 <%-- 			url:"<%=request.getContextPath()%>/subMenu.do?mCode="+mCode, --%>
-// 			type:"get",
+// 			type:"post",
 // 			dataType:"application/json",
 // 			success:function(data){
 // 				console.log(data);
 // 			}
 // 		})
 
-		$.getJSON("<%=request.getContextPath()%>/subMenu.do?mCode="+mCode,function(data){
-// 			console.log(data);
-			printData(data, $('.subMenuList'), $('#subMenu-list-template'), '.subMenu');
-		});
+<%-- 		$.getJSON("<%=request.getContextPath()%>/subMenu.do?mCode="+mCode,function(data){ --%>
+// 			printData(data, $('.subMenuList'), $('#subMenu-list-template'), '.subMenu');
+// 		});
 
-<%-- 		var url = "<%=request.getContextPath()%>/subMenu.do?mCode="+mCode; --%>
-// 		var request = new XMLHttpRequest();
-// 		request.open('GET', url);
-// 		request.responseType='application/json';
-// 		request.onload = function(){
-// 			var data = request.response;
-// 			console.log(data);
-// 		}
-// 		request.send();
+		var url = "<%=request.getContextPath()%>/subMenu.do?mCode="+mCode;
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', url, true);
+		xhr.responseType='json';
+		xhr.onload = function(){
+			var data = xhr.response;
+			console.log("xhr!!!");
+			console.log(data);
+			printData(data, $('.subMenuList'), $('#subMenu-list-template'), '.subMenu');
+		}
+		xhr.send(null);
 		
 	}else{
 		$(".subMenuList").html("");
@@ -74,6 +75,8 @@ function printData(dataArr, target, targetObject, removeClass){
 	var template = Handlebars.compile(targetObject.html());
 	
 	var html = template(dataArr);
+	
+// 	alert("printData's html : " + html + "!");
 	
 	$(removeClass).remove();
 	

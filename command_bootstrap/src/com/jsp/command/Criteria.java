@@ -4,10 +4,16 @@ import com.jsp.exception.NotNumberException;
 
 public class Criteria {
 	
+	@Override
+	public String toString() {
+		return "Criteria [page=" + page + ", perPageNum=" + perPageNum + ", startRowNum=" + startRowNum + "]";
+	}
+
 	private int page=1;
 	private int perPageNum=10;
 	
 	private int startRowNum=0;
+	
 	
 	
 	public Criteria() {}

@@ -4,11 +4,11 @@ import java.util.Date;
 
 public class NoticeVO {
 	private int nno;
-	private String title;
+	private String title = "";
 	private String writer;
-	private String content;
-	private int viewcnt;
-	private Date regDate;
+	private String content = "";
+	private int viewcnt=0;
+	private Date regDate=new Date();
 	
 	public int getNno() {
 		return nno;

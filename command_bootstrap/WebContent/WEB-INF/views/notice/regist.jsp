@@ -68,61 +68,11 @@
     </section>
     <!-- /.content -->
     
-<script type="text/javascript">
+<%@ include file="/WEB-INF/views/common/summernote.jsp" %>
+
+<script>
 	window.onload = function(){
-		summernote_go();
-	}
-	
-	function summernote_go(){
-		$('textarea#content').summernote({
-			placeholder:'여기에 내용을 적으세요',
-			lang:'ko-KR',
-			height:250,
-			disableResizeEditor: true,
-			callbacks:{
-				onImageUpload:function(files, editor, welEditable){
-					for(var file of files){
-						//alert(file.name);
-						if(file.name.substring(file.name.lastIndexOf('.') + 1).toUpperCase() != 'JPG' ){
-							alert('JPG 이미지 형식만 가능합니다.');
-							return;
-						}
-						if(file.size > 1024 * 1024 * 5){
-							alert('이미지는 5MB 미만입니다.');
-							return;
-						}
-						
-					}
-					for(var file of files){
-						sendFile(file, this); // this = $('textarea#content')를 미러링하고 있는 summernote 결국 textarea라고 생각해도 됨
-					}
-				},
-				onMediaDelete:function(target){
-					
-				}
-			}
-			
-		});
-	}
-	
-	function sendFile(file, el) {
-		var form_data = new FormData();
-		form_data.append("file", file);
-		$.ajax({
-			data: form_data,
-			type: "POST",
-			url: '<%=request.getContextPath()%>/uploadImg.do',
-			cache: false,
-			contentType: false,
-			processData: false,
-			success: function(img_url){
-				alert(img_url);
-				$(el).summernote('editor.insertImage', img_url);
-			},
-			error: function(){
-				alert(file.name + " 업로드에 실패했습니다.");
-			}
-		})
+		summernote_go($('textarea#content'));
 	}
 	
 	function regist_go(){
@@ -133,6 +83,7 @@
 		}
 		form.submit();
 	}
+	
 </script>
     
 </body>
