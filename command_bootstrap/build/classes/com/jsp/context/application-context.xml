@@ -11,6 +11,9 @@
 	<bean id = "noticeDAO" class="com.jsp.dao.NoticeDAOImpl" />
 	<bean id = "boardDAO" class="com.jsp.dao.BoardDAOImpl" />
 	<bean id = "replyDAO" class="com.jsp.dao.ReplyDAOImpl" />
+	<bean id = "attachDAO" class="com.jsp.dao.AttachDAOImpl" />
+	<bean id = "pdsDAO" class="com.jsp.dao.PdsDAOImpl" />
+	
 	
 	<!-- Service layer -->
 	<bean id="memberService" class="com.jsp.service.SearchMemberServiceImpl" >
@@ -43,6 +46,12 @@
 		<property name = "sqlSessionFactory" ref-value="sqlSessionFactory" />
 		<property name = "replyDAO" ref-value="replyDAO" />
 		<property name = "memberDAO" ref-value="memberDAO" />
+	</bean>
+	
+	<bean id="pdsService" class="com.jsp.service.PdsServiceImpl">
+		<property name="sqlSessionFactory" ref-value="sqlSessionFactory" />
+		<property name="attachDAO" ref-value="attachDAO" />
+		<property name="pdsDAO" ref-value="pdsDAO" />
 	</bean>
 	
 </beans>

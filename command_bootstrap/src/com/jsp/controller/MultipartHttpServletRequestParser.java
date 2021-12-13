@@ -2,6 +2,7 @@ package com.jsp.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -19,20 +20,19 @@ import com.jsp.utils.ServletFileUploadBuilder;
 
 public class MultipartHttpServletRequestParser {
 
-	
-	Map<String, String[]> paramString = new HashMap<String, String[]>();
-	Map<String, List<FileItem>> paramFile = new HashMap<String, List<FileItem>>();
+	private Map<String, String[]> paramString = new HashMap<String, String[]>();
+	private Map<String, List<FileItem>> paramFile = new HashMap<String, List<FileItem>>();
 	
 	public MultipartHttpServletRequestParser(HttpServletRequest request, 
-											 int memory_threshold, 
-											 int max_file_size,
-											 int max_request_size)
-													throws NotMultipartFormDataException, 
-														   UnsupportedEncodingException,		
-														   FileUploadException {
+			int memory_threshold, 
+			int max_file_size,
+			int max_request_size)
+					throws NotMultipartFormDataException, 
+					UnsupportedEncodingException,		
+					FileUploadException {
 		ServletFileUpload upload = 
 				ServletFileUploadBuilder.build(request, memory_threshold, max_file_size,
-												max_request_size);
+						max_request_size);
 		
 		
 		List<FileItem> formItems = upload.parseRequest(request);
@@ -43,8 +43,26 @@ public class MultipartHttpServletRequestParser {
 			
 			if (item.isFormField()) { //일반 parameter : text
 				
+				String[] paramValues = paramString.get(paramName);
+				
+				if(paramValues == null) {
+					this.paramString.put(paramName, new String[] { item.getString("utf-8") });
+				}else {
+					String[] temp = new String[paramValues.length + 1];
+					System.arraycopy(paramValues, 0, temp, 0, paramValues.length);
+					temp[paramValues.length] = item.getString("utf-8");
+					paramString.put(paramName, temp);
+				}
+				
+/*				System.out.println("paramName : " + paramName + " value is : " + item.getString("utf-8"));
+				
 				String[] paramValues = item.getString("utf-8").split(",");
-				this.paramString.put(paramName, paramValues);
+				
+				for(String test : paramValues) {
+					System.out.println("==asdf==" + test);
+				}
+				
+				this.paramString.put(paramName, paramValues);*/
 				
 			}else { //1.2 file
 				List<FileItem> files = this.paramFile.get(paramName);
@@ -58,11 +76,16 @@ public class MultipartHttpServletRequestParser {
 			}
 		}
 	}
+	
+	public Map<String, String[]> getParamString() {
+		return paramString;
+	}
 
-	
-	
-	
-	
+	public Map<String, List<FileItem>> getParamFile() {
+		return paramFile;
+	}
+
+
 	public String getParameter(String paramName) {
 		String[] param = this.paramString.get(paramName);
 		String result = null;

@@ -1,10 +1,6 @@
 package com.jsp.command;
 
-import com.jsp.dto.ReplyVO;
-
 public class ReplyRemoveCommand {
-
-
 
 	private String rno;
 	private String bno;
@@ -29,7 +25,7 @@ public class ReplyRemoveCommand {
 		this.bno = bno;
 	}
 	
-	public ReplyVO toReplyVO() {
+/*	public ReplyVO toReplyVO() {
 		
 		ReplyVO reply = new ReplyVO();
 		reply.setBno(Integer.parseInt(this.bno));
@@ -43,5 +39,16 @@ public class ReplyRemoveCommand {
 		cri.setPage(Integer.parseInt(this.page));
 		
 		return cri;
+	}
+*/
+
+	public Integer getBnoInt() {
+		return Integer.parseInt(this.bno);
+	}
+	public Integer getPageInt() {
+		return Integer.parseInt(this.page);
+	}
+	public Integer getRnoInt() {
+		return Integer.parseInt(this.rno);
 	}
 }

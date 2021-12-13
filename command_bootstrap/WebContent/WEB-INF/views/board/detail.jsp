@@ -97,13 +97,11 @@
 						</div>
 						<div class='text-center'>
 							<ul id="pagination" class="pagination justify-content-center m-0" >
-								<%@ include file="/WEB-INF/views/common/pagination.jsp" %>
+
 							</ul>
 						</div>
 					</div>
 					<div class="card-footer">
-						<label for="newReplyWriter">Writer</label>
-						<input class="form-control" type="hidden" placeholder="USER ID"	 id="newReplyWriter" readonly value="${loginUser.id }"> 
 						<label for="newReplyText">Reply Text</label>
 						<input class="form-control" type="text"	placeholder="REPLY TEXT" id="newReplyText">
 						<br/>
@@ -146,25 +144,6 @@
 
 <script>
 
-window.onload = function(){
-	replylist_go();
-}
-
-function replylist_go(){
-	var xhr = new XMLHttpRequest();
-	
-	var url = "<%=request.getContextPath()%>/reply/list.do?bno=${board.bno }";
-	xhr.open("GET", url, true);
-	xhr.responseType = "json";
-	xhr.onreadystatechange  = function(){
-		if(xhr.status === 200 && xhr.readyState === 4){
-			var data = xhr.response;
-			console.log(data);
-		}
-	};
-	xhr.send(null);
-}
-
 function modify_go(){
 	var form = $('form[role="form"]');
 	form.attr({
@@ -187,4 +166,6 @@ function remove_go(){
 }
 </script>
  
+<%@ include file="./reply_js.jsp" %>
+
 </body> 

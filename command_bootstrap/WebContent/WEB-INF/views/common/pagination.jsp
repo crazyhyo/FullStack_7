@@ -47,6 +47,39 @@
 function list_go(page,url){
 	if(!url) url="list.do";
 	
+	if('${board.title }'){
+		console.log('${board.title }');
+		var jobForm=$('#jobForm');
+		
+		jobForm.find("[name='page']").val(page);
+		jobForm.find("[name='perPageNum']").val($('select[name="perPageNum"]').val());
+		jobForm.find("[name='searchType']").val($('select[name="searchType"]').val());
+		jobForm.find("[name='keyword']").val($('div.input-group>input[name="keyword"]').val());
+		
+		var formData = new FormData(jobForm[0]);
+		formData.append('bno', '${board.bno }');
+
+		console.log(jobForm[0]);
+		console.log(formData);
+		alert(formData);
+		
+		url = '<%=request.getContextPath()%>/reply/list.do';
+		
+		var xhr = new XMLHttpRequest();
+		
+		xhr.open("GET", url, true);
+		xhr.responseType = "json";
+		xhr.onreadystatechange  = function(){
+			if(xhr.status === 200 && xhr.readyState === 4){
+				var data = xhr.response;
+				console.log(data);
+			}
+		};
+		xhr.send(formData);
+		
+		return;
+	}
+	
 	var jobForm=$('#jobForm');
 	
 	jobForm.find("[name='page']").val(page);
