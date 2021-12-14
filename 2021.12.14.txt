@@ -1,0 +1,42 @@
+2021.12.14
+
+pom.xml의 구성
+
+<repositories> : maven은 기본적으로 원격저장소에서 필요한 jar를 가져옴
+기본 원격저장소에서 가져올 수 없는 jar의 경우 혹은 가져오지 못했을 경우
+jar를 가져올 위치 설정
+
+<dependensies> : 우리가 안만든다. 복붙할거임
+
+<properties> : 버전 호환을 위하여 작성
+
+maven missing error 해결법
+1. 이클립스를 닫는다.
+2. 해당 폴더에 들어가서 dependency와 연결된 폴더를 비운다.
+3. 다시 실행한다.
+
+4. 이걸로 해결이 안될 경우 1~3을 반복한다.
+  혹은 멀쩡한 애의 폴더를 긁어서 붙여넣는다.(가장 추천, repository를 백업하고 붙여넣는 방법으로 해결)
+
+project ! 혹은 빨간불 해결법
+프로젝트 우클릭 > Maven > update Project
+단 이런 경우 부작용이 나올 수 있음
+
+window > properties를 연다
+1. buildPath를 1.8로 설정
+2. java Compiler 의 version을 1.6(혹은 1.8)으로 설정
+3. project facet의 java를 1.8로 설정, web을 3.0으로 설정
+
+
+spring with jdbc
+1. ojdbc6 [search by maven ojdbc6 -> dependency copy, url to repositories > repository > id, url]
+2. dbcp2.5[search by maven dbcp2.5 -> dependency copy]
+3. mybatis3.5
+4. mybatis-spring [maven mybatis-spring]
+5. transaction manager[by pom.xml org.springframwork, spring-webmvc -> spring-jdbc]
+
+pom.xml은 tomcat서버가 도는 중에는 절대 만지면 안된다.
+
+프로젝트 다시 만들어야 할 수 있음
+tomcat loc라는 메세지 보면 그 프로젝트는 들어내야 하는거임
+다시 만들어야 함.
