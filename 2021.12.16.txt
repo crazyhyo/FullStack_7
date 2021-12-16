@@ -1,0 +1,35 @@
+2021.12.16
+
+[Interface를 다루는 고급 기술]
+
+- 내가 만든 interface의 프로토타입을 대대적으로 고치고 싶을 때
+예를 들어 memberDAO의 경우는 sqlSession을 파라미터로 받아 사용할 뿐
+instance변수로 관리하지 않는다. 이를 application-context에서 sqlSession을
+만들고 주입하는 형태로 인터페이스를 변경하고자 한다.
+
+직접 memberDAO를 변경하는 것은 후폭풍이 크므로 Wrapping하는 방법을 통해
+이를 해결할 수 있다.
+
+방법은새로운 패키지를 생성하여  memberDAOBean를 만들고,
+원하는 프로토타입이 되도록 메서드를 작성한 후
+이를 implement하는 class를 (memberDAOImplTemplate) memberDAO, sqlSession을
+has a 형태로 가지도록 하여 wrapping하여 method를 override한다.
+
+이후 service에서 memberDAO와 memberDAOBean을 instance변수 형태로 가지도록 하여 관리하면
+사용자가 선택적으로 해당 메서드의 prototype을 선택할 수 있다.
+
+
+
+[jar파일 사용법]
+프로젝트 우클릭 > export .jar > library에 담을 패키지 및 폴더 선택 > 저장
+library를 import할 프로젝트(스프링 프로젝트) webapp/WEB-INF/lib에 해당 jar파일 저장(해당 프로젝트 설정에서 web app library)를 추가해야 함.
+
+이후에는 Ctrl-Shift-o를 이용하여 .class를 import할 수 있다.
+
+
+===
+이 Wrapping으로 문제를 해결할 수 없는 경우도 존재한다.
+
+.class만 있는 클래스의 properties[instance variable]은 건드릴 수 없다.
+-> 이경우는 새로 만들어야 한다.
+
