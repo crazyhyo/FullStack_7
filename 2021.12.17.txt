@@ -1,0 +1,13 @@
+2021.12.17
+
+board/list.jsp => list -> detail인 경우에만 viewCnt++하고 싶다
+해당 정보를 .jsp에서 담아줘야 한다.
+이후 controller에서 from list를 가진 경우에 from list가 없는 url로
+redirect시키고 list가 없는 경우에 viewCnt가 변화없는 메서드로
+mnv에 설정해서 보내준다 (타짜)
+
+regist는 list로 /modify는 detail로 보내면서 해당 페이지에서 왔다는 메시지를 한번만
+띄우고 싶음
+
+해당 jsp에서 정보를 받아서 스크립트로 처리함. el문으로 비교하기(jstl if는 이럴때 쓰는게 아님)
+script넣는 위치도 고려할 것/ 스크립트 실행시점에 화면을 보여줄 필요가 있는가가 판단근거다.
