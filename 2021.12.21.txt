@@ -1,0 +1,28 @@
+2021.12.21
+
+Exception이슈
+다형성에서 @Override한메서드와 
+
+Exception의 부모관계도 가져간다.
+
+interface에서 메서드 프로토타입을 만들 때 exception은 예상되는 exception을
+포함하도록 throws해라. 이 메서드를 override한 메서드들에서 나오는 exception을
+포함할 수 있도록. 그렇다고 너무 많이 던지진 말고(그렇다고 throws Exception을
+하면 자식메서드한테 니가 처리하든 안하든 내가 받겠다는 이야기)
+
+throw exception을 만드는 이유는 보고체계
+
+상속받는 메서드보다 큰 범위의 exception을 던지는 경우는 메서드 자체에서는 특정한
+Exception만 던질것이고 메서드 내부에서 범위 밖의 Exception이 터지면 그건
+그 메서드 안에서 처리하라는 의미이다.
+
+springframework에서 controller에서 throw하는 exception은 adviser에게 보내기 위한 exception이다.
+
+
+Rest방식 controller와 일반 Controller의 flow는 다름
+
+
+중복가입처리[중복인지 아닌지 메시지 뿌리는 애], picture[서버에 저장하고 파일명 주는 애]
+
+
+spy있었다. pom 살펴봐라
