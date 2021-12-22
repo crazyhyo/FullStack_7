@@ -4,8 +4,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<c:set var="memberList" value="${dataMap.memberList }" />
-<c:set var="pageMaker" value="${dataMap.pageMaker }" /> 
+<%-- <c:set var="memberList" value="${dataMap.memberList }" /> --%>
+<%-- <c:set var="pageMaker" value="${dataMap.pageMaker }" />  --%>
+<%-- <c:set var="memberList" value="${memberList }" /> --%>
+<%-- <c:set var="pageMaker" value="${pageMaker }" />  --%>
 
 
 <title>회원목록</title>

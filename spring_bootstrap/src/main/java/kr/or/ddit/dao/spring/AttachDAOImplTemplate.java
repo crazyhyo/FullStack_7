@@ -24,6 +24,7 @@ public class AttachDAOImplTemplate implements AttachDAOBean{
 	@Override
 	public List<AttachVO> selectAttachByPno(int pno) throws SQLException {
 		return attachDAO.selectAttachByPno(session, pno);
+//		return session.selectList("Attach-Mapper.selectAttachByPno", pno);
 	}
 
 	@Override

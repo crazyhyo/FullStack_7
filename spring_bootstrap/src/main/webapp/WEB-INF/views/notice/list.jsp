@@ -4,9 +4,11 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 
-<c:set var="pageMaker" value="${dataMap.pageMaker }" />
-<c:set var="cri" value="${dataMap.pageMaker.cri }" />
-<c:set var="noticeList" value="${dataMap.noticeList }" />
+<%-- <c:set var="pageMaker" value="${dataMap.pageMaker }" /> --%>
+<%-- <c:set var="cri" value="${dataMap.pageMaker.cri }" /> --%>
+<%-- <c:set var="noticeList" value="${dataMap.noticeList }" /> --%>
+
+<c:set var="cri" value="${pageMaker.cri }" />
 
 <head></head>
 
@@ -87,7 +89,7 @@
 						</tr>
 					</c:if>				
 					<c:forEach items="${noticeList }" var="notice">
-						<tr style='font-size:0.85em;cursor:pointer;' onclick="OpenWindow('detail.do?nno=${notice.nno }','상세보기',800,700);">
+						<tr style='font-size:0.85em;cursor:pointer;' onclick="OpenWindow('detail.do?nno=${notice.nno }&from=list','상세보기',800,700);">
 							<td>${notice.nno }</td>
 							<td id="boardTitle" style="text-align:left;max-width: 100px; overflow: hidden; 
 												white-space: nowrap; text-overflow: ellipsis;">
@@ -116,6 +118,13 @@
     				+$(this).text(),'상세보기',800,700);
     		return false;    		
     	});
+    	
+    	if(${from eq 'regist'}){
+    		alert('공지사항 등록이 성공했습니다.');
+    		window.opner.location.reload();
+    		window.close();
+    	}
+    	
     }
     </script>
     

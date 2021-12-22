@@ -11,7 +11,7 @@
 	<bean id="picturePath" class="java.lang.String">
 		<constructor-arg value="${member.picture.upload}"/>
 	</bean>
-	<bean id="FileUploadPath" class="java.lang.String">
+	<bean id="fileUploadPath" class="java.lang.String">
 		<constructor-arg value="${pds.upload}"/>
 	</bean>
 

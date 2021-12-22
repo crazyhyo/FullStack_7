@@ -95,9 +95,17 @@ function modify_go(){
 }
 function remove_go(){
 	var answer = confirm('정말 삭제하시겠습니까?');
-	if(answer) formObj.attr('action', 'remove.do').submit();
+	if(answer) formObj.attr({'action': 'remove.do', 'method' : 'post'}).submit();
 }
 
+if(${from eq 'modify'}){
+	alert('수정되었습니다.');
+}
+if(${from eq 'remove'}){
+	alert('삭제되었습니다.');
+	window.opener.location.reload();
+	window.close();
+}
 </script>
 
 </body>

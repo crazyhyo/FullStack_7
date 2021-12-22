@@ -108,11 +108,26 @@
   </div>
   <!-- /.content-wrapper -->
   
-  <script>
-	window.onload=function(){
-		MemberPictureThumb(document.querySelector('[data-id="${member.id}"]'),
-				'${member.picture}','<%=request.getContextPath()%>');
+<script>
+window.onload=function(){
+	MemberPictureThumb(document.querySelector('[data-id="${member.id}"]'),
+			'${member.picture}','<%=request.getContextPath()%>');
+	
+	if(${!empty parentReload && parentReload}){
+		if(confirm('로그인 사용자의 정보가 수정되었습니다. \n현재 화면을 닫고 새로고침 하시겠습니까?')){
+			window.opener.parent.location.reload(true);
+			window.close();
+		}
 	}
+	
+	if(${param.from eq 'remove'}){
+		alert('${removeMember.name}님의 정보가 삭제되었습니다.');
+		if(${empty loginUser}){
+			window.opener.parent.location.href='<%=request.getContextPath()%>';
+		}
+		window.close();
+	}
+}
 </script>    
 </body>
 

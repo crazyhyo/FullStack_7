@@ -71,6 +71,13 @@ public class CommonController {
 		}
 		return url;
 	}	
+	
+	@RequestMapping("/main")
+	public String main() {
+		String url = "common/main";
+		return url;
+	}
+	
 	@RequestMapping(value="/common/loginForm", method=RequestMethod.GET)
 	public String loginForm() {
 		String url = "common/login";
