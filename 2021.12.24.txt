@@ -1,0 +1,20 @@
+2021.12.24
+
+Main topic : Security
+
+1. spring security는 보안이 아니다(지금 여기의 문맥에서)
+
+  1.1. 인증 : 누구냐(아이디, 비밀번호? 토큰? 등등)
+       Authentication(인증)
+  1.2. 인허가 : 권한
+       Authority
+
+웹상의 보안, 우리가 알고 있는 보안은 암호화이다.
+
+본인을 제외하고 시스템의 누구도 개인정보를 수정할 수 없다.
+관리자계정으로 와서 개인정보 수정하는거 보여주지 말자
+
+security는 filter를 통해 구현한다.
+단 session을 이용하지 않고 Authentication객체를 이용한다. -> 로그인해도 session에 안담긴다.
+
+security기본형은 xml한장으로 되지만 인증과 인허가를 커스터마이징하려면 손을 대야 됨

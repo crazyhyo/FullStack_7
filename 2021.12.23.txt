@@ -1,0 +1,10 @@
+
+proxy : 프로그램이 run하기 위한 제반사항을 proxy라고 함
+meta적인 영역이라고 일단 생각하자.
+
+aop의 개념은 결합을 생각하지 않은 객체들에게 관계를 주기 위해서 
+프록시를 이용하여 
+
+context.xml 작성법 중 기본네임스페이스 작성법
+xmlns(xml namespace)를 이용한다.
+기본으로 사용할 namespace
