@@ -1,3 +1,6 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -591,7 +594,7 @@
         },
       };
 
-      $(document).ready(function () {
+      window.onload = function () {
         var table = $("#example").DataTable({
           data: dataSet,
           columns: col_title,
@@ -628,7 +631,7 @@
           if(colName=="진행상황") table.column().search().draw();
         }); 
     
-      });
+      };
     </script>
   </body>
 </html>
