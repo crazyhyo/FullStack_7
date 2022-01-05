@@ -10,6 +10,7 @@
 		<config>src/main/resources/com/spring/compass/context/root-context.xml</config>
 		<config>src/main/resources/com/spring/compass/context/servlet-context.xml</config>
 		<config>src/main/resources/com/spring/compass/context/dataSource-context.xml</config>
+		<config>src/main/resources/com/spring/compass/context/application-context.xml</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>

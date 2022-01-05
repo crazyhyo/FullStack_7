@@ -8,4 +8,8 @@ public class TestController {
 
 	@RequestMapping("/test/main")
 	public void main() {}
+	
+	@RequestMapping("/test/test")
+	public void test() { }
+	
 }
