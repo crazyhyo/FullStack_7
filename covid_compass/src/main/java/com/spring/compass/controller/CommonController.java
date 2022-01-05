@@ -25,7 +25,7 @@ public class CommonController {
 	 * iframe만 바꾸려면 추가로직 필요
 	 * 그대로 쓰지 못하는 코드!!!!!!!!!!!
 	 */
-	@RequestMapping("/index")
+	@RequestMapping("/index2")
 	public String index(String murl, String mcode, Model model)
 											throws SQLException{
 		String url = "common/indexPage";

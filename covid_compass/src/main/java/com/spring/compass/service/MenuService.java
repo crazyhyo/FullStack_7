@@ -12,5 +12,8 @@ public interface MenuService {
 	public MenuVO getMenu(String menuInnb) throws SQLException;
 	
 	public List<MenuVO> getMenuList() throws SQLException;
+
+	public List<MenuVO> getSubMenuList(String menuInnb) throws SQLException;
+	
 	
 }

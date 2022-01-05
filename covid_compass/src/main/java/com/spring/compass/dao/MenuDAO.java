@@ -12,5 +12,7 @@ public interface MenuDAO {
 	public MenuVO selectMenuByMenuInnb(String menuInnb) throws SQLException;
 
 	public List<MenuVO> selectMenuList() throws SQLException;
+
+	public List<MenuVO> selectSubMenuList(String menuInnb) throws SQLException;
 	
 }

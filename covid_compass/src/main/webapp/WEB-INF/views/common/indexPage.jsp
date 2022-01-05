@@ -13,16 +13,14 @@
  	</div>
 
 <script>
-function goPage(url, mCode){
-	document.querySelector('iframe[name="ifr"]').src = url;
+function goPage(menuUrl, menuInnb){
+	
+	document.querySelector('iframe[name="ifr"]').src = menuUrl;
 	
 	if(typeof(history.pushState) == 'function'){
 		var renewURL = location.href;
-		
 		renewURL = renewURL.substring(0, renewURL.indexOf('?'));
-		
-		renewURL += "?mCode=" + mCode;
-		
+		renewURL += "?mCode=" + menuInnb;
 		history.pushState(mCode, null, renewURL);
 	}else{
 		location.hash = "#"+mCode;
@@ -32,7 +30,8 @@ function goPage(url, mCode){
 
 window.onload = function(){
 	
-	goPage('<%=request.getContextPath()%>${murl}','${mcode}');
+	goPage('<%=request.getContextPath()%>${menu.menuUrl}','${menu.menuInnb}');
+	
 }
 
 

@@ -32,6 +32,12 @@ public class MenuServiceImpl implements MenuService{
 		List<MenuVO> menuList = menuDAO.selectMenuList();
 		return menuList;
 	}
+
+	@Override
+	public List<MenuVO> getSubMenuList(String menuInnb) throws SQLException {
+		List<MenuVO> menuList = menuDAO.selectSubMenuList(menuInnb);
+		return menuList;
+	}
 	
 
 }

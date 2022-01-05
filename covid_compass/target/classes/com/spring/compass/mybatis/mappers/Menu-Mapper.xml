@@ -29,6 +29,22 @@ SELECT
    ,MENU_NM
 FROM
     MENU
+WHERE
+	MENU_ISNAV = 1
+	</select>
+	
+	<select id="selectSubMenuList" parameterType="java.lang.String"
+			resultType="com.spring.compass.vo.MenuVO">
+SELECT
+    MENU_INNB       ,MENU_URL       ,MENU_ICON
+   ,UPMENU_INNB     ,MENU_ISNAV     ,MENU_LEVEL
+   ,MENU_NM
+FROM
+    MENU
+WHERE
+	MENU_ISNAV = 1
+AND
+	UPMENU_INNB = #{menuInnb}
 	</select>
 	
 </mapper>  
