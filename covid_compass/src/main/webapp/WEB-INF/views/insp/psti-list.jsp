@@ -9,246 +9,188 @@
 
 <body>
 
-	<%@ include file="./gobackTest.jsp" %>
-
-	<div class="#">
-		<div class="card-header border-transparent"
-			style="background-color: #5b6f90;">
-			<div class="row">
-				<div class="col-sm-12 col-md-10">
-				<p class="card-title" style="color: white; font-size: 30px;">문진표 목록</p>
-				</div>
-				<div class="col-sm-12 col-md-1">
-				</div>
-				<div class="col-sm-12 col-md-1">
-				</div>
-			</div>
-			<!-- <h3 class="card-title" style="color: white;">문진표 목록</h3>
-			<div class="card-tools ">
-				<button type="button" class="btn btn-tool" data-card-widget="">
-					<i class="fas fa-plus" style="color: white;"> PCR키트 수량 500</i>
-				</button>
-
-			</div> -->
+	  <div class="card" style="margin:1px;" >
+		<div class="card-header center" style="background: #5b6f90; color: white;">
+				<h3 class="card-title">피검자</h3>
 		</div>
-		<!-- /.card-header -->
-		<div class="#">
-			<%@ include file="./tmpSearch.jsp" %>
-			<div class="table-responsive">
-				<table class="table m-0" style="text-align: center;">
-					<thead>
-						<tr role="row">
-							<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
-								aria-label="Browser: activate to sort column ascending">구분</th>
-							<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
-								aria-label="Browser: activate to sort column ascending">이름</th>
-							<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
-								aria-sort="ascending"
-								aria-label="Rendering engine: activate to sort column descending">피검자 등록일</th>
-							<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
-								aria-label="Platform(s): activate to sort column ascending">나이</th>
-							<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
-								aria-label="Engine version: activate to sort column ascending">생년월일</th>
-							<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
-								aria-label="CSS grade: activate to sort column ascending">전화번호</th>
-						</tr>
-					</thead>
-					<tbody>
-						<%-- <c:forEach items="${pstiReadyVOList }" var="pstiReadoVO"> --%>
-						<%-- <c:set var="pstiReadyVO" value="" /> --%>
-						<tr onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','800','900');" 
-		            		  	   style="cursor:pointer;">
-							<td>
-							<span class="badge badge-${pstiReadyListVO.sttusCode eq 'A101' ? 'info':'primary' }">${pstiReadyListVO.insttNm }검사소</span></td>
-							<td>${pstiReadyListVO.pstiNm }pstiNm</td>
-							<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
-									value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-01</td>
-							<td>${pstiReadyListVO.age }age</td>
-							<td><fmt:formatDate value="${pstiReadyListVO.birthDate }"
-									pattern="yyyy-MM-dd" />1990-01-01</td>
-							<td>${pstiReadyListVO.telNo }010-1234-4321</td>
-						</tr>
-						<%-- </c:forEach> --%>
-						<tr>
-
-							<%-- <c:forEach items="${pstiReadyVOList }" var="pstiReadoVO"> --%>
-							<%-- <c:set var="pstiReadyVO" value="" /> --%>
-							<td>
-							<span class="badge badge-${pstiReadyListVO.sttusCode eq 'A101' ? 'info':'primary' }">${pstiReadyListVO.insttNm }검사소</span></td>
-							<td>${pstiReadyListVO.pstiNm }pstiNm</td>
-							<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
-									value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-01</td>
-							<td>${pstiReadyListVO.age }age</td>
-							<td><fmt:formatDate value="${pstiReadyListVO.birthDate }"
-									pattern="yyyy-MM-dd" />1990-01-01</td>
-							<td>${pstiReadyListVO.telNo }010-1234-4321</td>
-							<%-- </c:forEach> --%>
-						</tr>
-						<tr>
-
-							<%-- <c:forEach items="${pstiReadyVOList }" var="pstiReadoVO"> --%>
-							<%-- <c:set var="pstiReadyVO" value="" /> --%>
-							<td>
-							<span class="badge badge-${pstiReadyListVO.sttusCode eq 'A101' ? 'info':'primary' }">${pstiReadyListVO.insttNm }검사소</span></td>
-							<td>${pstiReadyListVO.pstiNm }pstiNm</td>
-							<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
-									value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-01</td>
-							<td>${pstiReadyListVO.age }age</td>
-							<td><fmt:formatDate value="${pstiReadyListVO.birthDate }"
-									pattern="yyyy-MM-dd" />1990-01-01</td>
-							<td>${pstiReadyListVO.telNo }010-1234-4321</td>
-							<%-- </c:forEach> --%>
-						</tr>
-						<tr>
-
-							<%-- <c:forEach items="${pstiReadyVOList }" var="pstiReadoVO"> --%>
-							<%-- <c:set var="pstiReadyVO" value="" /> --%>
-							<td>
-							<span class="badge badge-${pstiReadyListVO.sttusCode eq 'A101' ? 'info':'primary' }">${pstiReadyListVO.insttNm }검사소</span></td>
-							<td>${pstiReadyListVO.pstiNm }pstiNm</td>
-							<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
-									value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-01</td>
-							<td>${pstiReadyListVO.age }age</td>
-							<td><fmt:formatDate value="${pstiReadyListVO.birthDate }"
-									pattern="yyyy-MM-dd" />1990-01-01</td>
-							<td>${pstiReadyListVO.telNo }010-1234-4321</td>
-							<%-- </c:forEach> --%>
-						</tr>
-						<tr>
-
-							<%-- <c:forEach items="${pstiReadyVOList }" var="pstiReadoVO"> --%>
-							<%-- <c:set var="pstiReadyVO" value="" /> --%>
-							<td>
-							<span class="badge badge-${pstiReadyListVO.sttusCode eq 'A101' ? 'info':'primary' }">${pstiReadyListVO.insttNm }검사소</span></td>
-							<td>${pstiReadyListVO.pstiNm }pstiNm</td>
-							<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
-									value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-01</td>
-							<td>${pstiReadyListVO.age }age</td>
-							<td><fmt:formatDate value="${pstiReadyListVO.birthDate }"
-									pattern="yyyy-MM-dd" />1990-01-01</td>
-							<td>${pstiReadyListVO.telNo }010-1234-4321</td>
-							<%-- </c:forEach> --%>
-						</tr>
-						<tr>
-
-							<%-- <c:forEach items="${pstiReadyVOList }" var="pstiReadoVO"> --%>
-							<%-- <c:set var="pstiReadyVO" value="" /> --%>
-							<td>
-							<span class="badge badge-${pstiReadyListVO.sttusCode eq 'A101' ? 'info':'primary' }">${pstiReadyListVO.insttNm }검사소</span></td>
-							<td>${pstiReadyListVO.pstiNm }pstiNm</td>
-							<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
-									value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-01</td>
-							<td>${pstiReadyListVO.age }age</td>
-							<td><fmt:formatDate value="${pstiReadyListVO.birthDate }"
-									pattern="yyyy-MM-dd" />1990-01-01</td>
-							<td>${pstiReadyListVO.telNo }010-1234-4321</td>
-							<%-- </c:forEach> --%>
-						</tr>
-						<tr>
-
-							<%-- <c:forEach items="${pstiReadyVOList }" var="pstiReadoVO"> --%>
-							<%-- <c:set var="pstiReadyVO" value="" /> --%>
-							<td>
-							<span class="badge badge-${pstiReadyListVO.sttusCode eq 'A101' ? 'info':'primary' }">${pstiReadyListVO.insttNm }검사소</span></td>
-							<td>${pstiReadyListVO.pstiNm }pstiNm</td>
-							<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
-									value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-01</td>
-							<td>${pstiReadyListVO.age }age</td>
-							<td><fmt:formatDate value="${pstiReadyListVO.birthDate }"
-									pattern="yyyy-MM-dd" />1990-01-01</td>
-							<td>${pstiReadyListVO.telNo }010-1234-4321</td>
-							<%-- </c:forEach> --%>
-						</tr>
-						<tr>
-
-							<%-- <c:forEach items="${pstiReadyVOList }" var="pstiReadoVO"> --%>
-							<%-- <c:set var="pstiReadyVO" value="" /> --%>
-							<td>
-							<span class="badge badge-${pstiReadyListVO.sttusCode eq 'A101' ? 'info':'primary' }">${pstiReadyListVO.insttNm }검사소</span></td>
-							<td>${pstiReadyListVO.pstiNm }pstiNm</td>
-							<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
-									value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-01</td>
-							<td>${pstiReadyListVO.age }age</td>
-							<td><fmt:formatDate value="${pstiReadyListVO.birthDate }"
-									pattern="yyyy-MM-dd" />1990-01-01</td>
-							<td>${pstiReadyListVO.telNo }010-1234-4321</td>
-							<%-- </c:forEach> --%>
-						</tr>
-						<tr>
-
-							<%-- <c:forEach items="${pstiReadyVOList }" var="pstiReadoVO"> --%>
-							<%-- <c:set var="pstiReadyVO" value="" /> --%>
-							<td>
-							<span class="badge badge-${pstiReadyListVO.sttusCode eq 'A101' ? 'info':'primary' }">${pstiReadyListVO.insttNm }검사소</span></td>
-							<td>${pstiReadyListVO.pstiNm }pstiNm</td>
-							<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
-									value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-01</td>
-							<td>${pstiReadyListVO.age }age</td>
-							<td><fmt:formatDate value="${pstiReadyListVO.birthDate }"
-									pattern="yyyy-MM-dd" />1990-01-01</td>
-							<td>${pstiReadyListVO.telNo }010-1234-4321</td>
-							<%-- </c:forEach> --%>
-						</tr>
-						<tr>
-
-							<%-- <c:forEach items="${pstiReadyVOList }" var="pstiReadoVO"> --%>
-							<%-- <c:set var="pstiReadyVO" value="" /> --%>
-							<td>
-							<span class="badge badge-${pstiReadyListVO.sttusCode eq 'A101' ? 'info':'primary' }">${pstiReadyListVO.insttNm }검사소</span></td>
-							<td>${pstiReadyListVO.pstiNm }pstiNm</td>
-							<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
-									value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-01</td>
-							<td>${pstiReadyListVO.age }age</td>
-							<td><fmt:formatDate value="${pstiReadyListVO.birthDate }"
-									pattern="yyyy-MM-dd" />1990-01-01</td>
-							<td>${pstiReadyListVO.telNo }010-1234-4321</td>
-							<%-- </c:forEach> --%>
-						</tr>
-					</tbody>
-				</table>
-
-			</div>
-			<!-- /.table-responsive -->
-			<div class="row">
-				<div class="col-sm-12 col-md-5">
-					<div class="dataTables_info" id="example2_info" role="status"
-						aria-live="polite">1 - 10 / 57</div>
-				</div>
-				<div class="col-sm-12 col-md-7">
-					<div class="dataTables_paginate paging_simple_numbers"
-						id="example2_paginate">
-						<ul class="pagination">
-							<li class="paginate_button page-item previous disabled"
-								id="example2_previous"><a href="#" aria-controls="example2"
-								data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li>
-							<li class="paginate_button page-item active"><a href="#"
-								aria-controls="example2" data-dt-idx="1" tabindex="0"
-								class="page-link">1</a></li>
-							<li class="paginate_button page-item "><a href="#"
-								aria-controls="example2" data-dt-idx="2" tabindex="0"
-								class="page-link">2</a></li>
-							<li class="paginate_button page-item "><a href="#"
-								aria-controls="example2" data-dt-idx="3" tabindex="0"
-								class="page-link">3</a></li>
-							<li class="paginate_button page-item "><a href="#"
-								aria-controls="example2" data-dt-idx="4" tabindex="0"
-								class="page-link">4</a></li>
-							<li class="paginate_button page-item "><a href="#"
-								aria-controls="example2" data-dt-idx="5" tabindex="0"
-								class="page-link">5</a></li>
-							<li class="paginate_button page-item "><a href="#"
-								aria-controls="example2" data-dt-idx="6" tabindex="0"
-								class="page-link">6</a></li>
-							<li class="paginate_button page-item next" id="example2_next"><a
-								href="#" aria-controls="example2" data-dt-idx="7" tabindex="0"
-								class="page-link">Next</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
+		<div class="card-body" style="height: 70px;">
+			<!-- search bar -->
+			<div class="input-group  float-right" style="max-width:600px;">
+				<!-- sort num -->
+				<select class="form-control " name="perPageNum"	id="perPageNum" onchange="list_go(1);" >
+					<option value="10">정렬개수</option>
+					<option value="2" ${pageMaker.cri.perPageNum == 2 ? 'selected':''}>2개씩</option>
+					<option value="3" ${pageMaker.cri.perPageNum == 3 ? 'selected':''}>3개씩</option>
+					<option value="5" ${pageMaker.cri.perPageNum == 5 ? 'selected':''}>5개씩</option>
+				</select>
+				
+				<!-- search bar -->
+				<select class="form-control " name="searchType" id="searchType" >
+						<option value="" ${pageMaker.cri.searchType eq '' ? 'selected':''}>검색구분</option>
+						<option value="n"
+							${pageMaker.cri.searchType eq 'n' ? 'selected':''}>성 명</option>
+						<option value="p"
+							${pageMaker.cri.searchType eq 'p' ? 'selected':''}>전화번호</option>
+				</select>
+				
+				<!-- keyword -->
+				<input class="form-control" type="text" name="keyword" placeholder="검색어를 입력하세요." value="${pageMaker.cri.keyword }" style="width: 18%;display: inline-block;"/>
+				<span class="input-group-append"> 
+					<button class="btn btn-primary" type="button" id="searchBtn" 
+						    style="background: #5b6f90; color: #ffffff; border-color: #5b6f90;
+						    	   display: inline-block;margin-bottom: 4px;margin-left: -7px;"
+						data-card-widget="search" onclick="">
+						<i class="fa fa-fw fa-search" ></i>
+					</button>
+				</span>
+				<!-- end : search bar -->
+		    </div>
+	  
 		</div>
-		<!-- /.card-body -->
+
+		<div class="table-responsive">
+			<table class="table table-hover text-nowrap" style="text-align: center;">
+				<thead>
+					<tr role="row">
+						<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+							aria-label="">구분</th>
+						<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+							aria-label="">성명</th>
+						<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+							aria-sort="ascending"
+							aria-label="">문진표 작성일</th>
+						<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+							aria-label="">나이</th>
+						<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+							aria-label="">생년월일</th>
+						<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+							aria-label="">전화번호</th>
+					</tr>
+				</thead>
+				<tbody>
+				
+					<tr data-psti-no="${pstiNo }"  onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');" style="cursor:pointer;">
+						<td><span class="badge badge-info">신규</span></td>
+						<td>홍길동</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-06</td>
+						<td>34</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.birYmd }" pattern="yyyy-MM-dd" />1989-01-06</td>
+						<td>010-1234-5678</td>
+					</tr>
+					<tr data-psti-no="${pstiNo }"  onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');" style="cursor:pointer;">
+						<td><span class="badge badge-primary">재검</span></td>
+						<td>김영희</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-06</td>
+						<td>34</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.birYmd }" pattern="yyyy-MM-dd" />1989-01-06</td>
+						<td>010-1234-5678</td>
+					</tr>
+					<tr data-psti-no="${pstiNo }"  onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');" style="cursor:pointer;">
+						<td><span class="badge badge-info">신규</span></td>
+						<td>홍길동</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-06</td>
+						<td>34</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.birYmd }" pattern="yyyy-MM-dd" />1989-01-06</td>
+						<td>010-1234-5678</td>
+					</tr>
+					<tr data-psti-no="${pstiNo }"  onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');" style="cursor:pointer;">
+						<td><span class="badge badge-primary">재검</span></td>
+						<td>김영희</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-06</td>
+						<td>34</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.birYmd }" pattern="yyyy-MM-dd" />1989-01-06</td>
+						<td>010-1234-5678</td>
+					</tr>
+					<tr data-psti-no="${pstiNo }"  onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');" style="cursor:pointer;">
+						<td><span class="badge badge-info">신규</span></td>
+						<td>홍길동</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-06</td>
+						<td>34</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.birYmd }" pattern="yyyy-MM-dd" />1989-01-06</td>
+						<td>010-1234-5678</td>
+					</tr>
+					<tr data-psti-no="${pstiNo }"  onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');" style="cursor:pointer;">
+						<td><span class="badge badge-primary">재검</span></td>
+						<td>김영희</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-06</td>
+						<td>34</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.birYmd }" pattern="yyyy-MM-dd" />1989-01-06</td>
+						<td>010-1234-5678</td>
+					</tr>
+					<tr data-psti-no="${pstiNo }"  onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');" style="cursor:pointer;">
+						<td><span class="badge badge-info">신규</span></td>
+						<td>홍길동</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-06</td>
+						<td>34</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.birYmd }" pattern="yyyy-MM-dd" />1989-01-06</td>
+						<td>010-1234-5678</td>
+					</tr>
+					<tr data-psti-no="${pstiNo }"  onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');" style="cursor:pointer;">
+						<td><span class="badge badge-primary">재검</span></td>
+						<td>김영희</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-06</td>
+						<td>34</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.birYmd }" pattern="yyyy-MM-dd" />1989-01-06</td>
+						<td>010-1234-5678</td>
+					</tr>
+					<tr data-psti-no="${pstiNo }"  onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');" style="cursor:pointer;">
+						<td><span class="badge badge-info">신규</span></td>
+						<td>홍길동</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-06</td>
+						<td>34</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.birYmd }" pattern="yyyy-MM-dd" />1989-01-06</td>
+						<td>010-1234-5678</td>
+					</tr>
+					<tr data-psti-no="${pstiNo }"  onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');" style="cursor:pointer;">
+						<td><span class="badge badge-primary">재검</span></td>
+						<td>김영희</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />2022-01-06</td>
+						<td>34</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.birYmd }" pattern="yyyy-MM-dd" />1989-01-06</td>
+						<td>010-1234-5678</td>
+					</tr>
+					
+				</tbody>
+			</table>
+
+		</div>
+		<!-- /.table-responsive -->
+		
+		<%@ include file="../template/list-footer.jsp" %>
+		
 	</div>
+	<!-- /.card-body -->
 
 
 </body>
+
+<c:forEach items="${pstiReadyVOList }" var="pstiReadoVO">
+	<tr data-psti-no="${pstiNo }"  onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');" style="cursor:pointer;">
+		<td><span class="badge badge-${pstiReadyListVO.sttusCode eq 'A101' ? 'info':'primary' }">${pstiReadyListVO.insttNm }</span></td>
+		<td>${pstiReadyListVO.pstiNm }</td>
+		<td><fmt:formatDate	value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" /></td>
+		<td>${pstiReadyListVO.age }</td>
+		<td><fmt:formatDate	value="${pstiReadyListVO.birYmd }" pattern="yyyy-MM-dd" /></td>
+		<td><fmt:formatNumber value="${pstiReadyListVO.telNo }" pattern="yyyy-MM-dd"/></td>
+	</tr>
+</c:forEach>

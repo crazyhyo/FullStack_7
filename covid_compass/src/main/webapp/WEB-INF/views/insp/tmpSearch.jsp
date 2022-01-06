@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<div class="card-header with-border" id="custom-search">
+<div class="card-header with-border">
 	<div id="keyword" class="card-tools" style="width: 550px;">
 		<div class="input-group row">
 			<!-- search bar -->

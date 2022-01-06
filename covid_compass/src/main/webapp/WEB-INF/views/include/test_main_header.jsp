@@ -21,9 +21,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/bootstrap/dist/css/adminlte.min.css">
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.6.0.min.js"></script>
  <!-- DataTables -->
-  <link rel="stylesheet" href="<%=request.getContextPath() %>/resources/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-  <link rel="stylesheet" href="<%=request.getContextPath() %>/resources/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-  <link rel="stylesheet" href="<%=request.getContextPath() %>/resources/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <link rel="stylesheet" href="<%=request.getContextPath() %>/resources/bootstrap/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="<%=request.getContextPath() %>/resources/bootstrap/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="<%=request.getContextPath() %>/resources/bootstrap/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 <decorator:head />
 </head>
 <body class="hold-transition sidebar-mini">
@@ -104,7 +104,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						<!-- Add icons to the links using the .nav-icon classwith font-awesome or any other icon font library -->
 						<c:forEach items="${menuList }" var="submenu">
 							<li class="nav-item subMenu">
-								<a href="javascript:goPage('<%=request.getContextPath()%>${submenu.menuUrl }','${submenu.menuInnb }');" class="nav-link">
+								<a href="javascript:goPage('<%=request.getContextPath()%>${submenu.menuUrl }','${submenu.menuNo }');" class="nav-link">
 									${submenu.menuIcon }<h7><b>${submenu.menuNm }</b></h7>
 								</a>
 							</li>

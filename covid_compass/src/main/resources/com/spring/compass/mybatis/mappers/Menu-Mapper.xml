@@ -10,22 +10,23 @@
 		FROM MENU
 	</select>
 	
-	<select id="selectMenuByMenuInnb" parameterType="java.lang.String" 
+	<select id="selectMenuByMenuNo" parameterType="java.lang.String" 
 			resultType="com.spring.compass.vo.MenuVO">
 SELECT
-    MENU_INNB       ,MENU_URL       ,MENU_ICON
-   ,UPMENU_INNB     ,MENU_ISNAV     ,MENU_LEVEL
+    MENU_NO         ,MENU_URL       ,MENU_ICON
+   ,UPMENU_NO       ,MENU_ISNAV     ,MENU_LEVEL
    ,MENU_NM
 FROM
     MENU
-WHERE MENU_INNB = #{menuInnb}
+WHERE
+    MENU_NO = #{menuNo}
 	</select>
 	
 	<select id="selectMenuList"
 			resultType="com.spring.compass.vo.MenuVO">
 SELECT
-    MENU_INNB       ,MENU_URL       ,MENU_ICON
-   ,UPMENU_INNB     ,MENU_ISNAV     ,MENU_LEVEL
+    MENU_NO         ,MENU_URL       ,MENU_ICON
+   ,UPMENU_NO       ,MENU_ISNAV     ,MENU_LEVEL
    ,MENU_NM
 FROM
     MENU
@@ -36,15 +37,15 @@ WHERE
 	<select id="selectSubMenuList" parameterType="java.lang.String"
 			resultType="com.spring.compass.vo.MenuVO">
 SELECT
-    MENU_INNB       ,MENU_URL       ,MENU_ICON
-   ,UPMENU_INNB     ,MENU_ISNAV     ,MENU_LEVEL
+    MENU_NO         ,MENU_URL       ,MENU_ICON
+   ,UPMENU_NO       ,MENU_ISNAV     ,MENU_LEVEL
    ,MENU_NM
 FROM
     MENU
 WHERE
 	MENU_ISNAV = 1
 AND
-	UPMENU_INNB = #{menuInnb}
+	UPMENU_NO = #{menuNo}
 	</select>
 	
 </mapper>  

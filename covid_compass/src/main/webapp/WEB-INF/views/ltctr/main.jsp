@@ -6,8 +6,6 @@
 <title></title>
 
 <body> 
-	<h1>ltctr/main</h1>
-
 	<div class="card">
 		<div class="card-header" style="background-color: #5b6f90;">
 			<h3 class="card-title" style="color: white;">통계</h3>
@@ -60,12 +58,6 @@
 		<div class="#">
 			<div class="card-header border-transparent" style="background-color: #5b6f90;">
 				<h3 class="card-title" style="color: white;">피검자 대기목록</h3>
-			<div class="card-tools ">
-				<button type="button" class="btn btn-tool" data-card-widget="">
-					<i class="fas fa-plus" style="color:white;"> PCR키트 수량 500</i>
-				</button>
-				
-			</div>
 			</div>
 			<!-- /.card-header -->
 			<div class="#">

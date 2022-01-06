@@ -22,7 +22,7 @@ hsptl/notice-remove
 hsptl/sckbdcnt-modify
 hsptl/sckbd-manage
 hsptl/slfptnt-regist
-hsptl/smple-list
+hsptl/res-smple-list
 hsptl/smple-regist
 hsptl/statistics
 insp/chckd-psti-list
@@ -60,7 +60,7 @@ ltctr/notice-registform
 ltctr/notice-remove
 ltctr/sckbdcnt-modify
 ltctr/sckbd-manage
-ltctr/smple-list
+ltctr/res-smple-list
 ltctr/smple-regist
 ltctr/statistics
 pbhlth/cnfrm-list
@@ -78,5 +78,7 @@ pbhlth/slfptnt-list
 pbhlth/smple-confirm
 pbhlth/smple-detail
 pbhlth/smple-list
-
+pbhlth/res-smple-list
 pbhlth/statistics
+admin/instt-list
+admin/instt-registform
