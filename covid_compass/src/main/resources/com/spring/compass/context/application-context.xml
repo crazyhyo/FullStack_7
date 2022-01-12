@@ -3,16 +3,32 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
-
+	
+	<bean id="instPath" class="java.lang.String">
+		<constructor-arg value="${inst.upload}"/>
+	</bean>
+	
 	<!-- repository context(DAO) -->
 	<bean id="menuDAO" class="com.spring.compass.dao.MenuDAOImpl"
 		p:sqlSession-ref="sqlSession"
 	/>
-	
+	<bean id="inspDAO" class="com.spring.compass.dao.InspDAOImpl"
+		p:sqlSession-ref="sqlSession"
+	/>
+	<bean id="mberDAO" class="com.spring.compass.dao.MberDAOImpl"
+		p:sqlSession-ref="sqlSession"
+	/>
+
 	<!-- service context(service) -->
 	<bean id="menuService" class="com.spring.compass.service.MenuServiceImpl"
 		p:menuDAO-ref="menuDAO"
 	/>
-	
+	<bean id="inspService" class="com.spring.compass.service.InspServiceImpl"
+		p:inspDAO-ref="inspDAO"
+	/>
+	<bean id="mberService" class="com.spring.compass.service.MberServiceImpl"
+		  p:mberDAO-ref="mberDAO"
+	/>
+
 
 </beans>

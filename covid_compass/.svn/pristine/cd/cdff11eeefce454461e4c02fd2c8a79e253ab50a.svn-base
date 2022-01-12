@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Insp-Mapper">
+
+<select id="test">
+select 1 from dual
+</select>
+
+<update id="insertPsti" parameterType="com.spring.compass.vo.PstiVO">
+INSERT INTO psti (
+    psti_no
+   ,insp_no
+   ,psti_nm
+   ,rrn
+   ,gender
+   ,pregn_yn
+   ,nlty
+   ,psti_telno
+   ,psti_adres
+   ,job_code
+   ,fever_yn
+   ,symptms
+   ,vac_code
+   ,wrt_ymd
+   ,del_ymd
+   ,rechkd_yn
+   ,chkd_yn
+   ,manage_no
+) VALUES (
+#{pstiNo}
+, #{inspNo}
+, #{pstiNm}
+, #{rrn}
+, #{gender}
+, #{pregnYn}
+, #{nlty}
+, #{pstiTelno}
+, #{pstiAdres}
+, #{jobCode}
+, #{feverYn}
+, #{sysptms}
+, #{vacCode}
+   ,SYSDATE
+   ,SYSDATE + 1
+, #{rechkdYn}
+   ,'N'
+   ,NULL
+)
+</update>
+
+<select id="selectPstiByPstiNo" parameterType="java.lang.String">
+SELECT
+    psti_no
+   ,insp_no
+   ,psti_nm
+   ,rrn
+   ,gender
+   ,pregn_yn
+   ,nlty
+   ,psti_telno
+   ,psti_adres
+   ,job_code
+   ,fever_yn
+   ,symptms
+   ,vac_code
+   ,wrt_ymd
+   ,del_ymd
+   ,rechkd_yn
+   ,chkd_yn
+   ,manage_no
+FROM
+    psti
+WHERE
+	PSTI_NO = #{pstiNo}
+</select>
+<select id="selectPstiSeqNextval">
+SELECT PSTI_SEQ.NEXTVAL AS PSTI_SEQ
+FROM DUAL
+</select>
+<select id="selectPstiNo" parameterType="java.lang.String">
+SELECT 'PSTI' || TO_CHAR(SYSDATE, 'YYYYMMDD') || #{pstiSeq} AS PSTI_NO
+FROM DUAL
+</select>
+</mapper>
+
+
