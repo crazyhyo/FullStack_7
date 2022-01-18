@@ -7,7 +7,7 @@
 <body>
 <div class="wrapper">
 			<div class="card-primary">
-			  <div class="card-header" style="background-color: #5bbc71;">
+			  <div class="card-header" style="background-color: #5b6f90;">
 			    <h3 class="card-title">내 정보 수정</h3>
 			  </div>
 			  <!-- /.card-header -->
@@ -19,54 +19,57 @@
 			    <div class="row" style="margin-bottom: 20px;">
 			        <label for="mber_id" class="col-md-2 text-right" style="padding-top: 7px;">소속기관</label>
 				      <div class="col-md-3">
-				        <input type="text" class="form-control" id="mber_id" readonly>
+				        <input type="text" class="form-control" id="mber_id" value="대덕검사소" readonly>
 				      </div>
 			      
 			        <label for="mber_id" class="col-md-2 text-right" style="padding-top: 7px;">소속번호</label>
 				      <div class="col-md-4">
-				        <input type="text" class="form-control" id="mber_id" readonly>
+				        <input type="text" class="form-control" id="mber_id" value="A12345" readonly>
 				      </div>
 			    </div>
 			    
 			    <div class="row" style="margin-bottom: 20px;">
 			        <label for="mber_nm" class="col-md-2 text-right" style="padding-top: 7px;">성명</label>
 				      <div class="col-md-3">
-				        <input type="text" class="form-control" id="mber_id" readonly>
+				        <input type="text" class="form-control" id="mber_id" value="홍길동" readonly>
 				      </div>
 			      
 			        <label for="mber_birth" class="col-md-2 text-right" style="padding-top: 7px;">생년월일</label>
 				      <div class="col-md-4">
-				        <input type="date" class="form-control" id="mber_birth" readonly>
+				        <input type="date" class="form-control" id="mber_birth" value="2022-01-06" readonly>
 				      </div>
 			    </div>
 			    
 			    <div class="row" style="margin-bottom: 20px;">
 			        <label for="mber_telno" class="col-md-2 text-right" style="padding-top: 7px;">연락처</label>
 				      <div class="col-md-3">
-				        <input type="text" class="form-control" id="mber_id" maxlength="13">
+				        <input type="text" class="form-control" id="mber_id" value="010-1234-5678" maxlength="13">
 				      </div>
 			      
 			        <label for="mber_email" class="col-md-2 text-right" style="padding-top: 7px;">이메일</label>
 				      <div class="col-md-4">
-				        <input type="text" class="form-control" id="mber_birth">
+				        <input type="text" class="form-control" id="mber_birth" value="ddit@ddit.or.kr">
 				      </div>
 			    </div>
 
 				<div class="row" style="margin-bottom: 20px;">
 			        <label for="mber_adres" class="col-md-2 text-right">주소</label>
 			          <div class="col-md-7">
-			            <input type="text" class="form-control" id="mber_adres">
+			            <input type="text" class="form-control" id="mber_adres" id="mber_adres" value="대전 중구 계룡로 846">
 			          </div>
 			          <div class="col-md-2">
-			          <button type="button" onclick="address_go();" class="btn btn-block btn-secondary" style="background-color: #5bbc71; border-color: #5bbc71">주소검색</button>
+			          <button type="button" onclick="address_go();" class="btn btn-block btn-secondary" style="background-color: #5b6f90;">주소검색</button>
 			          </div>
 			   </div>
 			   
 			    <div class="row">
-				    <div class="col-md-9"></div>
+				    <div class="col-md-7"></div>
 				    
 				    <div class="col-md-2">
-				   		<button type="button" class="btn btn-block btn-secondary" style="background-color: #5bbc71; border-color: #5bbc71;">등록</button>
+				   		<button type="button" class="btn btn-block btn-secondary" style="background-color: #5b6f90;">취소</button>
+				    </div>
+				    <div class="col-md-2">
+				   		<button type="button" class="btn btn-block btn-secondary" style="background-color: #5b6f90;">수정</button>
 				    </div>
 			    </div>
 			    

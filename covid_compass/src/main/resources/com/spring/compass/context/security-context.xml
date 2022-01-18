@@ -46,6 +46,10 @@
 	<beans:bean id="loginSuccessHandler"
 				class="com.spring.compass.security.LoginSuccessHandler"
 				p:mberService-ref="mberService"
+				p:inspService-ref="inspService"
+				p:pbhtService-ref="pbhtService"
+				p:hsptService-ref="hsptService"
+				p:ltctService-ref="ltctService"
 				p:defaultTargetUrl="/common/set-session"
 	/>
 	

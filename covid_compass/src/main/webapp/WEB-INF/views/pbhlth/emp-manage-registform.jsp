@@ -10,8 +10,8 @@
 </style>
 <body>
 	<div class="card card-success">
-	<div class="register-card-body"> 
-		<div class="card-header" style="background-color: #5bbc71; color:white;">
+	<div class="register-card-body pb-0"> 
+		<div class="card-header" style="background-color: #1a4f72; color:white;">
 			<h3 class="card-title">직원등록</h3>
 		</div>
 	</div>
@@ -71,7 +71,8 @@
 				style="padding-top: 7px;">주소</label>
 			<div class="col-sm-9">
 				<input name="pstiNm" type="text" class="form-control"
-					id="inputEmail3" value="${pstiNm }홍길동">
+					id="inputEmail3" value="${pstiNm }오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?">
+					
 			</div>
 		</div>
 		
@@ -81,7 +82,7 @@
 				style="padding-top: 7px;">소속기관</label>
 			<div class="col-sm-3">
 				<input name="pstiNm" type="text" class="form-control"
-					id="inputEmail3" value="서구보건소" readonly>
+					id="inputEmail3" value="대덕검사소" readonly>
 			</div>
 			<label for="inputEmail3" class="col-md-2 control-label text-right "
 				style="padding-top: 7px;">소속번호</label>
@@ -93,10 +94,10 @@
 		<div class="row" style="margin-bottom: 7px;">
 			<div class="col-md-7"></div>
 			<div class="col-md-2">
-			<button style="background-color: #5bbc71;border-color: #5bbc71;" type="button" class="btn btn-block btn-primary btn-sm">등록</button>
+			<button style="background-color: #1a4f72;border-color: #1a4f72;" type="button" class="btn btn-block btn-primary btn-sm">등록</button>
 			</div>
 			<div class="col-md-2">
-			<button style="background-color: #5bbc71;border-color: #5bbc71;" type="button" class="btn btn-block btn-primary btn-sm">취소</button>
+			<button style="background-color: #1a4f72;border-color: #1a4f72;" type="button" class="btn btn-block btn-primary btn-sm">취소</button>
 			</div>
 		</div>
 	</div>

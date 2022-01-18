@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Psti-Mapper">
+
+<sql id="Allsearch">
+	<if test="!keyword.equals('') and keyword!=null">
+		and (			
+			inst_nm like '%'||#{keyword}||'%'     
+		OR	inst_adres  like '%'||#{keyword}||'%'
+		OR	inst_telno  like '%'||#{keyword}||'%'
+		)
+	</if>
+</sql>
+
+<select id="selectPstiNextVal" resultType="java.lang.Integer">
+SELECT 
+		PSTI_SEQ.NEXTVAL AS PSTI_NO
+	  FROM DUAL
+</select>
+
+<select id="selectPstiCityNo" parameterType="java.lang.String" resultType="java.lang.String">
+	SELECT 
+		CODE_NM2 
+	FROM 
+		CMMN_CODE 
+	WHERE 
+		CODE_NM1=#{city}
+</select>
+
+<select id="selectInspList" parameterType="com.spring.compass.command.SearchCriteria" resultType="com.spring.compass.vo.InspVO">
+SELECT
+    insp_no
+   ,pbht_no
+   ,inst_no
+   ,inst_nm
+   ,inst_adres
+   ,inst_telno
+   ,emp_cnt
+   ,rmnd_kit_cnt
+   ,area_no
+FROM
+    insp
+    where insp_no is not null
+    <include refid="Allsearch" />
+
+</select>
+
+<select id="selectSearchInspListCount" parameterType="com.spring.compass.command.SearchCriteria" resultType="java.lang.Integer">
+		select
+		count(*)
+		from
+		insp
+		where insp_no is not null  			  	
+		<include refid="Allsearch" />
+
+</select>
+
+
+
+<update id="registPsti" parameterType="com.spring.compass.vo.PstiVO">
+INSERT INTO psti (
+    psti_no
+   ,insp_no
+   ,psti_nm
+   ,rrn
+   ,gender
+   ,pregn_yn
+   ,nlty
+   ,psti_telno
+   ,psti_adres
+   ,job_code
+   ,fever_yn
+   ,symptms
+   ,vac_code
+   ,wrt_ymd
+   ,del_ymd
+   ,rechkd_yn
+   ,chkd_yn
+   ,manage_no
+   ,area_no
+) VALUES (
+    #{pstiNo}
+   ,#{inspNo}           
+   ,#{pstiNm}  
+   ,#{rrn}    
+   ,#{gender}    
+   ,#{pregnYn}   
+   ,#{nlty} 
+   ,#{pstiTelno}   
+   ,#{pstiAdres}
+   ,#{jobCode}  
+   ,#{feverYn}
+   ,#{symptms}
+   ,#{vacCode}
+   ,sysdate   
+   ,sysdate + (INTERVAL '1' DAY)
+   ,#{rechkdYn}   
+   ,#{chkdYn}  
+   ,null
+   ,#{areaNo}
+)
+
+
+</update>
+
+
+
+
+<select id="selectPstiByPstiNo" parameterType="java.lang.String"
+	resultType="com.spring.compass.vo.PstiVO">
+SELECT
+    psti_no
+   ,insp_no
+   ,psti_nm
+   ,rrn
+   ,gender
+   ,pregn_yn
+   ,nlty
+   ,psti_telno
+   ,psti_adres
+   ,job_code
+   ,fever_yn
+   ,symptms
+   ,vac_code
+   ,wrt_ymd
+   ,del_ymd
+   ,rechkd_yn
+   ,chkd_yn
+   ,manage_no
+FROM
+    psti
+WHERE
+	psti_no = #{pstiNo}
+</select>
+
+<select id="selectVPstiByPstiNo" parameterType="java.lang.String"
+		resultType="com.spring.compass.command.VPstiCommand">
+SELECT
+    psti_no
+   ,insp_no
+   ,psti_nm
+   ,rrn
+   ,gender
+   ,pregn_yn
+   ,nlty
+   ,psti_telno
+   ,psti_adres
+   ,job_code
+   ,fever_yn
+   ,symptms
+   ,vac_code
+   ,wrt_ymd
+   ,del_ymd
+   ,rechkd_yn
+   ,chkd_yn
+   ,manage_no
+   ,bir
+   ,age
+FROM
+    v_psti
+WHERE
+	psti_no = #{pstiNo}
+</select>
+
+<select id="selectVPstiByManageNo" parameterType="java.lang.String"
+		resultType="com.spring.compass.command.VPstiCommand">
+SELECT
+    psti_no
+   ,insp_no
+   ,psti_nm
+   ,rrn
+   ,gender
+   ,pregn_yn
+   ,nlty
+   ,psti_telno
+   ,psti_adres
+   ,job_code
+   ,fever_yn
+   ,symptms
+   ,vac_code
+   ,wrt_ymd
+   ,del_ymd
+   ,rechkd_yn
+   ,chkd_yn
+   ,manage_no
+   ,bir
+   ,age
+FROM
+    v_psti
+WHERE
+	manage_no = #{manageNo}
+</select>
+
+<select id="selectVSmplResultByManageNo" parameterType="java.lang.String"
+		resultType="com.spring.compass.vo.SmplResultVO">
+SELECT
+    smpl_no
+   ,pbht_no
+   ,inst_no
+   ,manage_no
+   ,chkd_yn
+   ,req_ymd
+   ,pstv_yn
+   ,res_ymd
+FROM
+    v_smpl_result
+where
+    manage_no = #{manageNo}
+</select>
+
+<select id="selectVSmplResultBySmplNo" parameterType="java.lang.String"
+		resultType="com.spring.compass.vo.SmplResultVO">
+SELECT
+    smpl_no
+   ,pbht_no
+   ,inst_no
+   ,manage_no
+   ,chkd_yn
+   ,req_ymd
+   ,pstv_yn
+   ,res_ymd
+FROM
+    v_smpl_result
+where
+    smpl_no = #{smplNo}
+</select>
+
+<select id="selectVDgnssResultByDgnssNo" parameterType="java.lang.String"
+		resultType="com.spring.compass.vo.DgnssResultVO">
+SELECT
+    dgnss_no
+   ,hspt_no
+   ,type
+   ,child_no
+   ,manage_no
+   ,req_ymd
+   ,dgnss_code
+   ,cancle_ymd
+   ,dgnss_result_code
+   ,res_ymd
+   ,dgnss_note
+FROM
+    v_dgnss_result
+WHERE
+	dgnss_no = #{dgnssNo}
+</select>
+<select id="selectVDgnssResultByManageNo" parameterType="java.lang.String"
+		resultType="com.spring.compass.vo.DgnssResultVO">
+SELECT
+    dgnss_no
+   ,hspt_no
+   ,type
+   ,child_no
+   ,manage_no
+   ,req_ymd
+   ,dgnss_code
+   ,cancle_ymd
+   ,dgnss_result_code
+   ,res_ymd
+   ,dgnss_note
+FROM
+    v_dgnss_result
+WHERE
+	manage_no = #{manageNo}
+</select>
+
+
+<select id="selectPstiByManageNo" parameterType="java.lang.String"
+	resultType="com.spring.compass.vo.PstiVO">
+SELECT
+    psti_no
+   ,insp_no
+   ,psti_nm
+   ,rrn
+   ,gender
+   ,pregn_yn
+   ,nlty
+   ,psti_telno
+   ,psti_adres
+   ,job_code
+   ,fever_yn
+   ,symptms
+   ,vac_code
+   ,wrt_ymd
+   ,del_ymd
+   ,rechkd_yn
+   ,chkd_yn
+   ,manage_no
+FROM
+    psti
+WHERE
+	manage_no = #{manageNo}
+</select>
+<select id="selectPstiListByInspNo" parameterType="java.lang.String"
+	resultType="com.spring.compass.vo.PstiVO">
+SELECT
+    psti_no
+   ,insp_no
+   ,psti_nm
+   ,rrn
+   ,gender
+   ,pregn_yn
+   ,nlty
+   ,psti_telno
+   ,psti_adres
+   ,job_code
+   ,fever_yn
+   ,symptms
+   ,vac_code
+   ,wrt_ymd
+   ,del_ymd
+   ,rechkd_yn
+   ,chkd_yn
+   ,manage_no
+FROM
+    psti
+WHERE
+	insp_no = #{inspNo}
+ORDER BY
+	wrt_ymd desc
+</select>
+
+</mapper>
+
+

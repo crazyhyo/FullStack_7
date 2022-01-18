@@ -1,0 +1,106 @@
+package com.spring.compass.dao;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import org.apache.ibatis.session.SqlSession;
+
+import com.spring.compass.command.DgnssListSearchCommand;
+import com.spring.compass.command.DgnssListVO;
+import com.spring.compass.command.InptntListSearchCommand;
+import com.spring.compass.command.InptntListVO;
+import com.spring.compass.command.ReqInptntListCommand;
+import com.spring.compass.vo.HsptStatsVO;
+import com.spring.compass.vo.HsptVO;
+
+public class HsptDAOImpl implements HsptDAO{
+
+	private String nameSpace = "Hspt-Mapper.";
+
+	private SqlSession sqlSession;
+	public void setSqlSession(SqlSession sqlSession) {
+		this.sqlSession = sqlSession;
+	}
+
+	@Override
+	public HsptVO selectHsptByInstNo(String instNo) throws SQLException {
+		HsptVO hspt = sqlSession.selectOne(nameSpace + "selectHsptByInstNo", instNo);
+		return hspt;
+	}
+
+	@Override
+	public int selectInptntListCount(InptntListSearchCommand cri) throws SQLException {
+		int inptntCnt = sqlSession.selectOne(nameSpace + "selectInptntListCount", cri);
+		return inptntCnt;
+	}
+
+	@Override
+	public List<InptntListVO> selectInptntList(InptntListSearchCommand cri) throws SQLException {
+		List<InptntListVO> inptntList = sqlSession.selectList(nameSpace + "selectInptntList", cri);
+		return inptntList;
+	}
+
+	@Override
+	public String selectHsptCityNo(String city) throws SQLException {
+		String cityNo = sqlSession.selectOne(nameSpace+"selectHsptCityNo",city);
+		return cityNo;
+	}
+
+	@Override
+	public int selectHsptNextVal() throws SQLException {
+		int hsptSeq = sqlSession.selectOne(nameSpace+"selectHsptNextVal");
+		return hsptSeq;
+	}
+
+	@Override
+	public int selectInstNextval() throws SQLException {
+		int instSeq = sqlSession.selectOne(nameSpace+"selectInstNextval");
+		return instSeq;
+	}
+
+	@Override
+	public int insertHspt(HsptVO hspt) throws SQLException {
+		int result = sqlSession.update(nameSpace+"insertHspt", hspt);
+
+		return result;
+	}
+
+	@Override
+	public int insertInst(HsptVO hspt) throws SQLException {
+		int result = sqlSession.update(nameSpace+"insertInst",hspt);
+
+		return result;
+	}
+	@Override
+	public List<DgnssListVO> selectDgnssList(DgnssListSearchCommand cri) throws SQLException {
+		List<DgnssListVO> dgnssReqList = sqlSession.selectList(nameSpace + "selectDgnssList", cri);
+		return dgnssReqList;
+	}
+
+	@Override
+	public int selectDgnssListCount(DgnssListSearchCommand cri) throws SQLException {
+		int dgnssReqCnt = sqlSession.selectOne(nameSpace + "selectDgnssListCount", cri);
+		return dgnssReqCnt;
+	}
+
+	@Override
+	public HsptStatsVO selectHsptStats(String statsNo) throws SQLException {
+		HsptStatsVO stats = sqlSession.selectOne(nameSpace + "selectHsptStats", statsNo);
+		return stats;
+	}
+
+	@Override
+	public int selectSckbdreqListCount(InptntListSearchCommand cri) throws SQLException {
+		int reqInptntCnt = sqlSession.selectOne(nameSpace + "selectSckbdreqListCount", cri);
+		return reqInptntCnt;
+	}
+
+	@Override
+	public List<ReqInptntListCommand> selectSckbdreqList(InptntListSearchCommand cri)
+			throws SQLException {
+		List<ReqInptntListCommand> reqInptntList = sqlSession.selectList(nameSpace + "selectSckbdreqList", cri);
+		return reqInptntList;
+	}
+
+
+}

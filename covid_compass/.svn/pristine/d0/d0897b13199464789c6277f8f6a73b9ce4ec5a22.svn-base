@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Admin-Mapper">
+
+<select id="selectAllInsp" resultType="com.spring.compass.vo.InspVO">
+			SELECT 
+                INSP_NO,
+                PBHT_NO,
+                INST_NO,
+                INST_NM,
+                INST_ADRES,
+                INST_TELNO,
+                EMP_CNT,
+                RMND_KIT_CNT,
+                AREA_NO
+            FROM INSP
+</select>
+
+<select id="selectAllPbht" resultType="com.spring.compass.vo.PbhtVO">
+			SELECT 
+                PBHT_NO,
+                INST_NO,
+                INST_NM,
+                INST_ADRES,
+                INST_TELNO,
+                EMP_CNT,
+                AREA_NO
+            FROM PBHT
+</select>
+
+<select id="selectAllHspt" resultType="com.spring.compass.vo.HsptVO">
+			SELECT 
+                HSPT_NO,
+                INST_NO,
+                INST_NM,
+                INST_ADRES,
+                INST_TELNO,
+                EMP_CNT,
+                SCKBD_CNT,
+                RMND_SCKBD_CNT,
+                AREA_NO
+            FROM HSPT
+</select>
+
+<select id="selectAllLtct" resultType="com.spring.compass.vo.LtctVO">
+			SELECT 
+                LTCT_NO,
+                INST_NO,
+                INST_NM,
+                INST_ADRES,
+                INST_TELNO,
+                EMP_CNT,
+                SCKBD_CNT,
+                RMND_SCKBD_CNT,
+                AREA_NO
+            FROM LTCT
+</select>
+
+<update id="insertInst" parameterType="com.spring.compass.vo.InstVO">
+			INSERT INTO INST(
+                      INST_NO
+                     ,INST_CODE
+                     ,CHILD_NO
+                     ,INST_NM
+                     ,INST_TELNO
+                     ,INST_ADRES
+                    )
+              VALUES(
+                     #{instNo}
+                    ,#{instCode}
+                    ,#{childNo}
+                    ,#{instNm}
+                    ,#{instTelno}
+                    ,#{instAdres}
+                    
+                    )
+</update>
+
+
+
+
+</mapper>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+	
+	<bean id="instPath" class="java.lang.String">
+		<constructor-arg value="${inst.upload}"/>
+	</bean>
+	
+	<bean id="adminDAO" class="com.spring.compass.dao.AdminDAOImpl"
+		p:sqlSession-ref="sqlSession"
+	/>
+	
+	<!-- repository context(DAO) -->
+	<bean id="menuDAO" class="com.spring.compass.dao.MenuDAOImpl"
+		p:sqlSession-ref="sqlSession"
+	/>
+	<bean id="inspDAO" class="com.spring.compass.dao.InspDAOImpl"
+		p:sqlSession-ref="sqlSession"
+	/>
+	<bean id="pbhtDAO" class="com.spring.compass.dao.PbhtDAOImpl"
+		p:sqlSession-ref="sqlSession"
+	/>
+	<bean id="hsptDAO" class="com.spring.compass.dao.HsptDAOImpl"
+		p:sqlSession-ref="sqlSession"
+	/>
+	<bean id="ltctDAO" class="com.spring.compass.dao.LtctDAOImpl"
+		p:sqlSession-ref="sqlSession"
+	/>
+	<bean id="mberDAO" class="com.spring.compass.dao.MberDAOImpl"
+		p:sqlSession-ref="sqlSession"
+	/>
+	<bean id="pstiDAO" class="com.spring.compass.dao.PstiDAOImpl"
+		p:sqlSession-ref="sqlSession"
+	/>
+
+	<!-- service context(service) -->
+	<bean id="menuService" class="com.spring.compass.service.MenuServiceImpl"
+		p:menuDAO-ref="menuDAO"
+	/>
+	<bean id="inspService" class="com.spring.compass.service.InspServiceImpl"
+		p:inspDAO-ref="inspDAO"
+	/>
+	<bean id="pbhtService" class="com.spring.compass.service.PbhtServiceImpl"
+		p:pbhtDAO-ref="pbhtDAO"
+	/>
+	
+	<bean id="ltctService" class="com.spring.compass.service.LtctServiceImpl"
+		p:ltctDAO-ref="ltctDAO"
+	/>
+	
+	
+	<bean id="hsptService" class="com.spring.compass.service.HsptServiceImpl"
+		p:hsptDAO-ref="hsptDAO"
+	/>
+	
+	
+	<bean id="mberService" class="com.spring.compass.service.MberServiceImpl"
+		  p:mberDAO-ref="mberDAO"
+	/>
+	<bean id="pstiService" class="com.spring.compass.service.PstiServiceImpl"
+		p:pstiDAO-ref="pstiDAO"
+	/>
+	
+	<bean id="adminService" class="com.spring.compass.service.AdminServiceImpl"
+		p:adminDAO-ref="adminDAO"
+	/>
+	
+	<bean id="pbhtServiceLKH" class="com.spring.compass.service.PbhtServiceImplLKH"
+		p:pbhtDAO-ref="pbhtDAO"
+	/>
+	
+	<bean id="ltctServiceLKH" class="com.spring.compass.service.LtctServiceImplLKH"
+		p:ltctDAO-ref="ltctDAO"
+	/>
+	
+	<bean id="hsptServiceLKH" class="com.spring.compass.service.HsptServiceImplLKH"
+		p:hsptDAO-ref="hsptDAO"
+		p:ltctDAO-ref="ltctDAO"
+		p:pbhtDAO-ref="pbhtDAO"
+	/>
+
+</beans>

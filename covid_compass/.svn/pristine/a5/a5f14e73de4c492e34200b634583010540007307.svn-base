@@ -1,0 +1,30 @@
+package com.spring.compass.command;
+
+import java.io.Serializable;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
+public class InspPstiListSearchCommand extends SearchCriteria implements Serializable{
+
+	public InspPstiListSearchCommand() {}
+	
+	public InspPstiListSearchCommand(int page, int perPageNum, String searchType, String keyword) {
+		super(page, perPageNum, searchType, keyword);
+	}
+	
+	private String inspNo = "";
+	
+	public String getInspNo() {
+		return inspNo;
+	}
+	
+	public void setInspNo(String inspNo) {
+		this.inspNo = inspNo;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);
+	}
+}

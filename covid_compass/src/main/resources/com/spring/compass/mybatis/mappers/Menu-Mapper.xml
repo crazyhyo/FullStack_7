@@ -12,24 +12,33 @@
 	
 	<select id="selectMenuByMenuNo" parameterType="java.lang.String" 
 			resultType="com.spring.compass.vo.MenuVO">
+
 SELECT
-    MENU_NO         ,MENU_URL       ,MENU_ICON
-   ,UPMENU_NO       ,MENU_ISNAV     ,MENU_LEVEL
-   ,MENU_NM
+    menu_no
+   ,menu_url
+   ,upmenu_no
+   ,menu_isnav
+   ,menu_level
+   ,menu_nm
+   ,menu_type
 FROM
-    MENU
-WHERE
+    menu
+    WHERE
     MENU_NO = #{menuNo}
 	</select>
 	
 	<select id="selectMenuList"
 			resultType="com.spring.compass.vo.MenuVO">
 SELECT
-    MENU_NO         ,MENU_URL       ,MENU_ICON
-   ,UPMENU_NO       ,MENU_ISNAV     ,MENU_LEVEL
-   ,MENU_NM
+    menu_no
+   ,menu_url
+   ,upmenu_no
+   ,menu_isnav
+   ,menu_level
+   ,menu_nm
+   ,menu_type
 FROM
-    MENU
+    menu
 WHERE
 	MENU_ISNAV = 1
 	</select>
@@ -37,17 +46,44 @@ WHERE
 	<select id="selectSubMenuList" parameterType="java.lang.String"
 			resultType="com.spring.compass.vo.MenuVO">
 SELECT
-    MENU_NO         ,MENU_URL       ,MENU_ICON
-   ,UPMENU_NO       ,MENU_ISNAV     ,MENU_LEVEL
-   ,MENU_NM
+    menu_no
+   ,menu_url
+   ,upmenu_no
+   ,menu_isnav
+   ,menu_level
+   ,menu_nm
+   ,menu_type
 FROM
-    MENU
+    menu
 WHERE
 	MENU_ISNAV = 1
 AND
 	UPMENU_NO = #{menuNo}
+ORDER BY
+	MENU_NO
 	</select>
 	
+<select id="selectEmpSubMenuList" parameterType="java.lang.String"
+		resultType="com.spring.compass.vo.MenuVO">
+SELECT
+    menu_no
+   ,menu_url
+   ,upmenu_no
+   ,menu_isnav
+   ,menu_level
+   ,menu_nm
+   ,menu_type
+FROM
+    menu
+WHERE
+	MENU_ISNAV = 1
+AND
+	UPMENU_NO = #{menuNo}
+AND
+	MENU_TYPE = 0
+ORDER BY
+	MENU_NO
+</select>
 </mapper>  
 
 

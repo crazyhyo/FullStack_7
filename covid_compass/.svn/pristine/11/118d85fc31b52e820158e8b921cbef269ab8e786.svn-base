@@ -1,0 +1,33 @@
+package com.spring.compass.service;
+
+import java.util.Map;
+
+import com.spring.compass.command.InspChckdPstiListCommand;
+import com.spring.compass.command.InspListVO;
+import com.spring.compass.command.InspPstiListSearchCommand;
+import com.spring.compass.vo.InspVO;
+
+public interface InspService {
+
+	public InspVO getInspByInstNo(String instNo) throws Exception;
+	
+	public String getInspCityNo(String city) throws Exception;
+	
+	public String getInspSeqNo() throws Exception;
+	
+	public String getInstSeqNo() throws Exception;
+	
+	public int registInsp(InspVO insp) throws Exception;
+	
+	public int registInst(InspVO insp) throws Exception;
+	
+	public Map<String, Object> getInspListPage(InspPstiListSearchCommand cri) throws Exception;
+	
+	public String getResponsibleAgency(String responsi) throws Exception;
+	
+	public InspListVO getPstiDetail(String pstiNo) throws Exception;
+	
+	public Map<String, Object> getInspChckdPstiListPage(InspPstiListSearchCommand cri) throws Exception;
+	
+	public Map<String, Object> getPstiResultListPage(InspPstiListSearchCommand cri) throws Exception;
+}

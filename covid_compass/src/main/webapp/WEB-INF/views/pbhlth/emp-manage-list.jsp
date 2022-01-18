@@ -8,15 +8,13 @@
 <title></title>
 
 <body>
-	
-	  <div class="card" style="margin:1px;" >
-		<div class="card-header center" style="background: #5bbc71; color: white;">
-			<h3 class="card-title">직원관리</h3>
-		</div>
-		<div class="card-body" style="height: 70px;">
+	<section class="content">
+	  <div class="card" style="margin:1px; margin-top: 13px;" >
+	  <div style="height: 725px;">
+		<div class="card-body" style="height: 70px; padding-bottom: 0px;">
 			<!-- search bar -->
-			<button type="button" class="btn btn-primary" style="background:#5bbc71;border:0px;width: 90px;"
-				onclick="OpenWindow('emp-manage-registform', '', 800,415)">등록</button>
+			<button type="button" class="btn btn-primary" style="background:#1a4f72;border:0px;width: 90px;"
+				onclick="OpenWindow('emp-manage-registform', '', 800,395)">등록</button>
 				
 			<div class="input-group  float-right" style="max-width:600px;">
 				<!-- sort num -->
@@ -44,7 +42,7 @@
 				<input class="form-control" type="text" name="keyword" placeholder="검색어를 입력하세요." value="${pageMaker.cri.keyword }" style="width: 18%;display: inline-block;"/>
 				<span class="input-group-append"> 
 					<button class="btn btn-primary" type="button" id="searchBtn" 
-						    style="background: #5bbc71; color: #ffffff; border-color: #5bbc71;
+						    style="background: #1a4f72; color: #ffffff; border-color: #1a4f72;
 						    	   display: inline-block;margin-bottom: 4px;margin-left: -7px;"
 						data-card-widget="search" onclick="">
 						<i class="fa fa-fw fa-search" ></i>
@@ -54,7 +52,7 @@
 		    </div>
 		</div>
 
-		<div class="table-responsive">
+		<div class="card-body table-responsive" style="padding-top: 0px;">
 			<table class="table table-hover text-nowrap" style="text-align: center;">
 				<thead>
 					<tr role="row">
@@ -69,6 +67,10 @@
 							aria-label="">전화번호</th>
 						<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
 							aria-label="">이메일</th>
+						<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+							aria-label="">주소</th>
+						<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
+							aria-label="">또잉</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -79,6 +81,9 @@
 								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
 						<td>010-1234-5678</td>
 						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
 					</tr>
 					<tr>
 						<td>test1</td>
@@ -87,6 +92,9 @@
 								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
 						<td>010-1234-5678</td>
 						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
 					</tr>
 					<tr>
 						<td>test1</td>
@@ -95,6 +103,9 @@
 								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
 						<td>010-1234-5678</td>
 						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
 					</tr>
 					<tr>
 						<td>test1</td>
@@ -103,6 +114,9 @@
 								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
 						<td>010-1234-5678</td>
 						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
 					</tr>
 					<tr>
 						<td>test1</td>
@@ -111,6 +125,9 @@
 								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
 						<td>010-1234-5678</td>
 						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
 					</tr>
 					<tr>
 						<td>test1</td>
@@ -119,6 +136,9 @@
 								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
 						<td>010-1234-5678</td>
 						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
 					</tr>
 					<tr>
 						<td>test1</td>
@@ -127,6 +147,9 @@
 								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
 						<td>010-1234-5678</td>
 						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
 					</tr>
 					<tr>
 						<td>test1</td>
@@ -135,6 +158,9 @@
 								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
 						<td>010-1234-5678</td>
 						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
 					</tr>
 					<tr>
 						<td>test1</td>
@@ -143,6 +169,9 @@
 								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
 						<td>010-1234-5678</td>
 						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
 					</tr>
 					<tr>
 						<td>test1</td>
@@ -151,16 +180,77 @@
 								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
 						<td>010-1234-5678</td>
 						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
 					</tr>
+					<tr>
+						<td>test1</td>
+						<td>홍길동</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
+						<td>010-1234-5678</td>
+						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
+					</tr>
+					<tr>
+						<td>test1</td>
+						<td>홍길동</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
+						<td>010-1234-5678</td>
+						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
+					</tr>
+					<tr>
+						<td>test1</td>
+						<td>홍길동</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
+						<td>010-1234-5678</td>
+						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
+					</tr>
+					<tr>
+						<td>test1</td>
+						<td>홍길동</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
+						<td>010-1234-5678</td>
+						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
+					</tr>
+					<tr>
+						<td>test1</td>
+						<td>홍길동</td>
+						<td class="dtr-control sorting_1" tabindex="0"><fmt:formatDate
+								value="${pstiReadyListVO.wrtYmd }" pattern="yyyy-MM-dd" />1990-11-15</td>
+						<td>010-1234-5678</td>
+						<td>kimchiman@kimchi.kim.chi</td>
+						<td>오리는 꽥꽥 모래알은 반짝 오늘 저녁은 뭘 먹지?</td>
+						<td><button type="button" class="btn btn-primary p-0" style="background:#1a4f72; border:0px;width: 56px;"
+								        onclick="">삭제</button></td>
+					</tr>
+				
 				</tbody>
 			</table>
+			</div>
+		</div>
+			<div class="card-footer clearfix" style="background: white; ">
+				<%@ include file="../template/list-footer.jsp"%>
+			</div>
 
 		</div>
-		<!-- /.table-responsive -->
-			<%@ include file="../template/list-footer.jsp" %>
-		</div>
+		</section>
 	
-	<!-- /.card-body -->
 
 
 </body>

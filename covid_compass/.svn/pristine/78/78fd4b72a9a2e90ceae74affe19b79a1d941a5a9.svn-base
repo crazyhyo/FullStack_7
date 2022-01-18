@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Psti-Mapper">
+
+
+<select id="selectPstiNextVal" resultType="java.lang.Integer">
+SELECT 
+		PSTI_SEQ.NEXTVAL AS PSTI_NO
+	  FROM DUAL
+</select>
+
+<select id="selectPstiCityNo" parameterType="java.lang.String" resultType="java.lang.String">
+	SELECT 
+		CODE_NM2 
+	FROM 
+		CMMN_CODE 
+	WHERE 
+		CODE_NM1=#{city}
+</select>
+
+<select id="selectInspList" resultType="com.spring.compass.vo.InspVO">
+SELECT
+    insp_no
+   ,pbht_no
+   ,inst_no
+   ,inst_nm
+   ,inst_adres
+   ,inst_telno
+   ,emp_cnt
+   ,rmnd_kit_cnt
+   ,area_no
+FROM
+    insp
+
+</select>
+
+
+
+<update id="registPsti" parameterType="com.spring.compass.vo.PstiVO">
+INSERT INTO psti (
+    psti_no
+   ,insp_no
+   ,psti_nm
+   ,rrn
+   ,gender
+   ,pregn_yn
+   ,nlty
+   ,psti_telno
+   ,psti_adres
+   ,job_code
+   ,fever_yn
+   ,symptms
+   ,vac_code
+   ,wrt_ymd
+   ,del_ymd
+   ,rechkd_yn
+   ,chkd_yn
+   ,manage_no
+   ,area_no
+) VALUES (
+    #{pstiNo}
+   ,#{inspNo}           
+   ,#{pstiNm}  
+   ,#{rrn}    
+   ,#{gender}    
+   ,#{pregnYn}   
+   ,#{nlty} 
+   ,#{pstiTelno}   
+   ,#{pstiAdres}
+   ,#{jobCode}  
+   ,#{feverYn}
+   ,#{symptms}
+   ,#{vacCode}
+   ,sysdate   
+   ,sysdate + (INTERVAL '1' DAY)
+   ,#{rechkdYn}   
+   ,#{chkdYn}  
+   ,null
+   ,#{areaNo}
+)
+
+
+</update>
+
+
+
+
+<select id="selectPstiByPstiNo" parameterType="java.lang.String"
+	resultType="com.spring.compass.vo.PstiVO">
+SELECT
+    psti_no
+   ,insp_no
+   ,psti_nm
+   ,rrn
+   ,gender
+   ,pregn_yn
+   ,nlty
+   ,psti_telno
+   ,psti_adres
+   ,job_code
+   ,fever_yn
+   ,symptms
+   ,vac_code
+   ,wrt_ymd
+   ,del_ymd
+   ,rechkd_yn
+   ,chkd_yn
+   ,manage_no
+FROM
+    psti
+WHERE
+	psti_no = #{pstiNo}
+</select>
+<select id="selectPstiByManageNo" parameterType="java.lang.String"
+	resultType="com.spring.compass.vo.PstiVO">
+SELECT
+    psti_no
+   ,insp_no
+   ,psti_nm
+   ,rrn
+   ,gender
+   ,pregn_yn
+   ,nlty
+   ,psti_telno
+   ,psti_adres
+   ,job_code
+   ,fever_yn
+   ,symptms
+   ,vac_code
+   ,wrt_ymd
+   ,del_ymd
+   ,rechkd_yn
+   ,chkd_yn
+   ,manage_no
+FROM
+    psti
+WHERE
+	manage_no = #{manageNo}
+</select>
+<select id="selectPstiListByInspNo" parameterType="java.lang.String"
+	resultType="com.spring.compass.vo.PstiVO">
+SELECT
+    psti_no
+   ,insp_no
+   ,psti_nm
+   ,rrn
+   ,gender
+   ,pregn_yn
+   ,nlty
+   ,psti_telno
+   ,psti_adres
+   ,job_code
+   ,fever_yn
+   ,symptms
+   ,vac_code
+   ,wrt_ymd
+   ,del_ymd
+   ,rechkd_yn
+   ,chkd_yn
+   ,manage_no
+FROM
+    psti
+WHERE
+	insp_no = #{inspNo}
+ORDER BY
+	wrt_ymd desc
+</select>
+
+</mapper>
+
+

@@ -1,0 +1,67 @@
+package com.spring.compass.service;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import com.spring.compass.dao.PstiDAO;
+import com.spring.compass.vo.InspVO;
+import com.spring.compass.vo.PstiVO;
+
+public class PstiServiceImpl implements PstiService{
+
+	private PstiDAO pstiDAO;
+	public void setPstiDAO(PstiDAO pstiDAO) {
+		this.pstiDAO = pstiDAO;
+	}
+	
+	@Override
+	public PstiVO getPstiByPstiNo(String pstiNo) throws Exception {
+		PstiVO psti = pstiDAO.selectPstiByPstiNo(pstiNo);
+		return psti;
+	}
+
+	@Override
+	public PstiVO getPstiByManageNo(String manageNo) throws Exception {
+		PstiVO psti = pstiDAO.selectPstiByManageNo(manageNo);
+		return psti;
+	}
+
+	@Override
+	public List<PstiVO> getPstiListByInspNo(String inspNo) throws Exception {
+		
+		List<PstiVO> pstiList = pstiDAO.selectPstiListByInspNo(inspNo);
+		
+		return pstiList;
+	}
+	
+	@Override
+	public int registPsti(PstiVO psti) throws Exception {
+		int cnt = pstiDAO.registPsti(psti);
+		return cnt;
+	}
+
+	@Override
+	public int getPstiNextVal() throws Exception {
+		
+		int instNo = pstiDAO.selectPstiNextVal();
+		
+		return instNo;
+	}
+
+	@Override
+	public String getPstiCityNo(String city) throws Exception {
+		
+		String cityNo = pstiDAO.selectPstiCityNo(city);
+		
+		return cityNo;
+	}
+
+	@Override
+	public List<InspVO> getinspList() throws Exception {
+		
+		List<InspVO> insp = pstiDAO.selectInspList();
+		
+		return insp;
+	}
+
+}

@@ -39,7 +39,7 @@ insp/notice-modifyform
 insp/notice-regist
 insp/notice-registform
 insp/notice-remove
-insp/psti-list 
+insp/psti-list
 insp/psti-regist
 insp/psti-registform
 insp/res-psti-list
@@ -82,3 +82,4 @@ pbhlth/res-smple-list
 pbhlth/statistics
 admin/instt-list
 admin/instt-registform
+admin/notice-list
