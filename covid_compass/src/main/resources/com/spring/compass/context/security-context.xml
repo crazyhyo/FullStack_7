@@ -21,6 +21,8 @@
 	<http use-expressions="true" pattern="/**">
 		<access-denied-handler error-page="/security/accessDenied"/>
 		
+		<intercept-url pattern="/**" access="permitAll" />
+		
 		<form-login login-page="/common/loginForm.do?error=1"
 					login-processing-url="/common/login.do"
 					username-parameter="mberId"

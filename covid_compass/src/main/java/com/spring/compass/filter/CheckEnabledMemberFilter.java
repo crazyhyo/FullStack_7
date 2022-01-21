@@ -40,6 +40,7 @@ public class CheckEnabledMemberFilter implements Filter{
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		
 		String requestURI = httpRequest.getRequestURI();
+		
 		String endPoint = requestURI.split("/")[requestURI.split("/").length-1];
 		
 		String result = "";

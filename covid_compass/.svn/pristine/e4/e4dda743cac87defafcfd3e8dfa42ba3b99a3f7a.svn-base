@@ -1,0 +1,577 @@
+package com.spring.compass.service;
+
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.spring.compass.command.DgnssListSearchCommand;
+import com.spring.compass.command.DgnssListVO;
+import com.spring.compass.command.DgnssSckbdreqCommand;
+import com.spring.compass.command.InptntListSearchCommand;
+import com.spring.compass.command.InptntListVO;
+import com.spring.compass.command.PageMaker;
+import com.spring.compass.command.ReqInptntListCommand;
+import com.spring.compass.command.SckbdreqLtctListCommand;
+import com.spring.compass.dao.HsptDAO;
+import com.spring.compass.dao.LtctDAO;
+import com.spring.compass.dao.PbhtDAO;
+import com.spring.compass.dao.PstiDAO;
+import com.spring.compass.vo.DgnssResultVO;
+import com.spring.compass.vo.HsptVO;
+import com.spring.compass.vo.InptntVO;
+import com.spring.compass.vo.IsoptntVO;
+import com.spring.compass.vo.LtctVO;
+import com.spring.compass.vo.ManageVO;
+import com.spring.compass.vo.PbhtVO;
+import com.spring.compass.vo.SckbdreqVO;
+import com.spring.compass.vo.SlfptntVO;
+import com.spring.compass.vo.SmplResultVO;
+
+public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLKH{
+	
+	
+	private PbhtDAO pbhtDAO;
+	private LtctDAO ltctDAO;
+	private HsptDAO hsptDAO;
+	
+	private PstiDAO pstiDAO;
+	
+	public void PstiDAO(PstiDAO pstiDAO) {
+		this.pstiDAO = pstiDAO;
+	}
+	
+	public void setHsptDAO(HsptDAO hsptDAO) {
+		this.hsptDAO = hsptDAO;
+	}
+	public void setPbhtDAO(PbhtDAO pbhtDAO) {
+		this.pbhtDAO = pbhtDAO;
+	}
+	public void setLtctDAO(LtctDAO ltctDAO) {
+		this.ltctDAO = ltctDAO;
+	}
+	@Override
+	public Map<String, Object> getDgnssList(DgnssListSearchCommand cri) throws SQLException {
+		Map<String, Object> dataMap = null;
+		
+		PageMaker pageMaker = null;
+		
+		pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		
+		int totalCount = hsptDAO.selectDgnssListCount(cri);
+		
+		System.out.println(totalCount);
+		
+		pageMaker.setTotalCount(totalCount);
+		
+		List<DgnssListVO> dgnssList = hsptDAO.selectDgnssList(cri);
+		
+		dataMap = new HashMap<String, Object>();
+		
+		System.out.println(pageMaker);
+		
+		for(int i = 0; i < dgnssList.size(); i++) {
+			
+			DgnssListVO dgnss = dgnssList.get(i);
+			if(dgnss.getType().equals("A")) {
+				String pbhtNo = dgnss.getChildNo();
+				PbhtVO pbht = pbhtDAO.selectPbhtByPbhtNo(pbhtNo);
+				dgnss.setPbhtNm(pbht.getInstNm());
+				
+				dgnss.setPbht(true);
+				
+			}else if(dgnss.getType().equals("B")) {
+				String ltctNo = dgnss.getChildNo();
+				LtctVO ltct = ltctDAO.selectLtctByLtctNo(ltctNo);
+				dgnss.setLtctNm(ltct.getInstNm());
+				dgnss.setPbht(false);
+			}
+			
+			dgnssList.set(i, dgnss);
+		}
+		for(DgnssListVO dgnss : dgnssList) {
+			System.out.println(dgnss);
+		}
+		dataMap.put("dgnssList", dgnssList);
+		dataMap.put("pageMaker", pageMaker);
+		return dataMap;
+	}
+	@Override
+	public Map<String, Object> getReqInptntList(InptntListSearchCommand cri) throws Exception {
+		Map<String, Object> dataMap = null;
+		
+		PageMaker pageMaker = null;
+		
+		pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		
+		int totalCount = hsptDAO.selectReqInptntListCount(cri);
+		
+		System.out.println(totalCount);
+		
+		pageMaker.setTotalCount(totalCount);
+		
+		List<ReqInptntListCommand> reqInptntList = hsptDAO.selectReqInptntList(cri);
+		dataMap = new HashMap<String, Object>();
+		
+		for(ReqInptntListCommand reqInptnt : reqInptntList) {
+			System.out.println(reqInptnt);
+		}
+		
+		dataMap.put("reqInptntList", reqInptntList);
+		dataMap.put("pageMaker", pageMaker);
+		return dataMap;
+	}
+	@Override
+	public Map<String, Object> getInptntList(InptntListSearchCommand cri) throws Exception {
+
+		Map<String, Object> dataMap = null;
+
+		PageMaker pageMaker = null;
+
+		pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+
+
+		System.out.println(hsptDAO == null);
+
+
+		int totalCount = hsptDAO.selectInptntListCount(cri);
+
+		System.out.println(totalCount);
+
+		pageMaker.setTotalCount(totalCount);
+
+		List<InptntListVO> inptntList = hsptDAO.selectInptntList(cri);
+
+		dataMap = new HashMap<String, Object>();
+
+		dataMap.put("inptntList", inptntList);
+		dataMap.put("pageMaker", pageMaker);
+
+		System.out.println(pageMaker);
+
+		for(InptntListVO inptnt : inptntList) {
+			System.out.println(inptnt);
+		}
+
+		return dataMap;
+	}
+	@Override
+	public Map<String, Object> getSckbdreqHsptList(InptntListSearchCommand cri) throws Exception {
+
+		Map<String, Object> dataMap = null;
+
+		PageMaker pageMaker = null;
+
+		pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+
+		int totalCount = hsptDAO.selectSckbdReqHsptListCount(cri);
+
+		System.out.println(totalCount);
+
+		pageMaker.setTotalCount(totalCount);
+
+		List<ReqInptntListCommand> sckbdreqList = hsptDAO.selectSckbdReqHsptList(cri);
+
+		dataMap = new HashMap<String, Object>();
+
+		dataMap.put("sckbdreqList", sckbdreqList);
+		dataMap.put("pageMaker", pageMaker);
+
+		System.out.println(pageMaker);
+
+		for(ReqInptntListCommand sckbdreq : sckbdreqList) {
+			System.out.println(sckbdreq);
+		}
+
+		return dataMap;
+	}
+	@Override
+	public Map<String, Object> getSckbdreqLtctList(InptntListSearchCommand cri) throws Exception {
+		Map<String, Object> dataMap = null;
+
+		PageMaker pageMaker = null;
+
+		pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+
+		int totalCount = hsptDAO.selectSckbdReqLtctListCount(cri);
+
+		System.out.println(totalCount);
+
+		pageMaker.setTotalCount(totalCount);
+
+		List<SckbdreqLtctListCommand> sckbdreqList = hsptDAO.selectSckbdReqLtctList(cri);
+
+		dataMap = new HashMap<String, Object>();
+
+		dataMap.put("sckbdreqList", sckbdreqList);
+		dataMap.put("pageMaker", pageMaker);
+
+		System.out.println(pageMaker);
+
+		for(SckbdreqLtctListCommand sckbdreq : sckbdreqList) {
+			System.out.println(sckbdreq);
+		}
+
+		return dataMap;
+	}
+	
+	@Override
+	public HsptVO getHsptByHsptNo(String hsptNo) throws Exception {
+		HsptVO hspt = hsptDAO.selectHsptByHsptNo(hsptNo);
+		return hspt;
+	}
+
+	@Override
+	public String registInptntDirectlyByDgnss(DgnssResultVO dgnssResult, HsptVO hspt) throws Exception {
+		// 보건소에서 요청한 신규환자를 진료하고 바로 입원시키는 메서드
+		//-------------------------------------------------
+		// insert	inptnt				|	#{inpntNo} #{hsptNo} #{manageNo}
+		//			dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+		// update	manage				|	#{sttusCode} #{instNm} #{instNo} #{manageNo}
+		//			dgnss				|	#{dgnssNo}
+		//--------------------------------------------------
+		String msg = "success";
+		
+		// 1. 사전준비
+		String manageNo = dgnssResult.getManageNo();
+		String dgnssNo = dgnssResult.getDgnssNo();
+		
+		// 2. 진료 테이블 수정 #{dgnssNo}
+		hsptDAO.updateDgnssCodeChkd(dgnssNo);
+		
+		// 3. 진료결과 등록 #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+		hsptDAO.insertDgnssResult(dgnssResult);
+		
+		// 4. 입원환자 등록 #{inpntNo} #{hsptNo} #{manageNo}
+		String inptntNo = pstiDAO.selectInptntNextVal();
+	    String hsptNo = hspt.getHsptNo();
+		InptntVO inptnt = new InptntVO();
+		
+		inptnt.setInptntNo(inptntNo);
+		inptnt.setHsptNo(hsptNo);
+		inptnt.setManageNo(manageNo);
+		
+		hsptDAO.insertInptnt(inptnt);
+		
+		// 5. manage 테이블 수정 #{sttusCode} #{instNm} #{instNo} #{manageNo}
+		ManageVO manage = new ManageVO();
+		manage.setSttusCode("A105");
+		manage.setInstNm(hspt.getInstNm());
+		manage.setInstNo(hspt.getInstNo());
+		manage.setManageNo(manageNo);
+		
+		hsptDAO.updateManageChangeAll(manage);
+		
+		return msg;
+	}
+
+	@Override
+	public String registSckbdreqInptntDirectlyByDgnss(DgnssResultVO dgnssResult, HsptVO loginHspt, String toHsptNo)
+			throws Exception {
+		// 보건소에서 요청한 신규환자를 진료하고 이원신청하는 메서드
+		//-------------------------------------------------
+		// insert	sckbdreq			|	#{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo}
+		//			dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+		// update	manage				|	#{sttusCode} #{instNm} #{instNo} #{manageNo}
+		//			dgnss				|	#{dgnssNo}
+		//			hspt				|	#{hsptNo}
+		//			hspt				|	#{hsptNo}
+		//--------------------------------------------------
+		String msg = "success";
+		
+		// 1. 사전준비
+		String manageNo = dgnssResult.getManageNo();
+		String dgnssNo = dgnssResult.getDgnssNo();
+		
+		// 2. 진료 테이블 수정 #{dgnssNo}
+		hsptDAO.updateDgnssCodeChkd(dgnssNo);
+		
+		// 3. 진료결과 등록 #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+		hsptDAO.insertDgnssResult(dgnssResult);
+		
+		// 4. 병상신청 등록 #{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo}
+		String sckbdreqNo = pstiDAO.selectSckbdreqNextVal();
+		String type = "A";
+		String childNo = toHsptNo;
+	    String hsptNo = loginHspt.getHsptNo();
+
+	    SckbdreqVO sckbdreq = new SckbdreqVO();
+	    sckbdreq.setSckbdreqNo(sckbdreqNo);
+	    sckbdreq.setType(type);
+	    sckbdreq.setChildNo(childNo);
+	    sckbdreq.setHsptNo(hsptNo);
+	    sckbdreq.setManageNo(manageNo);
+	    
+		hsptDAO.insertSckbdreq(sckbdreq);
+		
+		// 5. 이원신청 병원 잔여병상 수정
+		hsptDAO.updateIncreaseRmndSckbdCntByHsptNo(hsptNo);
+		
+		// 6. 이원대상 병원 잔여병상 수정
+		hsptDAO.updateDecreaseRmndSckbdCntByHsptNo(toHsptNo);
+		
+		// 7. manage 테이블 수정  #{sttusCode} #{instNm} #{instNo} #{manageNo}
+		ManageVO manage = new ManageVO();
+		manage.setSttusCode("A110");
+		manage.setInstNm(loginHspt.getInstNm());
+		manage.setInstNo(loginHspt.getInstNo());
+		manage.setManageNo(manageNo);
+		
+		hsptDAO.updateManageChangeAll(manage);
+		
+		return msg;
+	}
+
+	@Override
+	public String registSckbdreqIsoptntDirectlyByDgnss(DgnssResultVO dgnssResult, HsptVO loginHspt, String toLtctNo)
+			throws Exception {
+		// 보건소에서 요청한 신규환자를 진료하고 입소신청하는 메서드
+		//-------------------------------------------------
+		// insert	sckbdreq			|	#{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo}
+		//			dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+		// update	manage				|	#{sttusCode} #{instNm} #{instNo} #{manageNo}
+		//			dgnss				|	#{dgnssNo}
+		//			hspt				|	#{hsptNo}
+		//			ltct				|	#{ltctNo}
+		//--------------------------------------------------	
+		String msg = "success";
+		
+		// 1. 사전준비
+		String manageNo = dgnssResult.getManageNo();
+		String dgnssNo = dgnssResult.getDgnssNo();
+		
+		// 2. 진료 테이블 수정 #{dgnssNo}
+		hsptDAO.updateDgnssCodeChkd(dgnssNo);
+		
+		// 3. 진료결과 등록 #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+		hsptDAO.insertDgnssResult(dgnssResult);
+		
+		// 4. 병상신청 등록 #{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo}
+		String sckbdreqNo = pstiDAO.selectSckbdreqNextVal();
+		String type = "B";
+		String childNo = toLtctNo;
+	    String hsptNo = loginHspt.getHsptNo();
+
+	    SckbdreqVO sckbdreq = new SckbdreqVO();
+	    sckbdreq.setSckbdreqNo(sckbdreqNo);
+	    sckbdreq.setType(type);
+	    sckbdreq.setChildNo(childNo);
+	    sckbdreq.setHsptNo(hsptNo);
+	    sckbdreq.setManageNo(manageNo);
+	    
+		hsptDAO.insertSckbdreq(sckbdreq);
+		
+		// 5. 입소신청 병원 잔여병상 수정
+		hsptDAO.updateIncreaseRmndSckbdCntByHsptNo(hsptNo);
+		
+		// 6. 입소대상 생활치료센터 잔여병상 수정
+		hsptDAO.updateDecreaseRmndSckbdCntByLtctNo(toLtctNo);
+		
+		// 7. manage 테이블 수정  #{sttusCode} #{instNm} #{instNo} #{manageNo}
+		ManageVO manage = new ManageVO();
+		manage.setSttusCode("A111");
+		manage.setInstNm(loginHspt.getInstNm());
+		manage.setInstNo(loginHspt.getInstNo());
+		manage.setManageNo(manageNo);
+		
+		hsptDAO.updateManageChangeAll(manage);
+		
+		return msg;
+	}
+
+	@Override
+	public String registSlfptntDirectlyByDgnss(DgnssResultVO dgnssResult) throws Exception {
+		// 보건소에서 요청한 신규환자를 진료하고 자가격리처리하는 메서드
+		//-------------------------------------------------
+		// insert	slfptnt				|	#{slfptntNo} #{pbhtNo} #{manageNo}
+		//			dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+		// update	manage				|	#{sttusCode} #{manageNo}
+		//			dgnss				|	#{dgnssNo}
+		//--------------------------------------------------	
+		String msg = "success";
+		
+		// 1. 사전준비
+		String manageNo = dgnssResult.getManageNo();
+		String dgnssNo = dgnssResult.getDgnssNo();
+		SmplResultVO smplResult = pstiDAO.selectVSmplResultByManageNo(manageNo);
+		String pbhtNo = smplResult.getPbhtNo();
+		
+		// 2. 진료 테이블 수정 #{dgnssNo}
+		hsptDAO.updateDgnssCodeChkd(dgnssNo);
+		
+		// 3. 진료결과 등록 #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+		hsptDAO.insertDgnssResult(dgnssResult);
+		
+		// 4. 자가격리자 등록 #{slfptntNo} #{pbhtNo} #{manageNo}
+		String slfptntNo = pstiDAO.selectSlfptntNextVal();
+		SlfptntVO slfptnt = new SlfptntVO();
+		slfptnt.setSlfptntNo(slfptntNo);
+		slfptnt.setPbhtNo(pbhtNo);
+		slfptnt.setManageNo(manageNo);
+		
+		hsptDAO.insertSlfptnt(slfptnt);
+
+		// 7. manage 테이블 수정 #{sttusCode} #{manageNo}
+		ManageVO manage = new ManageVO();
+		manage.setSttusCode("A107");
+		manage.setManageNo(manageNo);
+		
+		hsptDAO.updateManageChangeStatus(manage);
+		
+		return msg;
+	}
+
+	@Override
+	public String registDgnssResultByIsoptnt(DgnssResultVO dgnssResult) throws Exception {
+		// 생활치료센터에서 요청한 환자를 진료하고 별도의 사후처리를 하지 않는 메서드
+		//-------------------------------------------------
+		// insert	dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+		// update	dgnss				|	#{dgnssNo}
+		//--------------------------------------------------	
+		String msg = "success";
+		
+		// 1. 사전준비
+		String dgnssNo = dgnssResult.getDgnssNo();
+		
+		// 2. 진료 테이블 수정 #{dgnssNo}
+		hsptDAO.updateDgnssCodeChkd(dgnssNo);
+		
+		// 3. 진료결과 등록 #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+		hsptDAO.insertDgnssResult(dgnssResult);
+		
+		return msg;
+	}
+
+	@Override
+	public String registSckbdreqInptntByIsoptnt(DgnssResultVO dgnssResult, HsptVO loginHspt, String toHsptNo,
+			String fromLtctNo) throws Exception {
+		// 생활치료센터에서 요청한 환자를 진료하고 이원신청하는 메서드
+		//-------------------------------------------------
+		// insert	sckbdreq			|	#{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo}
+		//			dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+		// update	manage				|	#{sttusCode} #{instNm} #{instNo} #{manageNo}
+		//			dgnss				|	#{dgnssNo}
+		//			hspt				|	#{hsptNo}
+		//			ltct				|	#{ltctNo}
+		//			isoptnt				|	#{hsptlzCode} #{isoptntNo}
+		//--------------------------------------------------
+		String msg = "success";
+		
+		// 1. 사전준비
+		String manageNo = dgnssResult.getManageNo();
+		String dgnssNo = dgnssResult.getDgnssNo();
+		
+		// 2. 진료 테이블 수정 #{dgnssNo}
+		hsptDAO.updateDgnssCodeChkd(dgnssNo);
+		
+		// 3. 진료결과 등록 #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+		hsptDAO.insertDgnssResult(dgnssResult);
+		
+		// 4. 병상신청 등록 #{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo}
+		String sckbdreqNo = pstiDAO.selectSckbdreqNextVal();
+		String type = "A";
+		String childNo = toHsptNo;
+	    String hsptNo = loginHspt.getHsptNo();
+
+	    SckbdreqVO sckbdreq = new SckbdreqVO();
+	    
+	    sckbdreq.setSckbdreqNo(sckbdreqNo);
+	    sckbdreq.setType(type);
+	    sckbdreq.setChildNo(childNo);
+	    sckbdreq.setHsptNo(hsptNo);
+	    sckbdreq.setManageNo(manageNo);
+	    
+		hsptDAO.insertSckbdreq(sckbdreq);
+		
+		// 5. 이원대상 병원 잔여병상 수정
+		hsptDAO.updateIncreaseRmndSckbdCntByHsptNo(toHsptNo);
+		
+		// 6. 입소자 생활치료센터 잔여병상 수정
+		hsptDAO.updateDecreaseRmndSckbdCntByLtctNo(fromLtctNo);
+		
+		// 7. manage 테이블 수정  #{sttusCode} #{instNm} #{instNo} #{manageNo}
+		ManageVO manage = new ManageVO();
+		manage.setSttusCode("A110");
+		manage.setInstNm(loginHspt.getInstNm());
+		manage.setInstNo(loginHspt.getInstNo());
+		manage.setManageNo(manageNo);
+		
+		hsptDAO.updateManageChangeAll(manage);
+		
+		return msg;
+	}
+
+	@Override
+	public String registInptntByIsoptnt(DgnssResultVO dgnssResult, HsptVO loginHspt, String fromLtctNo)
+			throws Exception {
+		// 생활치료센터에서 진료요청한 환자를 진료하고 입원처리하는 메서드
+		//-------------------------------------------------
+		// insert	inptnt				|	#{inpntNo} #{hsptNo} #{manageNo}
+		//			dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+		// update	manage				|	#{sttusCode} #{instNm} #{instNo} #{manageNo}
+		//			dgnss				|	#{dgnssNo}
+		//			hspt				|	#{hsptNo}
+		//			ltct				|	#{ltctNo}
+		//			isoptnt				|	#{hsptlzCode} #{isoptntNo}
+		//--------------------------------------------------
+		String msg = "success";
+		
+		// 1. 사전준비
+		String manageNo = dgnssResult.getManageNo();
+		String dgnssNo = dgnssResult.getDgnssNo();
+		
+		// 2. 진료 테이블 수정 #{dgnssNo}
+		hsptDAO.updateDgnssCodeChkd(dgnssNo);
+		
+		// 3. 진료결과 등록 #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+		hsptDAO.insertDgnssResult(dgnssResult);
+		
+		// 4. 입원환자 등록 #{inpntNo} #{hsptNo} #{manageNo}
+		String inptntNo = pstiDAO.selectInptntNextVal();
+	    String hsptNo = loginHspt.getHsptNo();
+	    
+		InptntVO inptnt = new InptntVO();
+		
+		inptnt.setInptntNo(inptntNo);
+		inptnt.setHsptNo(hsptNo);
+		inptnt.setManageNo(manageNo);
+		
+		hsptDAO.insertInptnt(inptnt);
+		
+		// 5. 병원잔여병상 수정
+		hsptDAO.updateDecreaseRmndSckbdCntByHsptNo(hsptNo);
+		
+		// 6. 생활치료센터 잔여병상 수정
+		hsptDAO.updateIncreaseRmndSckbdCntByLtctNo(fromLtctNo);
+		
+		// 7. 입소자 상태 변경(퇴원처리) #{hsptlzCode} #{isoptntNo}
+		String isoptntNo = pstiDAO.selectIsoptntNextVal(); 
+		String hsptlzCode = "E103";
+		
+		IsoptntVO isoptnt = new IsoptntVO();
+		
+		isoptnt.setHsptlzCode(hsptlzCode);
+		isoptnt.setIsoptntNo(isoptntNo);
+		
+		hsptDAO.updateIsoptnt(isoptnt);
+		
+		// 8. manage 테이블 수정 #{sttusCode} #{instNm} #{instNo} #{manageNo}
+		ManageVO manage = new ManageVO();
+		manage.setSttusCode("A105");
+		manage.setInstNm(loginHspt.getInstNm());
+		manage.setInstNo(loginHspt.getInstNo());
+		manage.setManageNo(manageNo);
+		
+		hsptDAO.updateManageChangeAll(manage);
+		
+		return msg;
+	}
+
+	
+
+}

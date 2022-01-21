@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Pbht-Mapper">
+
+<sql id="search">
+	<if test="searchType == 'n'.toString()">
+		AND smpl_no like '%'||#{keyword}||'%'
+	</if>
+	<if test="searchType == 't'.toString()">
+		AND INST_NM like '%'||#{keyword}||'%'
+	</if>	
+	<if test="searchType == 's'.toString()">
+		AND psti_nm like '%'||#{keyword}||'%'
+	</if>	
+</sql>
+
+
+<select id="selectSmplList" parameterType="com.spring.compass.command.SmplSearchCommand" resultType="com.spring.compass.vo.SmplListVO">
+select
+    a.smpl_no
+   ,a.chkd_yn
+   ,a.req_ymd
+   ,c.inst_nm
+   ,a.manage_no
+from smpl a, psti b, insp c
+where a.pbht_no = #{pbhtNo}
+  and a.manage_no = b.manage_no
+  and b.insp_no = c.insp_no
+  and a.chkd_yn = 'N'
+   <include refid="search" />
+    
+</select>
+
+<select id="selectSearchSemplListCount" parameterType="com.spring.compass.command.SmplSearchCommand" resultType="java.lang.Integer">
+	select
+		count(*)
+		from
+		smpl
+		where pbht_no is not null
+          and pbht_no = #{pbhtNo}		  	
+          and chkd_yn = 'N'
+		<include refid="search" />
+
+</select>
+	
+
+<sql id="resultSerch">
+	<if test="typeCode == 'K102'.toString()">
+		AND SMPL_RES_CODE = #{typeCode}
+	</if>
+	<if test="typeCode == 'K103'.toString()">
+		AND SMPL_RES_CODE = #{typeCode}
+	</if>	
+</sql>
+
+
+
+<select id="selectSearchSemplResultListCount" parameterType="com.spring.compass.command.SmplSearchCommand" resultType="java.lang.Integer">
+	select
+		count(*)
+		from
+		smpl
+		where pbht_no is not null
+          and pbht_no = #{pbhtNo}		  	
+          and chkd_yn = 'Y'
+		 <include refid="resultSerch" />	
+</select>
+
+<select id="selectSearchSemplResultList" parameterType="com.spring.compass.command.SmplSearchCommand" resultType="com.spring.compass.vo.SmplResultVO">
+
+SELECT
+    A.smpl_no
+   ,C.psti_nm
+   ,D.INST_NM
+   ,A.REQ_YMD
+   ,B.RES_YMD
+   ,A.MANAGE_NO
+   ,a.SMPL_RES_CODE
+FROM
+    smpl A,  smpl_result B, psti C, insp D
+where A.smpl_no = B.smpl_no
+  and A.manage_no = c.manage_no
+  and c.insp_no = d.insp_no
+  and a.CHKD_YN = 'Y'
+  and A.PBHT_NO = #{pbhtNo}
+  <include refid="resultSerch" />	
+</select>
+
+
+
+
+
+
+
+
+
+<select id="selectPbhtByInstNo" parameterType="java.lang.String" resultType="com.spring.compass.vo.PbhtVO">
+SELECT
+    pbht_no
+   ,inst_no
+   ,inst_nm
+   ,inst_adres
+   ,inst_telno
+   ,emp_cnt
+FROM
+    pbht
+WHERE
+    inst_no = #{instNo}
+</select>
+<select id="selectPbhtByPbhtNo" parameterType="java.lang.String" resultType="com.spring.compass.vo.PbhtVO">
+SELECT
+    pbht_no
+   ,inst_no
+   ,inst_nm
+   ,inst_adres
+   ,inst_telno
+   ,emp_cnt
+   ,area_no
+FROM
+    pbht
+WHERE
+    pbht_no = #{pbhtNo}
+</select>
+
+<select id="selectPbhtCityNo" parameterType="java.lang.String" resultType="java.lang.String">
+	SELECT 
+	  	   CODE_NM2 
+	  FROM CMMN_CODE 
+	 WHERE CODE_NM1 = #{city}
+
+</select>
+
+<select id="selectPbhtNextVal" resultType="java.lang.Integer">
+	SELECT 
+		PBHT_SEQ.NEXTVAL AS PBHT_SEQ 
+	  FROM DUAL
+</select>
+
+<select id="selectInstNextval" resultType="java.lang.Integer">
+	SELECT
+		INST_SEQ.NEXTVAL AS INST_SEQ
+	  FROM DUAL
+</select>
+
+<update id="insertPbht" parameterType="com.spring.compass.vo.PbhtVO">
+	INSERT INTO PBHT(
+                 PBHT_NO
+                ,INST_NO
+                ,INST_NM
+                ,INST_ADRES
+                ,INST_TELNO
+                ,AREA_NO
+        )VALUES(
+                #{pbhtNo}
+               ,#{instNo}
+               ,#{instNm}
+               ,#{instAdres}
+               ,#{instTelno}
+               ,#{cityNo}
+        )
+</update>
+
+<update id="insertInst" parameterType="com.spring.compass.vo.PbhtVO">
+	INSERT INTO INST(
+                      INST_NO
+                     ,INST_CODE
+                     ,CHILD_NO
+                    )
+              VALUES(
+                     #{instNo}
+                    ,#{instCode}
+                    ,#{pbhtNo}
+                    )
+</update>
+
+
+</mapper>
+
+

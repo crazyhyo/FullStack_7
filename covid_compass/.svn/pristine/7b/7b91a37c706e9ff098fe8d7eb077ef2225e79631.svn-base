@@ -1,0 +1,109 @@
+package com.spring.compass.dao;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+
+import com.spring.compass.command.DgnssListSearchCommand;
+import com.spring.compass.command.DgnssListVO;
+import com.spring.compass.command.InptntListSearchCommand;
+import com.spring.compass.command.InptntListVO;
+import com.spring.compass.command.ReqInptntListCommand;
+import com.spring.compass.command.SckbdreqLtctListCommand;
+import com.spring.compass.vo.DgnssResultVO;
+import com.spring.compass.vo.HsptVO;
+import com.spring.compass.vo.InptntVO;
+import com.spring.compass.vo.IsoptntVO;
+import com.spring.compass.vo.ManageVO;
+import com.spring.compass.vo.SckbdreqVO;
+import com.spring.compass.vo.SlfptntVO;
+
+public interface HsptDAO {
+
+	public HsptVO selectHsptByInstNo(String instNo) throws SQLException;
+
+	public HsptVO selectHsptByHsptNo(String hsptNo) throws SQLException;
+
+	public int selectInptntListCount(InptntListSearchCommand cri) throws SQLException;
+
+	public List<InptntListVO> selectInptntList(InptntListSearchCommand cri) throws SQLException;
+
+	public String selectHsptCityNo(String city) throws SQLException;
+
+	public int selectHsptNextVal() throws SQLException;
+
+	public int selectInstNextval() throws SQLException;
+
+	public int insertHspt(HsptVO hspt) throws SQLException;
+
+	public int insertInst(HsptVO hspt) throws SQLException;
+	// 진료요청 목록을 보기 위한 메서드
+	public List<DgnssListVO> selectDgnssList(DgnssListSearchCommand cri) throws SQLException;
+	// 진료요청 목록을 보기 위한 메서드
+	public int selectDgnssListCount(DgnssListSearchCommand cri) throws SQLException;
+
+	// 승인대기 병상목록 개수
+	public int selectReqInptntListCount(InptntListSearchCommand cri) throws SQLException;
+	// 승인대기 병상목록
+	public List<ReqInptntListCommand> selectReqInptntList(InptntListSearchCommand cri) throws SQLException;
+
+	// 이원신청 목록
+	public List<ReqInptntListCommand> selectSckbdReqHsptList(InptntListSearchCommand cri) throws SQLException;
+
+	// 이원신청 수
+	public int selectSckbdReqHsptListCount(InptntListSearchCommand cri) throws SQLException;
+
+	// 입소신청 목록
+	public List<SckbdreqLtctListCommand> selectSckbdReqLtctList(InptntListSearchCommand cri) throws SQLException;
+
+	// 입소신청 수
+	public int selectSckbdReqLtctListCount(InptntListSearchCommand cri) throws SQLException;
+
+	
+	// businsess logic
+	
+	// 소속기관, sttusCode 모두 변경
+	// #{sttusCode} #{instNm} #{instNo} #{manageNo}
+	public int updateManageChangeAll(ManageVO manage) throws SQLException;
+	
+	// sttusCode만 변경
+	// #{sttusCode} #{manageNo}
+	public int updateManageChangeStatus(ManageVO manage) throws SQLException;
+	
+	// 소속기관만 변경, 이원신청 승인시 호출
+	// #{instNm} #{instNo} #{manageNo}
+	public int updateManageChangeInst(ManageVO manage) throws SQLException;
+	
+	// 진료결과 등록
+	// #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+	public int insertDgnssResult(DgnssResultVO dgnssResult) throws SQLException;
+	
+	// 입원환자 등록
+	// #{inpntNo} #{hsptNo} #{manageNo}
+	public int insertInptnt(InptntVO inptnt) throws SQLException;
+	
+	// 진료 테이블의 진료코드를 진료완료를 나타내는 G102로 바꿈
+	// #{dgnssNo}
+	public int updateDgnssCodeChkd(String dgnssNo) throws SQLException;
+	
+	// 병상신청 등록 이원신청과 입소신청 모두 이 메서드를 이용함
+	// #{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo}
+	public int insertSckbdreq(SckbdreqVO sckbdreq) throws SQLException;
+	
+	// 잔여병상수 1만큼 증가
+	// #{hsptNo}
+	public int updateIncreaseRmndSckbdCntByHsptNo(String hsptNo) throws SQLException;
+	
+	// 잔여병상수 1만큼 감소
+	// #{hsptNo}
+	public int updateDecreaseRmndSckbdCntByHsptNo(String hsptNo) throws SQLException;
+	
+	// 자가격리 환자 등록
+	// #{slfptntNo} #{pbhtNo} #{manageNo}
+	public int insertSlfptnt(SlfptntVO slfptnt) throws SQLException;
+
+	// 입소자 변경
+	// #{hsptlzCode} #{isoptntNo}
+	public int updateIsoptnt(IsoptntVO inptnt) throws SQLException;
+	
+}

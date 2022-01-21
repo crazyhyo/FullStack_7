@@ -1,0 +1,36 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!-- 확진자 조회 테이블 -->
+<!-- search bar -->
+<div class="card-body">
+	<div class="table-responsive">
+		<table class="table table-hover text-nowrap" style="text-align: center;">
+			<thead>
+				<tr role="row">
+					<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">시료고유번호</th>
+					<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">성명</th>
+					<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">요청기관</th>
+					<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">요청일자</th>
+					<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending">확정일자</th>
+					<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending">검사결과</th>
+
+				</tr>
+			</thead>
+			<tbody id="smpl-Result-list-y-table-tbody">
+
+			</tbody>
+		</table>
+		<div class="card-footer clearfix" style="background-color: white;">
+			<ul class="pagination justify-content-center m-0" id="inptnt-y-list-pagination-ul">
+			</ul>
+		</div>
+			<form id="jobForm"> 
+			  <input type='hidden' name="page" value="" />
+			  <input type='hidden' name="perPageNum" value=""/>
+			  <input type='hidden' name="searchType" value="" />
+			  <input type='hidden' name="keyword" value="" />
+			  <input type='hidden' name="typeCode" value="" />
+			</form>
+	</div>
+	<!-- /.table-responsive -->
+	<!-- /.card-body -->
+</div>

@@ -1,0 +1,67 @@
+package com.spring.compass.service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.spring.compass.command.PageMaker;
+import com.spring.compass.command.SmplSearchCommand;
+import com.spring.compass.dao.PbhtDAO;
+import com.spring.compass.vo.SmplVO;
+
+public class PbhtServiceImplLMY extends PbhtServiceImpl implements PbhtServiceLMY {
+
+	private PbhtDAO pbhtDAO;
+
+	public void setPbhtDAO(PbhtDAO pbhtDAO) {
+		this.pbhtDAO = pbhtDAO;
+	}
+
+	@Override
+	public Map<String, Object> getSmplList(SmplSearchCommand cri) throws Exception {
+
+		Map<String, Object> dataMap = null;
+
+		PageMaker pageMaker = null;
+
+		pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+
+		int totalCount = pbhtDAO.selectSearchSemplListCount(cri);
+
+		pageMaker.setTotalCount(totalCount);
+
+		List<SmplVO> smplList = pbhtDAO.selectSmplList(cri);
+
+		dataMap = new HashMap<String, Object>();
+
+		dataMap.put("smplList", smplList);
+		dataMap.put("pageMaker", pageMaker);
+
+		return dataMap;
+	}
+
+	@Override
+	public Map<String, Object> getSmplResultList(SmplSearchCommand cri) throws Exception {
+		Map<String, Object> dataMap = null;
+
+		PageMaker pageMaker = null;
+
+		pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+
+		int totalCount = pbhtDAO.selectSearchSemplResultListCount(cri);
+
+		pageMaker.setTotalCount(totalCount);
+
+		List<SmplVO> smplResultList = pbhtDAO.selectSearchSmplResultList(cri);
+
+		dataMap = new HashMap<String, Object>();
+		
+		dataMap.put("smplResultList", smplResultList);
+		dataMap.put("pageMaker", pageMaker);
+
+		return dataMap;
+	}
+
+}

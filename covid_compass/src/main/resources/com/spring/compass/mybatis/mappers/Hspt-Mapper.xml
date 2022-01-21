@@ -15,10 +15,28 @@
    ,emp_cnt
    ,sckbd_cnt
    ,rmnd_sckbd_cnt
+   ,area_no
 FROM
     hspt
 WHERE
     inst_no = #{instNo}
+</select>
+
+<select id="selectHsptByHsptNo" parameterType="java.lang.String" resultType="com.spring.compass.vo.HsptVO">
+    SELECT
+    hspt_no
+   ,inst_no
+   ,inst_nm
+   ,inst_adres
+   ,inst_telno
+   ,emp_cnt
+   ,sckbd_cnt
+   ,rmnd_sckbd_cnt
+   ,area_no
+FROM
+    hspt
+WHERE
+    hspt_no = #{hsptNo}
 </select>
 
 <select id="selectInptntListByHsptNo" parameterType="com.spring.compass.command.InptntListSearchCommand" resultType="com.spring.compass.vo.InptntVO">
@@ -36,16 +54,16 @@ WHERE
 </select>
 
 <select id="selectHsptCityNo" parameterType="java.lang.String" resultType="java.lang.String">
-	SELECT 
-	  	   CODE_NM2 
-	  FROM CMMN_CODE 
+	SELECT
+	  	   CODE_NM2
+	  FROM CMMN_CODE
 	 WHERE CODE_NM1 = #{city}
 
 </select>
 
 <select id="selectHsptNextVal" resultType="java.lang.Integer">
-	SELECT 
-		HSPT_SEQ.NEXTVAL AS HSPT_SEQ 
+	SELECT
+		HSPT_SEQ.NEXTVAL AS HSPT_SEQ
 	  FROM DUAL
 </select>
 
@@ -89,11 +107,11 @@ WHERE
 <select id="selectInptntListCount" parameterType="com.spring.compass.command.InptntListSearchCommand"
 		resultType="java.lang.Integer">
  SELECT  COUNT(A.INPTNT_NO)
-   FROM INPTNT A, CNFM B, V_PSTI_AGE C
+   FROM INPTNT A, CNFM B, V_PSTI_RECENT_MANAGE C
   WHERE A.MANAGE_NO = B.MANAGE_NO
         AND B.MANAGE_NO = C.MANAGE_NO
         AND A.HSPT_NO = #{hsptNo}
-                       
+
 	  <include refid="search"/>
 
 </select>
@@ -103,7 +121,7 @@ WHERE
 SELECT  RNUM
        ,INPTNT_NO,        CNFM_NO,         PSTI_NO
        ,IN_YMD,           NGTV_CNT,        PSTI_NM
-       ,AGE,              GENDER,          PSTI_TELNO 
+       ,AGE,              GENDER,          PSTI_TELNO
        ,MANAGE_NO
   FROM
         (
@@ -111,25 +129,25 @@ SELECT  RNUM
                         INPTNT_NO,        CNFM_NO,         PSTI_NO
                        ,IN_YMD,           NGTV_CNT,        PSTI_NM
                        ,AGE,              GENDER,          PSTI_TELNO
-                       ,MANAGE_NO     
-          FROM  
+                       ,MANAGE_NO
+          FROM
                 (
                 SELECT  C.INPTNT_NO,         B.CNFM_NO,          A.PSTI_NO
                        ,C.IN_YMD,            B.NGTV_CNT,         A.PSTI_NM
                        ,A.AGE,               A.GENDER,           A.PSTI_TELNO
                        ,C.MANAGE_NO
-                  FROM INPTNT C, CNFM B, V_PSTI_AGE A
+                  FROM INPTNT C, CNFM B, V_PSTI_RECENT_MANAGE A
                  WHERE C.MANAGE_NO = B.MANAGE_NO
                        AND B.MANAGE_NO = A.MANAGE_NO
                        AND C.HSPT_NO = #{hsptNo}
-                       
+
 					<include refid="search"/>
-                       
-                 ORDER BY A.IN_YMD DESC
+
+                 ORDER BY C.IN_YMD DESC
                 ) AA
         ) AAA
  WHERE AAA.RNUM BETWEEN #{startRowNum} AND #{endRowNum}
- 		
+
 </select>
 
 <sql id="search">
@@ -137,8 +155,8 @@ SELECT  RNUM
 		AND INSTR(A.PSTI_NM, #{keyword}) > 0
 	</if>
 	<if test="searchType == 't'.toString()">
-		AND INSTR(A.PSTI_TELNO, #{keyword}) > 0	
-	</if>	
+		AND INSTR(A.PSTI_TELNO, #{keyword}) > 0
+	</if>
 </sql>
 
 
@@ -150,7 +168,7 @@ SELECT RNUM, dgnss_no,    hspt_no,    type
            ,dgnss_code, cancle_ymd, PSTI_TELNO
            ,PSTI_NM,    vac_type,   PSTI_NO
            ,RRN,    BIR,    AGE
-  FROM 
+  FROM
 (
     SELECT  ROWNUM AS RNUM, dgnss_no,    hspt_no,    type
            ,child_no,   manage_no,  req_ymd
@@ -159,7 +177,7 @@ SELECT RNUM, dgnss_no,    hspt_no,    type
            ,RRN,    BIR,    AGE
       FROM
     (
-        SELECT     
+        SELECT
             A.dgnss_no
            ,A.hspt_no
            ,A.type
@@ -175,9 +193,9 @@ SELECT RNUM, dgnss_no,    hspt_no,    type
            ,B.RRN
            ,B.BIR
            ,B.AGE
-        FROM 
+        FROM
             DGNSS A
-           ,V_PSTI_AGE_BIR B
+           ,V_PSTI_RECENT_MANAGE B
          WHERE
             A.HSPT_NO = #{hsptNo}
             AND A.DGNSS_CODE IN ('G101', 'G104')
@@ -186,15 +204,15 @@ SELECT RNUM, dgnss_no,    hspt_no,    type
          ORDER BY A.REQ_YMD DESC
     )	AA
 )AAA
-WHERE AAA.RNUM BETWEEN #{startRowNum} AND #{endRowNum}    
+WHERE AAA.RNUM BETWEEN #{startRowNum} AND #{endRowNum}
 </select>
 <select id="selectDgnssListCount" parameterType="com.spring.compass.command.DgnssListSearchCommand"
 		resultType="java.lang.Integer">
-SELECT     
+SELECT
 	count(dgnss_no)
-FROM 
+FROM
     DGNSS A
-   ,V_PSTI_AGE_BIR B
+   ,V_PSTI_RECENT_MANAGE B
  WHERE
     A.HSPT_NO = #{hsptNo}
     AND A.DGNSS_CODE IN ('G101', 'G104')
@@ -207,13 +225,13 @@ FROM
 		AND INSTR(B.PSTI_NM, #{keyword}) > 0
 	</if>
 	<if test="searchType == 't'.toString()">
-		AND INSTR(B.PSTI_TELNO, #{keyword}) > 0	
-	</if>	
+		AND INSTR(B.PSTI_TELNO, #{keyword}) > 0
+	</if>
 </sql>
 
-<select id="selectSckbdreqListCount" parameterType="com.spring.compass.command.InptntListSearchCommand"
+<select id="selectReqInptntListCount" parameterType="com.spring.compass.command.InptntListSearchCommand"
 		resultType="java.lang.Integer">
-select count(sckbdreq_no)
+select 	count(sckbdreq_no)
   from sckbdreq a
        ,hspt b
        ,psti c
@@ -222,31 +240,16 @@ select count(sckbdreq_no)
        and a.type = 'A'
        and a.sckbdreq_code in ('H101', 'H102')
        and a.child_no = #{hsptNo}
-       
- 	   <include refid="sckbdListSearch"/>
-       
+	   <include refid="sckbdListSearch"/>
 order by a.sckbdreq_ymd desc
 </select>
 
-<sql id="sckbdListSearch">
-	<if test="searchType == 'n'.toString()">
-		AND INSTR(c.PSTI_NM, #{keyword}) > 0
-	</if>
-	<if test="searchType == 't'.toString()">
-		AND INSTR(c.PSTI_TELNO, #{keyword}) > 0	
-	</if>
-	<if test="searchType == 'h'.toString()">
-		AND INSTR(b.inst_nm, #{keyword}) > 0	
-	</if>
-</sql>
-
-
-<select id="selectSckbdreqList" parameterType="com.spring.compass.command.InptntListSearchCommand"
+<select id="selectReqInptntList" parameterType="com.spring.compass.command.InptntListSearchCommand"
 		resultType="com.spring.compass.command.ReqInptntListCommand">
-select	   rnum 
+select	   rnum
 		   sckbdreq_no,		type,		child_no
 		  ,hspt_no,			manage_no,	sckbdreq_ymd
-		  ,cancle_ymd,		sckbdreq_code,	hstp_nm
+		  ,cancle_ymd,		sckbdreq_code,	hspt_nm
 		  ,psti_no,			psti_nm,		psti_telno
 		  ,age
   from
@@ -254,14 +257,14 @@ select	   rnum
 			select rownum as rnum,
 				   sckbdreq_no,		type,		child_no
 				  ,hspt_no,			manage_no,	sckbdreq_ymd
-				  ,cancle_ymd,		sckbdreq_code,	hstp_nm
+				  ,cancle_ymd,		sckbdreq_code,	hspt_nm
 				  ,psti_no,			psti_nm,		psti_telno
 				  ,age
 			  from
 					(
 						select 	a.sckbdreq_no,		a.type,		 a.child_no
 						        ,a.hspt_no,			a.manage_no ,a.sckbdreq_ymd
-						        ,a.cancle_ymd      ,a.sckbdreq_code,	b.inst_nm as hstp_nm
+						        ,a.cancle_ymd      ,a.sckbdreq_code,	b.inst_nm as hspt_nm
 						        ,c.psti_no,         c.psti_nm,      c.psti_telno
 						        ,fn_get_age_by_psti_no(c.psti_no) as age
 						  from sckbdreq a
@@ -272,8 +275,8 @@ select	   rnum
 						       and a.type = 'A'
 						       and a.sckbdreq_code in ('H101', 'H102')
 						       and a.child_no = #{hsptNo}
- 	                          
-						       
+
+ 	   						   <include refid="sckbdListSearch"/>
 						order by a.sckbdreq_ymd desc
 					) a
 		) aa
@@ -304,8 +307,270 @@ SELECT
    ,avg_out_period
    ,stats_ymd
 FROM
-    hsptstats where HSPTSTATS_NO=#{hsptstatsNo}
+    hsptstats where HSPT_NO=#{hsptNo}
 </select>
+
+<select id="selectSckbdReqHsptListCount" parameterType="com.spring.compass.command.InptntListSearchCommand"
+		resultType="java.lang.Integer">
+select 	count(sckbdreq_no)
+  from sckbdreq a
+       ,hspt b
+       ,psti c
+ where a.hspt_no = b.hspt_no
+       and a.manage_no = c.manage_no
+       and a.type = 'A'
+       and a.hspt_no = #{hsptNo}
+	   <include refid="sckbdListSearch"/>
+order by a.sckbdreq_ymd desc
+</select>
+
+<select id="selectSckbdReqHsptList" parameterType="com.spring.compass.command.InptntListSearchCommand"
+		resultType="com.spring.compass.command.ReqInptntListCommand">
+select	   rnum
+		   sckbdreq_no,		type,		child_no
+		  ,hspt_no,			manage_no,	sckbdreq_ymd
+		  ,cancle_ymd,		sckbdreq_code,	hspt_nm
+		  ,psti_no,			psti_nm,		psti_telno
+		  ,age
+  from
+		(
+			select rownum as rnum,
+				   sckbdreq_no,		type,		child_no
+				  ,hspt_no,			manage_no,	sckbdreq_ymd
+				  ,cancle_ymd,		sckbdreq_code,	hspt_nm
+				  ,psti_no,			psti_nm,		psti_telno
+				  ,age
+			  from
+					(
+						select 	a.sckbdreq_no,		a.type,		 a.child_no
+						        ,a.hspt_no,			a.manage_no ,a.sckbdreq_ymd
+						        ,a.cancle_ymd      ,a.sckbdreq_code,	b.inst_nm as hspt_nm
+						        ,c.psti_no,         c.psti_nm,      c.psti_telno
+						        ,fn_get_age_by_psti_no(c.psti_no) as age
+						  from sckbdreq a
+                               ,hspt b
+						       ,psti c
+						 where a.child_no = b.hspt_no
+						       and a.manage_no = c.manage_no
+						       and a.type = 'A'
+                               and a.hspt_no = #{hsptNo}
+								<include refid="sckbdListSearch"/>
+						order by a.sckbdreq_ymd desc
+					) a
+		) aa
+ where  rnum between #{startRowNum} and #{endRowNum}
+</select>
+
+
+<select id="selectSckbdReqLtctListCount" parameterType="com.spring.compass.command.InptntListSearchCommand"
+		resultType="java.lang.Integer">
+	select 	count(sckbdreq_no)
+	  from sckbdreq a
+           ,ltct b
+	       ,psti c
+	 where a.child_no = b.ltct_no
+	       and a.manage_no = c.manage_no
+	       and a.type = 'B'
+           and a.hspt_no = #{hsptNo}
+		  <include refid="sckbdListSearch"/>
+	order by a.sckbdreq_ymd desc
+</select>
+
+<select id="selectSckbdReqLtctList" parameterType="com.spring.compass.command.InptntListSearchCommand"
+		resultType="com.spring.compass.command.SckbdreqLtctListCommand">
+select	   rnum
+		   sckbdreq_no,		type,		child_no
+		  ,hspt_no,			manage_no,	sckbdreq_ymd
+		  ,cancle_ymd,		sckbdreq_code,	ltct_nm
+		  ,psti_no,			psti_nm,		psti_telno
+		  ,age
+  from
+		(
+			select rownum as rnum,
+				   sckbdreq_no,		type,		child_no
+				  ,hspt_no,			manage_no,	sckbdreq_ymd
+				  ,cancle_ymd,		sckbdreq_code,	ltct_nm
+				  ,psti_no,			psti_nm,		psti_telno
+				  ,age
+			  from
+					(
+						select 	a.sckbdreq_no,		a.type,		 a.child_no
+						        ,a.hspt_no,			a.manage_no ,a.sckbdreq_ymd
+						        ,a.cancle_ymd      ,a.sckbdreq_code,	b.inst_nm as ltct_nm
+						        ,c.psti_no,         c.psti_nm,      c.psti_telno
+						        ,fn_get_age_by_psti_no(c.psti_no) as age
+						  from sckbdreq a
+                               ,ltct b
+						       ,psti c
+						 where a.child_no = b.ltct_no
+						       and a.manage_no = c.manage_no
+						       and a.type = 'B'
+                               and a.hspt_no = #{hsptNo}
+                               <include refid="sckbdListSearch"></include>
+						order by a.sckbdreq_ymd desc
+					) a
+		) aa
+ where  rnum between #{startRowNum} and #{endRowNum}
+</select>
+
+<sql id="sckbdListSearch">
+	<if test="searchType == 'n'.toString()">
+		AND INSTR(c.PSTI_NM, #{keyword}) > 0
+	</if>
+	<if test="searchType == 't'.toString()">
+		AND INSTR(c.PSTI_TELNO, #{keyword}) > 0
+	</if>
+	<if test="searchType == 'h'.toString()">
+		AND INSTR(b.inst_nm, #{keyword}) > 0
+	</if>
+</sql>
+
+
+<!-- CRUD 시작 -->
+<update id="updateManageChangeAll" parameterType="com.spring.compass.vo.ManageVO">
+UPDATE manage
+    SET
+        sttus_code = #{sttusCode},
+        update_ymd = sysdate,
+        inst_nm = #{instNm},
+        inst_no = #{instNo}
+WHERE
+    manage_no = #{manageNo}
+</update>
+
+<update id="updateManageChangeStatus" parameterType="com.spring.compass.vo.ManageVO">
+UPDATE manage
+    SET
+        sttus_code = #{sttusCode},
+        update_ymd = sysdate
+WHERE
+    manage_no = #{manageNo}
+</update>
+<update id="updateManageChangeInst" parameterType="com.spring.compass.vo.ManageVO">
+UPDATE manage
+    SET
+        update_ymd = sysdate,
+        inst_nm = #{instNm},
+        inst_no = #{instNo}
+WHERE
+    manage_no = #{manageNo}
+</update>
+
+<update id="insertDgnssResult" parameterType="com.spring.compass.vo.DgnssResultVO">
+INSERT INTO dgnss_result (
+    dgnss_no
+   ,dgnss_result_code
+   ,res_ymd
+   ,dgnss_note
+) VALUES (
+    #{dgnssNo}
+   ,#{dgnssResultCode}
+   ,sysdate
+   ,#{dgnssNote}
+)
+</update>
+<update id="insertInptnt" parameterType="com.spring.compass.vo.InptntVO">
+INSERT INTO inptnt (
+    inptnt_no
+   ,hspt_no
+   ,manage_no
+   ,in_ymd
+   ,out_ymd
+   ,hsptlz_code
+) VALUES (
+    #{inptntNo}
+   ,#{hsptNo}
+   ,#{manageNo}
+   ,sysdate
+   ,null
+   ,'E101'
+)
+</update>
+<update id="updateDgnssCodeChkd" parameterType="java.lang.String">
+UPDATE dgnss
+    SET
+        dgnss_code = 'G102'
+WHERE
+    dgnss_no = #{dgnssNo}
+</update>
+
+<update id="insertSckbdreq" parameterType="com.spring.compass.vo.SckbdreqVO">
+INSERT INTO sckbdreq (
+    sckbdreq_no
+   ,type
+   ,child_no
+   ,hspt_no
+   ,manage_no
+   ,sckbdreq_ymd
+   ,cancle_ymd
+   ,sckbdreq_code
+) VALUES (
+    #{sckbdreqNo}
+   ,#{type}
+   ,#{childNo}
+   ,#{hsptNo}
+   ,#{manageNo}
+   ,sysdate
+   ,sysdate + 1/4
+   ,'H101'
+)
+</update>
+
+<update id="updateIncreaseRmndSckbdCntByHsptNo" parameterType="java.lang.String">
+UPDATE hspt
+    SET
+        rmnd_sckbd_cnt = rmnd_sckbd_cnt + 1
+WHERE
+    hspt_no = #{hsptNo}
+</update>
+
+<update id="updateDecreaseRmndSckbdCntByHsptNo" parameterType="java.lang.String">
+UPDATE hspt
+    SET
+        rmnd_sckbd_cnt = rmnd_sckbd_cnt - 1
+WHERE
+    hspt_no = #{hsptNo}
+</update>
+
+<update id="updateDecreaseRmndSckbdCntByLtctNo" parameterType="java.lang.String">
+UPDATE ltct
+    SET
+        rmnd_sckbd_cnt = rmnd_sckbd_cnt - 1
+WHERE
+    ltct_no = #{ltctNo}
+</update>
+
+<update id="updateIncreaseRmndSckbdCntByLtctNo" parameterType="java.lang.String">
+UPDATE ltct
+    SET
+        rmnd_sckbd_cnt = rmnd_sckbd_cnt + 1
+WHERE
+    ltct_no = #{ltctNo}
+</update>
+
+<update id="insertSlfptnt" parameterType="com.spring.compass.vo.SlfptntVO">
+INSERT INTO slfptnt (
+    slfptnt_no
+   ,pbht_no
+   ,manage_no
+   ,in_ymd
+   ,out_ymd
+) VALUES (
+    #{slfptntNo}
+   ,#{pbhtNo}
+   ,#{manageNo}
+   ,sysdate
+   ,null
+)
+</update>
+<update id="updateIsoptnt" parameterType="com.spring.compass.vo.IsoptntVO">
+UPDATE isoptnt
+SET
+    hsptlz_code = #{hsptlzCode},
+    out_ymd = sysdate
+WHERE
+    isoptnt_no = #{isoptntNo}
+</update>
 
 </mapper>
 

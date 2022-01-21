@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Pbht-Mapper">
+
+<sql id="search">
+	<if test="searchType == 'n'.toString()">
+		AND smpl_no like '%'||#{keyword}||'%'
+	</if>
+	<if test="searchType == 't'.toString()">
+		AND INST_NM like '%'||#{keyword}||'%'
+	</if>	
+	<if test="searchType == 's'.toString()">
+		AND psti_nm like '%'||#{keyword}||'%'
+	</if>	
+</sql>
+
+
+<select id="selectSmplList" parameterType="com.spring.compass.command.SmplSearchCommand" resultType="com.spring.compass.vo.SmplListVO">
+select
+    a.smpl_no
+   ,a.chkd_yn
+   ,a.req_ymd
+   ,c.inst_nm
+   ,a.manage_no
+from smpl a, psti b, insp c
+where a.pbht_no = #{pbhtNo}
+  and a.manage_no = b.manage_no
+  and b.insp_no = c.insp_no
+  and a.chkd_yn = 'N'
+   <include refid="search" />
+    
+</select>
+
+<select id="selectSearchSemplListCount" parameterType="com.spring.compass.command.SmplSearchCommand" resultType="java.lang.Integer">
+	select
+		count(*)
+		from
+		smpl
+		where pbht_no is not null
+          and pbht_no = #{pbhtNo}		  	
+          and chkd_yn = 'N'
+		<include refid="search" />
+
+</select>
+	
+
+<sql id="resultSerch">
+	<if test="typeCode == 'K102'.toString()">
+		AND SMPL_RES_CODE = #{typeCode}
+	</if>
+	<if test="typeCode == 'K103'.toString()">
+		AND SMPL_RES_CODE = #{typeCode}
+	</if>	
+</sql>
+
+
+<select id="selectSearchSemplResultList" parameterType="com.spring.compass.command.SmplSearchCommand" resultType="com.spring.compass.vo.SmplResultVO">
+
+SELECT
+    A.smpl_no
+   ,C.psti_nm
+   ,D.INST_NM
+   ,A.REQ_YMD
+   ,B.RES_YMD
+   ,A.MANAGE_NO
+   ,a.SMPL_RES_CODE
+FROM
+    smpl A,  smpl_result B, psti C, insp D
+where A.smpl_no = B.smpl_no
+  and A.manage_no = c.manage_no
+  and c.insp_no = d.insp_no
+  and a.CHKD_YN = 'Y'
+  and A.PBHT_NO = #{pbhtNo}
+  <include refid="resultSerch" />	
+</select>
+
+<select id="selectSearchSemplResultListCount" parameterType="com.spring.compass.command.SmplSearchCommand" resultType="java.lang.Integer">
+	select
+		count(*)
+		from
+		smpl
+		where pbht_no is not null
+          and pbht_no = #{pbhtNo}		  	
+          and chkd_yn = 'Y'
+		 <include refid="resultSerch" />	
+</select>
+
+
+<!-- search필요  -->
+<select id="selectCnfrmDgnssList" parameterType="com.spring.compass.command.SmplSearchCommand" resultType="com.spring.compass.command.CnfrmDgnssListVO">
+	select a.cnfm_no
+      ,b.psti_no
+      ,b.psti_nm
+      ,b.psti_telno
+      ,a.in_ymd
+      ,a.manage_no
+      ,c.dgnss_no
+      ,c.req_ymd
+      ,d.inst_nm
+      ,d.hspt_no
+      ,e.sttus_code
+from cnfm a, psti b, dgnss c, hspt D, manage e
+where a.manage_no = b.manage_no
+  and a.manage_no = c.manage_no
+  and c.hspt_no = d.hspt_no
+  and a.manage_no = e.manage_no
+  and A.pbht_no = #{pbhtNo}  
+  and e.sttus_code = #{typeCode}
+</select>
+
+<select id="selectCnfrmDgnssListCount" parameterType="com.spring.compass.command.SmplSearchCommand" resultType="java.lang.Integer">
+	select
+		count(*)
+		from
+		CNFM A, manage b, CMMN_CODE c
+		where A.MANAGE_NO = b.MANAGE_NO
+          and b.sttus_code = c.CMMN_CODE
+          and A.pbht_no = #{pbhtNo}  	
+          and b.sttus_code = #{typeCode}
+</select>
+
+
+
+<sql id="cnfrmSerch">
+	<if test="typeCode == 'A107'.toString()">
+		AND sttus_code = #{typeCode}
+	</if>
+</sql>
+
+<select id="selectCnfrmManageList" parameterType="com.spring.compass.command.SmplSearchCommand" resultType="com.spring.compass.command.CnfrmManageListVO">
+select b.psti_nm 
+      ,b.psti_telno
+      ,a.in_ymd 
+      ,d.inst_nm 
+      ,c.in_ymd as slf_in_ymd
+      ,a.ngtv_cnt 
+      ,a.manage_no 
+      ,d.sttus_code
+from cnfm a, psti b, slfptnt c, manage d
+where a.manage_no = b.manage_no
+  and a.manage_no = c.manage_no(+)
+  and a.manage_no = d.manage_no
+  and a.pbht_no = #{pbhtNo}
+  <include refid="cnfrmSerch" />		
+
+</select>
+
+<select id="selectCnfrmManageListCount" parameterType="com.spring.compass.command.SmplSearchCommand" resultType="java.lang.Integer">
+	select count(*) from cnfm
+	 where pbht_no = #{pbhtNo}
+</select>
+
+<select id="selectSlfManageListCount" parameterType="com.spring.compass.command.SmplSearchCommand" resultType="java.lang.Integer">
+	select count(*) from  slfptnt
+	 where pbht_no = #{pbhtNo}
+</select>
+
+
+<select id="selectSmplDetail" parameterType="java.util.HashMap" resultType="com.spring.compass.command.SmplListDetailVO">
+	select A.req_ymd 
+      ,B.inst_nm 
+      ,C.psti_nm
+      ,C.rrn 
+      ,C.psti_telno
+      ,C.rechkd_yn
+      ,C.psti_adres 
+      ,D.inst_nm as req_inst_nm 
+      ,D.inst_telno
+      ,D.inst_adres 
+      ,A.smpl_no
+      ,A.pbht_no 
+      ,A.inst_no
+      ,A.manage_no 
+from smpl A, pbht B, psti C, inst D
+where A.pbht_no = B.pbht_no
+  and A.manage_no = C.manage_no
+  and A.inst_no = D.inst_no
+  and A.chkd_yn = 'N'
+  and A.pbht_no = #{pbhtNo}
+  and a.smpl_no = #{smplNo}
+
+</select>
+
+
+
+
+
+<select id="selectPbhtByInstNo" parameterType="java.lang.String" resultType="com.spring.compass.vo.PbhtVO">
+SELECT
+    pbht_no
+   ,inst_no
+   ,inst_nm
+   ,inst_adres
+   ,inst_telno
+   ,emp_cnt
+FROM
+    pbht
+WHERE
+    inst_no = #{instNo}
+</select>
+<select id="selectPbhtByPbhtNo" parameterType="java.lang.String" resultType="com.spring.compass.vo.PbhtVO">
+SELECT
+    pbht_no
+   ,inst_no
+   ,inst_nm
+   ,inst_adres
+   ,inst_telno
+   ,emp_cnt
+   ,area_no
+FROM
+    pbht
+WHERE
+    pbht_no = #{pbhtNo}
+</select>
+
+<select id="selectPbhtCityNo" parameterType="java.lang.String" resultType="java.lang.String">
+	SELECT 
+	  	   CODE_NM2 
+	  FROM CMMN_CODE 
+	 WHERE CODE_NM1 = #{city}
+
+</select>
+
+<select id="selectPbhtNextVal" resultType="java.lang.Integer">
+	SELECT 
+		PBHT_SEQ.NEXTVAL AS PBHT_SEQ 
+	  FROM DUAL
+</select>
+
+<select id="selectInstNextval" resultType="java.lang.Integer">
+	SELECT
+		INST_SEQ.NEXTVAL AS INST_SEQ
+	  FROM DUAL
+</select>
+
+<update id="insertPbht" parameterType="com.spring.compass.vo.PbhtVO">
+	INSERT INTO PBHT(
+                 PBHT_NO
+                ,INST_NO
+                ,INST_NM
+                ,INST_ADRES
+                ,INST_TELNO
+                ,AREA_NO
+        )VALUES(
+                #{pbhtNo}
+               ,#{instNo}
+               ,#{instNm}
+               ,#{instAdres}
+               ,#{instTelno}
+               ,#{cityNo}
+        )
+</update>
+
+<update id="insertInst" parameterType="com.spring.compass.vo.PbhtVO">
+	INSERT INTO INST(
+                      INST_NO
+                     ,INST_CODE
+                     ,CHILD_NO
+                    )
+              VALUES(
+                     #{instNo}
+                    ,#{instCode}
+                    ,#{pbhtNo}
+                    )
+</update>
+
+
+</mapper>
+
+

@@ -1,0 +1,28 @@
+package com.spring.compass.service;
+
+import java.util.Map;
+
+import com.spring.compass.command.DgnssListSearchCommand;
+import com.spring.compass.command.InptntListSearchCommand;
+import com.spring.compass.vo.HsptVO;
+
+public interface HsptSerivceLKH extends HsptService{
+
+	public HsptVO getHsptByHsptNo(String hsptNo) throws Exception;
+	
+	// 진료환자 목록
+	public  Map<String, Object> getDgnssList(DgnssListSearchCommand cri) throws Exception;
+	
+	// 입원환자 목록
+	public Map<String, Object> getInptntList(InptntListSearchCommand cri) throws Exception;
+	
+	// 승인대기 병상목록
+	public Map<String, Object> getReqInptntList(InptntListSearchCommand cri) throws Exception;
+	
+	// 이원신청 목록
+	public Map<String, Object> getSckbdreqHsptList(InptntListSearchCommand cri) throws Exception;
+	
+	// 입소신청 목록
+	public Map<String, Object> getSckbdreqLtctList(InptntListSearchCommand cri) throws Exception;
+	
+}

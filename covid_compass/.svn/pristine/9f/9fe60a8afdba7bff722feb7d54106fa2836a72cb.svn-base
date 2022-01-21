@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Ltct-Mapper">
+
+<sql id="search">
+	<if test="searchType == 'n'.toString()">
+		AND INSTR(B.PSTI_NM, #{keyword}) > 0
+	</if>
+	<if test="searchType == 't'.toString()">
+		AND INSTR(B.PSTI_TELNO, #{keyword}) > 0
+	</if>
+</sql>
+
+<select id="selectLtctByInstNo" parameterType="java.lang.String" resultType="com.spring.compass.vo.LtctVO">
+SELECT
+    ltct_no
+   ,inst_no
+   ,inst_nm
+   ,inst_adres
+   ,inst_telno
+   ,emp_cnt
+   ,rmnd_sckbd_cnt
+   ,sckbd_cnt
+FROM
+    ltct
+WHERE
+    inst_no = #{instNo}
+</select>
+
+<select id="selectLtctByLtctNo" parameterType="java.lang.String" resultType="com.spring.compass.vo.LtctVO">
+SELECT
+    ltct_no
+   ,inst_no
+   ,inst_nm
+   ,inst_adres
+   ,inst_telno
+   ,emp_cnt
+   ,rmnd_sckbd_cnt
+   ,sckbd_cnt
+   ,area_no
+FROM
+    ltct
+WHERE
+    ltct_no = #{ltctNo}
+</select>
+<select id="selectLtctCityNo" parameterType="java.lang.String" resultType="java.lang.String">
+	SELECT 
+	  	   CODE_NM2 
+	  FROM CMMN_CODE 
+	 WHERE CODE_NM1 = #{city}
+
+</select>
+
+<select id="selectLtctNextVal" resultType="java.lang.Integer">
+	SELECT 
+		LTCT_SEQ.NEXTVAL AS LTCT_SEQ 
+	  FROM DUAL
+</select>
+
+<select id="selectInstNextval" resultType="java.lang.Integer">
+	SELECT
+		INST_SEQ.NEXTVAL AS INST_SEQ
+	  FROM DUAL
+</select>
+
+
+<update id="insertLtct" parameterType="com.spring.compass.vo.LtctVO">
+	INSERT INTO LTCT(
+                 LTCT_NO
+                ,INST_NO
+                ,INST_NM
+                ,INST_ADRES
+                ,INST_TELNO
+                ,AREA_NO
+        )VALUES(
+                #{ltctNo}
+               ,#{instNo}
+               ,#{instNm}
+               ,#{instAdres}
+               ,#{instTelno}
+               ,#{cityNo}
+        )
+</update>
+
+<update id="insertInst" parameterType="com.spring.compass.vo.HsptVO">
+	INSERT INTO INST(
+                      INST_NO
+                     ,INST_CODE
+                     ,CHILD_NO
+                    )
+              VALUES(
+                     #{instNo}
+                    ,#{instCode}
+                    ,#{ltctNo}
+                    )
+</update>
+<!-- 입소자 리스트 -->
+<select id="selectIsoptntListCount" parameterType="com.spring.compass.command.LtctSearchCommand" resultType="java.lang.Integer">
+SELECT COUNT(A.MANAGE_NO)
+  FROM ISOPTNT A, PSTI B
+ WHERE A.MANAGE_NO = B.MANAGE_NO
+   AND LTCT_NO = #{ltctNo}
+   AND OUT_YMD IS NULL
+   <include refid="search"/>
+</select>
+<select id="selectIsoptntList" parameterType="com.spring.compass.command.LtctSearchCommand" resultType="com.spring.compass.command.IsoptntListVO">
+SELECT RNUM, AGE, MANAGE_NO, BDTEMP, PSTI_NM, GENDER, PSTI_TELNO
+  FROM (SELECT ROWNUM AS RNUM,
+	           fn_get_age_by_psti_no(psti_no) as AGE,
+               MANAGE_NO,
+               BDTEMP,
+               PSTI_NM,
+               GENDER,
+               PSTI_TELNO
+          FROM (SELECT A.BDTEMP,
+                       A.MANAGE_NO,
+                       B.PSTI_NO,
+                       B.PSTI_NM,
+                       B.GENDER,
+                       B.PSTI_TELNO
+                  FROM ISOPTNT A, PSTI B
+                 WHERE A.MANAGE_NO = B.MANAGE_NO
+                   AND LTCT_NO = #{ltctNo}
+                   AND OUT_YMD IS NULL
+                   <include refid="search"/>
+                   ORDER BY PSTI_NM
+                ) AA
+        )AAA
+ WHERE AAA.RNUM BETWEEN #{startRowNum} AND #{endRowNum}
+</select>
+
+          
+</mapper>
+
+
