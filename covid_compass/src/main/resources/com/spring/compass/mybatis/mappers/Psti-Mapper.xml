@@ -386,6 +386,8 @@ SELECT
    ,sckbdreq_ymd
    ,cancle_ymd
    ,sckbdreq_code
+   ,accept_ymd
+   ,request_code
 FROM
     sckbdreq
 WHERE
@@ -398,13 +400,15 @@ WHERE
 SELECT
     sckbdreq_no   ,type   ,child_no
    ,hspt_no   ,manage_no   ,sckbdreq_ymd
-   ,cancle_ymd   ,sckbdreq_code
+   ,cancle_ymd   ,sckbdreq_code		,accept_ymd
+   ,request_code
 FROM
         (    
             SELECT
                 a.sckbdreq_no               ,a.type               ,a.child_no
                ,a.hspt_no               ,a.manage_no               ,a.sckbdreq_ymd
-               ,a.cancle_ymd               ,a.sckbdreq_code
+               ,a.cancle_ymd               ,a.sckbdreq_code			,a.accept_ymd
+               ,a.request_code
             FROM
                 sckbdreq a,
                     (
@@ -494,7 +498,36 @@ FROM
 WHERE
 	isoptnt_no = #{isoptntNo}
 </select>
-		
+
+<select id="selectCnfmByManageNo" parameterType="java.lang.String"
+		resultType="com.spring.compass.vo.CnfmVO">
+SELECT
+    cnfm_no
+    , pbht_no
+    , manage_no
+    , in_ymd
+    , out_ymd
+    , ngtv_cnt
+FROM
+    cnfm
+WHERE
+	manage_no = #{manageNo}
+</select>	
+
+<select id="selectCnfmByCnfmNo" parameterType="java.lang.String"
+		resultType="com.spring.compass.vo.CnfmVO">
+SELECT
+    cnfm_no
+    , pbht_no
+    , manage_no
+    , in_ymd
+    , out_ymd
+    , ngtv_cnt
+FROM
+    cnfm
+WHERE
+	cnfm_no = #{cnfmNo}
+</select>	
 
 <select id="selectInptntNextVal" resultType="java.lang.String">
 	SELECT INPTNT_SEQ.NEXTVAL AS INPTNT_NO FROM DUAL

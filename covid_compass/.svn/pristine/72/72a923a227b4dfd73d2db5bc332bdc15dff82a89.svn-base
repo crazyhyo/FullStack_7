@@ -1,0 +1,179 @@
+package com.spring.compass.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.spring.compass.command.DgnssListSearchCommand;
+import com.spring.compass.command.InptntListSearchCommand;
+import com.spring.compass.vo.DgnssResultVO;
+import com.spring.compass.vo.HsptVO;
+import com.spring.compass.vo.PstiVO;
+
+public interface HsptSerivceLKH extends HsptService{
+
+	public HsptVO getHsptByHsptNo(String hsptNo) throws Exception;
+	
+	// 진료환자 목록
+	public  Map<String, Object> getDgnssList(DgnssListSearchCommand cri) throws Exception;
+	
+	// 입원환자 목록
+	public Map<String, Object> getInptntList(InptntListSearchCommand cri) throws Exception;
+	
+	// 승인대기 병상목록
+	public Map<String, Object> getReqInptntList(InptntListSearchCommand cri) throws Exception;
+	
+	// 이원신청 목록
+	public Map<String, Object> getSckbdreqHsptList(InptntListSearchCommand cri) throws Exception;
+	
+	// 입소신청 목록
+	public Map<String, Object> getSckbdreqLtctList(InptntListSearchCommand cri) throws Exception;
+	
+	/*
+	 * # : 컨트롤러 단에서 넘어오는 파라미터
+	 * regist - 접두사
+	 * ByDgnss : 보건소에서 요청한 진료
+	 * ByIsoptnt : 생활치료센터에서 요청한 진료
+	 * regist 뒤에 붙는 단어 : 테이블명
+	 * 
+	 * ---------------------------------------------------------------
+	 * update	manage				|	#{sttusCode} #{instNm} #{instNo} #{manageNo} 				: 소속기관 수정
+	 * update	manage				|	#{sttusCode} #{manageNo}									: 상태만 수정
+	 * update	dgnss				|	#{dgnssNo}													: 검사완료 상태로 수정
+	 * update	hspt				|	#{hsptNo}													: 잔여병상수 수정 (증가 혹은 감소)
+	 * update	ltct				|	#{ltctNo}													: 잔여병상수 수정 (증가 혹은 감소)
+	 * update	isoptnt				|	#{hsptlzCode} #{isoptntNo}									: 입소자 상태변경(입소 -> 퇴원(이원) 등)
+	 * insert	inptnt				|	#{inpntNo} #{hsptNo} #{manageNo}							: 입원환자 등록
+	 * insert	dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}					: 진료결과 등록
+	 * insert	sckbdreq			|	#{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo}		: 병상신청 등록
+	 * insert	slfptnt				|	#{slfptntNo} #{pbhtNo} #{manageNo}							: 자가격리자 등록
+	 * 
+	 */
+	
+	
+	// 보건소에서 요청한 신규환자를 진료하고 바로 입원시키는 메서드
+	//-------------------------------------------------
+	// insert	inptnt				|	#{inpntNo} #{hsptNo} #{manageNo}
+	//			dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+	// update	manage				|	#{sttusCode} #{instNm} #{instNo} #{manageNo}
+	//			dgnss				|	#{dgnssNo}
+	//--------------------------------------------------
+	
+	/*
+	 *	읽기 예 : 입원환자를 등록하고 진료결과를 등록한다. 소속기관을 진료완료 병원으로 바꾸고 검사레코드를 검사완료 상태로 수정한다. 
+	 */
+
+	public String registInptntDirectlyByDgnss(DgnssResultVO dgnssResult, HsptVO loginHspt) throws Exception;
+	
+	// 보건소에서 요청한 신규환자를 진료하고 이원신청하는 메서드
+	//-------------------------------------------------
+	// insert	sckbdreq			|	#{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo}
+	//			dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+	// update	manage				|	#{sttusCode} #{instNm} #{instNo} #{manageNo}
+	//			dgnss				|	#{dgnssNo}
+	//			hspt				|	#{hsptNo}
+	//			hspt				|	#{hsptNo}
+	//--------------------------------------------------
+	public String registSckbdreqInptntDirectlyByDgnss(DgnssResultVO dgnssResult, HsptVO loginHspt, String toHsptNo) throws Exception;
+	
+	// 보건소에서 요청한 신규환자를 진료하고 입소신청하는 메서드
+	//-------------------------------------------------
+	// insert	sckbdreq			|	#{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo}
+	//			dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+	// update	manage				|	#{sttusCode} #{instNm} #{instNo} #{manageNo}
+	//			dgnss				|	#{dgnssNo}
+	//			hspt				|	#{hsptNo}
+	//			ltct				|	#{ltctNo}
+	//--------------------------------------------------	
+	public String registSckbdreqIsoptntDirectlyByDgnss(DgnssResultVO dgnssResult, HsptVO loginHspt, String toLtctNo) throws Exception;
+	
+	// 보건소에서 요청한 신규환자를 진료하고 자가격리처리하는 메서드
+	//-------------------------------------------------
+	// insert	slfptnt				|	#{slfptntNo} #{pbhtNo} #{manageNo}
+	//			dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+	// update	manage				|	#{sttusCode} #{manageNo}
+	//			dgnss				|	#{dgnssNo}
+	//--------------------------------------------------	
+	public String registSlfptntDirectlyByDgnss(DgnssResultVO dgnssResult) throws Exception;
+	
+	// 생활치료센터에서 요청한 환자를 진료하고 별도의 사후처리를 하지 않는 메서드
+	//-------------------------------------------------
+	// insert	dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+	// update	dgnss				|	#{dgnssNo}
+	//--------------------------------------------------	
+	public String registDgnssResultByIsoptnt(DgnssResultVO dgnssResult) throws Exception;
+	
+	// 생활치료센터에서 요청한 환자를 진료하고 이원신청하는 메서드
+	//-------------------------------------------------
+	// insert	sckbdreq			|	#{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo}
+	//			dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+	// update	manage				|	#{sttusCode} #{instNm} #{instNo} #{manageNo}
+	//			dgnss				|	#{dgnssNo}
+	//			hspt				|	#{hsptNo}
+	//			ltct				|	#{ltctNo}
+	//			isoptnt				|	#{hsptlzCode} #{isoptntNo}
+	//--------------------------------------------------
+	public String registSckbdreqInptntByIsoptnt(DgnssResultVO dgnssResult, HsptVO loginHspt,  String toHsptNo,  String fromLtctNo) throws Exception;
+	
+	// 생활치료센터에서 진료요청한 환자를 진료하고 입원처리하는 메서드
+	//-------------------------------------------------
+	// insert	inptnt				|	#{inpntNo} #{hsptNo} #{manageNo}
+	//			dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
+	// update	manage				|	#{sttusCode} #{instNm} #{instNo} #{manageNo}
+	//			dgnss				|	#{dgnssNo}
+	//			hspt				|	#{hsptNo}
+	//			ltct				|	#{ltctNo}
+	//			isoptnt				|	#{hsptlzCode} #{isoptntNo}
+	//--------------------------------------------------
+	public String registInptntByIsoptnt(DgnssResultVO dgnssResult, HsptVO loginHspt, String fromLtctNo) throws Exception;
+
+	// 입원환자를 재검신청하는 메서드
+	//-------------------------------------------------
+	// insert	smpl				|	#{smplNo} #{manageNo} #{pbhtNo} #{instNo}
+	//--------------------------------------------------	
+	public String registSmpl(String hsptNo, String pbhtNo, String manageNo) throws Exception;
+	public String registSmpl(String hsptNo, String pbhtNo, List<String> manageNoList) throws Exception;
+	
+	// 입원환자를 수정하는 메서드, Controller단에서 필요한 모든 내용을 받아서(InptntUpdateCommand -> toPsti()) PstiVO를 생성하여 서비스에 넘겨준다.
+	//-------------------------------------------------
+	// update	psti				|	#{pstiNm} #{pstiTelno} #{pstiAdres} #{symptms} #{areaNo} #{pstiNo}
+	//--------------------------------------------------	
+	public String modifyInptnt(PstiVO psti) throws Exception;
+	
+	// 입원중이나 입소중이 아닌 확진자의 (보건소 - 진료완료 - 이원신청 flow) 병상신청을 승인하는 메서드 
+	//-------------------------------------------------
+	// insert	inptnt				|	#{inpntNo} #{hsptNo} #{manageNo}
+	// update	manage				|	#{sttusCode} #{instNm} #{instNo} #{manageNo}
+	//			sckbdreq			|	#{sckbdreqNo} #{sckbdreqCode} #{acceptYmd}
+	//--------------------------------------------------	
+	public String registInptntAcceptedByDgnss(String manageNo, String sckbdreqNo, HsptVO loginHspt) throws Exception;
+
+	// 입원환자의 이원신청을 승인하는 메서드 
+	//-------------------------------------------------
+	// insert	inptnt				|	#{inpntNo} #{hsptNo} #{manageNo}
+	// update	manage				|	#{instNm} #{instNo} #{manageNo}
+	//			sckbdreq			|	#{sckbdreqNo} #{sckbdreqCode} #{acceptYmd}
+	//			inptnt				|	#{hsptlzCode} #{inptntNo}
+	//			hspt				|	#{hsptNo}	
+	//--------------------------------------------------
+	public String registInptntAcceptedByInptnt(String manageNo, String sckbdreqNo, HsptVO loginHspt, String fromHsptNo) throws Exception;
+	
+	// 입소중환자의 이원신청을 승인하는 메서드, (생활치료센터 - 진료 - 진료완료 후 이원신청 - 이원대상병원 입원처리 flow) 
+	//-------------------------------------------------
+	// insert	inptnt				|	#{inpntNo} #{hsptNo} #{manageNo}
+	// update	manage				|	#{instNm} #{instNo} #{manageNo}
+	//			sckbdreq			|	#{sckbdreqNo} #{sckbdreqCode} #{acceptYmd}
+	//			isoptnt				|	#{hsptlzCode} #{isoptntNo}
+	//			hspt				|	#{hsptNo}	
+	//			ltct				|	#{ltctNo}	
+	//--------------------------------------------------
+	public String registInptntAccetedByIsoptnt(String manageNo, String sckbdreqNo, HsptVO loginHspt, String fromLtctNo, String toHsptNo) throws Exception;
+	
+	// 신규환자의 이원신청을 반려하는 메서드, (보건소 - 진료 - 진료완료 후 이원신청 - 반려 flow) 
+	//-------------------------------------------------
+	// update	sckbdreq			|	#{sckbdreqNo} #{sckbdreqCode}
+	//			hspt				|	#{hsptNo}	
+	//--------------------------------------------------
+	public String updateSckbdreqRejectByDgnss(String sckbdreqNo, HsptVO loginHspt) throws Exception;
+	
+	
+}

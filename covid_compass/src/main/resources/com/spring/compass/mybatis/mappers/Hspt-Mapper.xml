@@ -252,6 +252,7 @@ select	   rnum
 		  ,cancle_ymd,		sckbdreq_code,	hspt_nm
 		  ,psti_no,			psti_nm,		psti_telno
 		  ,age
+		  ,accept_ymd		,request_code
   from
 		(
 			select rownum as rnum,
@@ -260,6 +261,7 @@ select	   rnum
 				  ,cancle_ymd,		sckbdreq_code,	hspt_nm
 				  ,psti_no,			psti_nm,		psti_telno
 				  ,age
+				  ,accept_ymd		,request_code
 			  from
 					(
 						select 	a.sckbdreq_no,		a.type,		 a.child_no
@@ -267,6 +269,7 @@ select	   rnum
 						        ,a.cancle_ymd      ,a.sckbdreq_code,	b.inst_nm as hspt_nm
 						        ,c.psti_no,         c.psti_nm,      c.psti_telno
 						        ,fn_get_age_by_psti_no(c.psti_no) as age
+						        ,a.accept_ymd		,a.request_code
 						  from sckbdreq a
 						       ,hspt b
 						       ,psti c
@@ -332,6 +335,7 @@ select	   rnum
 		  ,cancle_ymd,		sckbdreq_code,	hspt_nm
 		  ,psti_no,			psti_nm,		psti_telno
 		  ,age
+		  ,accept_ymd		,request_code
   from
 		(
 			select rownum as rnum,
@@ -340,6 +344,7 @@ select	   rnum
 				  ,cancle_ymd,		sckbdreq_code,	hspt_nm
 				  ,psti_no,			psti_nm,		psti_telno
 				  ,age
+				  ,accept_ymd		,request_code
 			  from
 					(
 						select 	a.sckbdreq_no,		a.type,		 a.child_no
@@ -347,6 +352,7 @@ select	   rnum
 						        ,a.cancle_ymd      ,a.sckbdreq_code,	b.inst_nm as hspt_nm
 						        ,c.psti_no,         c.psti_nm,      c.psti_telno
 						        ,fn_get_age_by_psti_no(c.psti_no) as age
+						        ,a.accept_ymd		,a.request_code
 						  from sckbdreq a
                                ,hspt b
 						       ,psti c
@@ -384,6 +390,7 @@ select	   rnum
 		  ,cancle_ymd,		sckbdreq_code,	ltct_nm
 		  ,psti_no,			psti_nm,		psti_telno
 		  ,age
+		  ,accept_ymd		,request_code
   from
 		(
 			select rownum as rnum,
@@ -392,6 +399,7 @@ select	   rnum
 				  ,cancle_ymd,		sckbdreq_code,	ltct_nm
 				  ,psti_no,			psti_nm,		psti_telno
 				  ,age
+				  ,accept_ymd		,request_code
 			  from
 					(
 						select 	a.sckbdreq_no,		a.type,		 a.child_no
@@ -399,6 +407,7 @@ select	   rnum
 						        ,a.cancle_ymd      ,a.sckbdreq_code,	b.inst_nm as ltct_nm
 						        ,c.psti_no,         c.psti_nm,      c.psti_telno
 						        ,fn_get_age_by_psti_no(c.psti_no) as age
+						        ,a.accept_ymd		,a.request_code
 						  from sckbdreq a
                                ,ltct b
 						       ,psti c
@@ -504,6 +513,8 @@ INSERT INTO sckbdreq (
    ,sckbdreq_ymd
    ,cancle_ymd
    ,sckbdreq_code
+   ,accept_ymd		
+   ,request_code
 ) VALUES (
     #{sckbdreqNo}
    ,#{type}
@@ -513,6 +524,8 @@ INSERT INTO sckbdreq (
    ,sysdate
    ,sysdate + 1/4
    ,'H101'
+   ,null
+   ,#{requestCode}
 )
 </update>
 
@@ -563,7 +576,7 @@ INSERT INTO slfptnt (
    ,null
 )
 </update>
-<update id="updateIsoptnt" parameterType="com.spring.compass.vo.IsoptntVO">
+<update id="updateIsoptntExit" parameterType="com.spring.compass.vo.IsoptntVO">
 UPDATE isoptnt
 SET
     hsptlz_code = #{hsptlzCode},
@@ -571,6 +584,74 @@ SET
 WHERE
     isoptnt_no = #{isoptntNo}
 </update>
+
+<update id="updateMainSckbdCnt" parameterType="com.spring.compass.vo.HsptVO">
+UPDATE hspt
+    SET
+        sckbd_cnt =#{sckbdCnt}+#{inputSckbd}, rmnd_sckbd_cnt =#{rmndSckbdCnt}+#{inputSckbd}
+WHERE
+    hspt_no =#{hsptNo}
+</update>
+
+<update id="insertSmpl" parameterType="com.spring.compass.vo.SmplVO">
+INSERT INTO smpl (
+    smpl_no
+   ,pbht_no
+   ,inst_no
+   ,manage_no
+   ,chkd_yn
+   ,req_ymd
+   ,smpl_res_code
+) VALUES (
+    #{smplNo}
+   ,#{pbhtNo}
+   ,#{instNo}
+   ,#{manageNo}
+   ,'N'
+   ,sysdate
+   ,'K101'
+)
+</update>
+
+<update id="updateInptntInfo" parameterType="com.spring.compass.vo.PstiVO">
+UPDATE psti
+    SET
+        psti_nm = #{pstiNm},
+        psti_telno = #{pstiTelno},
+        psti_adres = #{pstiAdres},
+        symptms = #{symptms},
+        area_no = #{areaNo}
+WHERE
+    psti_no = #{pstiNo}
+</update>
+
+<update id="updateSckbdreqCodeOnly" parameterType="com.spring.compass.vo.SckbdreqVO">
+UPDATE sckbdreq
+    SET
+        sckbdreq_code = #{sckbdreqCode}
+WHERE
+    sckbdreq_no = #{sckbdreqNo}
+</update>
+
+<update id="updateSckbdreqAccept" parameterType="com.spring.compass.vo.SckbdreqVO">
+UPDATE sckbdreq
+    SET
+        sckbdreq_code = #{sckbdreqCode},
+        accept_ymd = #{acceptYmd}
+WHERE
+    sckbdreq_no = #{sckbdreqNo}
+</update>
+
+<update id="updateInptntExit" parameterType="com.spring.compass.vo.InptntVO">
+UPDATE inptnt
+    SET
+        out_ymd = sysdate,
+        hsptlz_code = #{hsptlzCode}
+WHERE
+    inptnt_no = #{inptntNo}
+</update>
+
+
 
 </mapper>
 

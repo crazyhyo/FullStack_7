@@ -107,5 +107,6 @@
 	<bean id="pbhtServiceLMY" class="com.spring.compass.service.PbhtServiceImplLMY"
 		p:pbhtDAO-ref="pbhtDAO"
 	/>
+	
 
 </beans>

@@ -1,0 +1,545 @@
+package com.spring.compass.controller;
+
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.spring.compass.command.DgnssDetailCommand;
+import com.spring.compass.command.DgnssListSearchCommand;
+import com.spring.compass.command.DgnssProcessCommand;
+import com.spring.compass.command.InptntDetailCommand;
+import com.spring.compass.command.InptntListSearchCommand;
+import com.spring.compass.command.ReqInptntDetailCommand;
+import com.spring.compass.command.SckbdreqDetailCommand;
+import com.spring.compass.command.VPstiCommand;
+import com.spring.compass.service.HsptSerivceLKH;
+import com.spring.compass.service.LtctServiceLKH;
+import com.spring.compass.service.PstiServiceLKH;
+import com.spring.compass.vo.CnfmVO;
+import com.spring.compass.vo.DgnssResultVO;
+import com.spring.compass.vo.HsptVO;
+import com.spring.compass.vo.InptntVO;
+import com.spring.compass.vo.LtctVO;
+import com.spring.compass.vo.SckbdreqVO;
+import com.spring.compass.vo.SmplResultVO;
+
+@RestController
+@RequestMapping("/rest-hspt")
+public class RestHsptController {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(RestHsptController.class);
+
+	@Autowired
+	@Qualifier("hsptServiceLKH")
+	private HsptSerivceLKH hsptServiceLKH;
+
+	@Autowired
+	private PstiServiceLKH pstiServiceLKH;
+	
+	@Autowired
+	private HsptSerivceLKH hsptSerivceLKH;
+	
+	@Autowired
+	private LtctServiceLKH ltctServiceLKH;
+
+	@RequestMapping("/inptnt-list")
+	public ResponseEntity<Map<String, Object>> inptntList(
+			@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "15") int perPageNum, 
+			@RequestParam(defaultValue = "") String searchType,
+			@RequestParam(defaultValue = "") String keyword, 
+			HttpSession session
+	) throws Exception {
+		ResponseEntity<Map<String, Object>> entity = null;
+		LOGGER.debug(String.format("page is %d, searchType is %s, keyword is %s, perpageNum is %d", page,
+				searchType, keyword, perPageNum));
+
+		
+		InptntListSearchCommand cri = new InptntListSearchCommand(page, perPageNum, searchType, keyword);
+
+		HsptVO hspt = (HsptVO) (session.getAttribute("loginInst"));
+
+		LOGGER.debug("{}",hspt);
+
+		cri.setHsptNo(hspt.getHsptNo());
+
+		LOGGER.debug("{}",cri);
+
+		try {
+			Map<String, Object> dataMap = hsptServiceLKH.getInptntList(cri);
+
+			entity = new ResponseEntity<Map<String, Object>>(dataMap, HttpStatus.OK);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<Map<String, Object>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return entity;
+	}
+
+	@RequestMapping("/dgnss-list")
+	public ResponseEntity<Map<String, Object>> dgnssList(
+			@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "15") int perPageNum,
+			@RequestParam(defaultValue = "") String searchType,
+			@RequestParam(defaultValue = "") String keyword,
+			HttpSession session)
+					throws Exception {
+		ResponseEntity<Map<String, Object>> entity = null;
+		LOGGER.debug(String.format("page is %d, searchType is %s, keyword is %s, perpageNum is %d", page,
+				searchType, keyword, perPageNum));
+		DgnssListSearchCommand cri = new DgnssListSearchCommand(page, perPageNum, searchType, keyword);
+
+		HsptVO hspt = (HsptVO) (session.getAttribute("loginInst"));
+
+		LOGGER.debug("{}",hspt);
+
+		cri.setHsptNo(hspt.getHsptNo());
+
+		LOGGER.debug("{}",cri);
+
+		try {
+			Map<String, Object> dataMap = hsptServiceLKH.getDgnssList(cri);
+
+			entity = new ResponseEntity<Map<String, Object>>(dataMap, HttpStatus.OK);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<Map<String, Object>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return entity;
+	}
+
+
+
+	@RequestMapping("/req-inptnt-list")
+	public ResponseEntity<Map<String, Object>> reqInptntList(
+												@RequestParam(defaultValue = "1") int page,
+												@RequestParam(defaultValue = "15") int perPageNum,
+												@RequestParam(defaultValue = "") String searchType,
+												@RequestParam(defaultValue = "") String keyword, 
+												HttpSession session)
+														throws Exception {
+		ResponseEntity<Map<String, Object>> entity = null;
+		LOGGER.debug(String.format("page is %d, searchType is %s, keyword is %s, perpageNum is %d", page,
+				searchType, keyword, perPageNum));
+		InptntListSearchCommand cri = new InptntListSearchCommand(page, perPageNum, searchType, keyword);
+
+		HsptVO hspt = (HsptVO) (session.getAttribute("loginInst"));
+
+		LOGGER.debug("{}",hspt);
+
+		cri.setHsptNo(hspt.getHsptNo());
+
+		LOGGER.debug("{}",cri);
+		
+		try {
+			Map<String, Object> dataMap = hsptServiceLKH.getReqInptntList(cri);
+
+			entity = new ResponseEntity<Map<String, Object>>(dataMap, HttpStatus.OK);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<Map<String, Object>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return entity;
+	}
+	
+	@RequestMapping("/sckbdreq-list")
+	public ResponseEntity<Map<String, Object>> sckbdreqList(
+												@RequestParam(defaultValue = "1") int page,
+												@RequestParam(defaultValue = "15") int perPageNum,
+												@RequestParam(defaultValue = "") String searchType,
+												@RequestParam(defaultValue = "") String keyword,
+												@RequestParam(defaultValue="C103")String typeCode,
+												HttpSession session)
+														throws Exception {
+		ResponseEntity<Map<String, Object>> entity = null;
+		LOGGER.debug(String.format("page is %d, searchType is %s, keyword is %s, perpageNum is %d, typeCode is %s", page,
+				searchType, keyword, perPageNum, typeCode));
+		InptntListSearchCommand cri = new InptntListSearchCommand(page, perPageNum, searchType, keyword);
+
+		HsptVO hspt = (HsptVO) (session.getAttribute("loginInst"));
+
+		LOGGER.debug("{}",hspt);
+
+		cri.setHsptNo(hspt.getHsptNo());
+		cri.setTypeCode(typeCode);
+
+		LOGGER.debug("{}",cri);
+		
+		Map<String, Object> dataMap = null;
+		
+		try {
+			
+			if(cri.getTypeCode().equals("C103")){
+				dataMap = hsptServiceLKH.getSckbdreqHsptList(cri);
+			}
+			if(cri.getTypeCode().equals("C104")) {
+				dataMap = hsptServiceLKH.getSckbdreqLtctList(cri);
+			}
+
+			entity = new ResponseEntity<Map<String, Object>>(dataMap, HttpStatus.OK);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<Map<String, Object>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return entity;
+	}
+	
+	@RequestMapping("/sckbdreq-hspt-list")
+	public ResponseEntity<Map<String, Object>> sckbdreqHsptList(
+												@RequestParam(defaultValue = "1") int page,
+												@RequestParam(defaultValue = "15") int perPageNum,
+												@RequestParam(defaultValue = "") String searchType,
+												@RequestParam(defaultValue = "") String keyword,
+												HttpSession session)
+														throws Exception {
+		ResponseEntity<Map<String, Object>> entity = null;
+		LOGGER.debug(String.format("page is %d, searchType is %s, keyword is %s, perpageNum is %d", page,
+				searchType, keyword, perPageNum));
+		InptntListSearchCommand cri = new InptntListSearchCommand(page, perPageNum, searchType, keyword);
+
+		HsptVO hspt = (HsptVO) (session.getAttribute("loginInst"));
+
+		LOGGER.debug("{}",hspt);
+
+		cri.setHsptNo(hspt.getHsptNo());
+
+		LOGGER.debug("{}",cri);
+		try {
+			Map<String, Object> dataMap = hsptServiceLKH.getSckbdreqHsptList(cri);
+
+			entity = new ResponseEntity<Map<String, Object>>(dataMap, HttpStatus.OK);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<Map<String, Object>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return entity;
+	}
+	
+	@RequestMapping("/sckbdreq-ltct-list")
+	public ResponseEntity<Map<String, Object>> sckbdreqLtctList(
+												@RequestParam(defaultValue = "1") int page,
+												@RequestParam(defaultValue = "15") int perPageNum,
+												@RequestParam(defaultValue = "") String searchType,
+												@RequestParam(defaultValue = "") String keyword,
+												HttpSession session)
+														throws Exception {
+		ResponseEntity<Map<String, Object>> entity = null;
+		LOGGER.debug(String.format("page is %d, searchType is %s, keyword is %s, perpageNum is %d", page,
+				searchType, keyword, perPageNum));
+		InptntListSearchCommand cri = new InptntListSearchCommand(page, perPageNum, searchType, keyword);
+
+		HsptVO hspt = (HsptVO) (session.getAttribute("loginInst"));
+
+		LOGGER.debug("{}",hspt);
+
+		cri.setHsptNo(hspt.getHsptNo());
+
+		LOGGER.debug("{}",cri);
+		try {
+			Map<String, Object> dataMap = hsptServiceLKH.getSckbdreqLtctList(cri);
+
+			entity = new ResponseEntity<Map<String, Object>>(dataMap, HttpStatus.OK);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<Map<String, Object>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return entity;
+	}
+	
+	@RequestMapping("/dgnss-detail")
+	public ResponseEntity<DgnssDetailCommand> dgnssDetail(String manageNo) throws Exception {
+		ResponseEntity<DgnssDetailCommand> entity = null;
+
+		VPstiCommand psti = pstiServiceLKH.getVPstiByManageNo(manageNo);
+
+		SmplResultVO smplResult = pstiServiceLKH.getVSmplResultByManageNo(manageNo);
+
+		DgnssResultVO dgnssResult = pstiServiceLKH.getVDgnssResultByManageNo(manageNo);
+
+		LOGGER.debug("{}",psti);
+		LOGGER.debug("{}",smplResult);
+		LOGGER.debug("{}",dgnssResult);
+
+		DgnssDetailCommand dgnssDetailCommand = new DgnssDetailCommand();
+
+		dgnssDetailCommand.setData(dgnssResult);
+		dgnssDetailCommand.setData(smplResult);
+		dgnssDetailCommand.setData(psti);
+		
+		LOGGER.debug("{}",dgnssDetailCommand);
+
+		entity = new ResponseEntity<DgnssDetailCommand>(dgnssDetailCommand, HttpStatus.OK);
+
+		return entity;
+	}
+	@RequestMapping("/inptnt-detail")
+	public ResponseEntity<InptntDetailCommand> inptntDetail(String manageNo) throws Exception{
+		ResponseEntity<InptntDetailCommand> entity = null;
+		
+		VPstiCommand psti = pstiServiceLKH.getVPstiByManageNo(manageNo);
+		DgnssResultVO dgnssResult = pstiServiceLKH.getVDgnssResultByManageNo(manageNo);
+		InptntVO inptnt = pstiServiceLKH.getInptntByManageNo(manageNo);
+		CnfmVO cnfm = pstiServiceLKH.getCnfmByManageNo(manageNo);
+		
+		LOGGER.debug("{}",psti);
+		LOGGER.debug("{}",dgnssResult);
+		LOGGER.debug("{}",inptnt);
+		LOGGER.debug("{}",cnfm);
+		
+		InptntDetailCommand inptntDetailCommand = new InptntDetailCommand();
+		
+		inptntDetailCommand.setData(inptnt);
+		inptntDetailCommand.setData(dgnssResult);
+		inptntDetailCommand.setData(psti);
+		inptntDetailCommand.setData(cnfm);
+		
+		LOGGER.debug("{}",inptntDetailCommand);
+		
+		entity = new ResponseEntity<InptntDetailCommand>(inptntDetailCommand, HttpStatus.OK);
+		
+		return entity;
+	}
+	
+	@RequestMapping("/req-inptnt-detail")
+	public ResponseEntity<ReqInptntDetailCommand> reqInptntDetail(String manageNo) throws Exception{
+		ResponseEntity<ReqInptntDetailCommand> entity = null;
+		
+		VPstiCommand psti = pstiServiceLKH.getVPstiByManageNo(manageNo);
+		DgnssResultVO dgnssResult = pstiServiceLKH.getVDgnssResultByManageNo(manageNo);
+		
+		SckbdreqVO sckbdreq = pstiServiceLKH.getSckbdreqByManageNo(manageNo);
+		
+		String hsptNo = sckbdreq.getHsptNo();
+		HsptVO hspt = hsptSerivceLKH.getHsptByHsptNo(hsptNo);
+		
+		LOGGER.debug("{}",psti);
+		LOGGER.debug("{}",dgnssResult);
+		LOGGER.debug("{}",sckbdreq);
+		LOGGER.debug("{}",hspt);
+		
+		ReqInptntDetailCommand reqInptntDetailCommand = new ReqInptntDetailCommand();
+		
+		reqInptntDetailCommand.setData(dgnssResult);
+		reqInptntDetailCommand.setData(psti);
+		reqInptntDetailCommand.setData(sckbdreq);
+		reqInptntDetailCommand.setData(hspt);
+		
+		
+		LOGGER.debug(reqInptntDetailCommand.toString());
+		
+		entity = new ResponseEntity<ReqInptntDetailCommand>(reqInptntDetailCommand, HttpStatus.OK);
+		
+		return entity;
+	}
+	
+	@RequestMapping("/sckbdreq-detail")
+	public ResponseEntity<SckbdreqDetailCommand> sckbdreqLtctDetail(String manageNo) throws Exception{
+		ResponseEntity<SckbdreqDetailCommand> entity = null;
+		
+		VPstiCommand psti = pstiServiceLKH.getVPstiByManageNo(manageNo);
+		DgnssResultVO dgnssResult = pstiServiceLKH.getVDgnssResultByManageNo(manageNo);
+		
+		SckbdreqVO sckbdreq = pstiServiceLKH.getSckbdreqByManageNo(manageNo);
+		
+		String childNo = sckbdreq.getChildNo();
+		LtctVO ltct = null;
+		HsptVO hspt = null;
+		
+		LOGGER.debug(sckbdreq.getType());
+		
+		if(sckbdreq.getType().equals("A")) {
+			hspt = hsptSerivceLKH.getHsptByHsptNo(childNo);
+		}
+		if(sckbdreq.getType().equals("B")) {
+			ltct = ltctServiceLKH.getLtctByLtctNo(childNo);
+		}
+		
+		LOGGER.debug("{}",psti);
+		LOGGER.debug("{}",dgnssResult);
+		LOGGER.debug("{}",sckbdreq);
+		LOGGER.debug("{}",ltct);
+		
+		SckbdreqDetailCommand sckbdreqDetailCommand = new SckbdreqDetailCommand();
+		
+		sckbdreqDetailCommand.setData(dgnssResult);
+		sckbdreqDetailCommand.setData(psti);
+		sckbdreqDetailCommand.setData(sckbdreq);
+		sckbdreqDetailCommand.setData(ltct);
+		sckbdreqDetailCommand.setData(hspt);
+		
+		LOGGER.debug(sckbdreqDetailCommand.toString());
+		
+		entity = new ResponseEntity<SckbdreqDetailCommand>(sckbdreqDetailCommand, HttpStatus.OK);
+		
+		return entity;
+	}	
+
+	@RequestMapping("/process-dgnss-inptnt")
+	public ResponseEntity<String> processDgnssInptnt(DgnssProcessCommand dgnssProcessCommand, HttpSession session) throws Exception{
+		
+		ResponseEntity<String> entity = null;
+		
+		LOGGER.debug("{}", dgnssProcessCommand);
+		
+		HsptVO loginHspt = null;
+		DgnssResultVO dgnssResult = null;
+		String fromLtctNo = null;
+		String msg = null;
+		
+		loginHspt = (HsptVO) session.getAttribute("loginInst");
+		
+		dgnssResult = new DgnssResultVO();
+		
+		dgnssResult.setDgnssNo(dgnssProcessCommand.getDgnssNo());
+		dgnssResult.setDgnssNote(dgnssProcessCommand.getDgnssNote());
+		dgnssResult.setDgnssResultCode(dgnssProcessCommand.getDgnssResultCode());
+		dgnssResult.setManageNo(dgnssProcessCommand.getManageNo());
+		
+		LOGGER.debug("{}",loginHspt);
+		LOGGER.debug("{}",dgnssResult);
+
+		if(dgnssProcessCommand.getType().equals("A")) {
+			
+			msg = hsptSerivceLKH.registInptntByDgnss(dgnssResult, loginHspt);
+			LOGGER.debug(msg);
+			
+		}
+		if(dgnssProcessCommand.getType().equals("B")) {			
+			
+			fromLtctNo = dgnssProcessCommand.getChildNo();
+			
+			LOGGER.debug(fromLtctNo);
+			
+			msg = hsptSerivceLKH.registInptntByIsoptnt(dgnssResult, loginHspt, fromLtctNo);
+			LOGGER.debug(msg);
+			
+		}
+		entity = new ResponseEntity<String>(msg, HttpStatus.OK);
+		
+		return entity;
+		
+	}
+	@RequestMapping("/process-dgnss-slfptnt")
+	public ResponseEntity<String> processDgnssSlfptnt(DgnssProcessCommand dgnssProcessCommand, HttpSession session) throws Exception{
+		
+		ResponseEntity<String> entity = null;
+		
+		LOGGER.debug(dgnssProcessCommand.toString());
+		
+		HsptVO loginHspt = null;
+		DgnssResultVO dgnssResult = null;
+		String msg = null;
+		
+		loginHspt = (HsptVO) session.getAttribute("loginInst");
+		
+		dgnssResult = new DgnssResultVO();
+		
+		dgnssResult.setDgnssNo(dgnssProcessCommand.getDgnssNo());
+		dgnssResult.setDgnssNote(dgnssProcessCommand.getDgnssNote());
+		dgnssResult.setDgnssResultCode(dgnssProcessCommand.getDgnssResultCode());
+		dgnssResult.setManageNo(dgnssProcessCommand.getManageNo());
+		
+		LOGGER.debug("{}",loginHspt);
+		LOGGER.debug("{}",dgnssResult);
+
+		msg = hsptSerivceLKH.registSlfptntByDgnss(dgnssResult, loginHspt);
+		
+		LOGGER.debug(msg);
+
+		entity = new ResponseEntity<String>(msg, HttpStatus.OK);
+		
+		return entity;
+		
+	}
+	
+	@RequestMapping("/process-dgnss-sckbdreq-inptnt")
+	public ResponseEntity<String> processDgnssSckbdreqInptnt(DgnssProcessCommand dgnssProcessCommand, HttpSession session) throws Exception{
+		
+		ResponseEntity<String> entity = null;
+		
+		LOGGER.debug(dgnssProcessCommand.toString());
+		
+		HsptVO loginHspt = null;
+		DgnssResultVO dgnssResult = null;
+		String fromLtctNo = null;
+		
+		String msg = null;
+		
+		loginHspt = (HsptVO) session.getAttribute("loginInst");
+		
+		dgnssResult = new DgnssResultVO();
+		
+		dgnssResult.setDgnssNo(dgnssProcessCommand.getDgnssNo());
+		dgnssResult.setDgnssNote(dgnssProcessCommand.getDgnssNote());
+		dgnssResult.setDgnssResultCode(dgnssProcessCommand.getDgnssResultCode());
+		dgnssResult.setManageNo(dgnssProcessCommand.getManageNo());		
+		
+		String toHsptNo = dgnssProcessCommand.getToHsptNo();
+		fromLtctNo = dgnssProcessCommand.getChildNo();
+		
+		if(dgnssProcessCommand.getType().equals("A")) {
+			msg = hsptSerivceLKH.registSckbdreqInptntByDgnss(dgnssResult, loginHspt, toHsptNo);
+			LOGGER.debug(msg);
+		}
+		if(dgnssProcessCommand.getType().equals("B")) {
+			msg = hsptSerivceLKH.registSckbdreqInptntByIsoptnt(dgnssResult, loginHspt, toHsptNo, fromLtctNo);
+			LOGGER.debug(msg);
+		}
+		
+		entity = new ResponseEntity<String>(msg, HttpStatus.OK);
+		
+		return entity;
+	}
+	
+	@RequestMapping("/process-dgnss-sckbdreq-isoptnt")
+	public ResponseEntity<String> processDgnssSckbdreqIsoptnt(DgnssProcessCommand dgnssProcessCommand, HttpSession session) throws Exception{
+		ResponseEntity<String> entity = null;
+		
+		LOGGER.debug(dgnssProcessCommand.toString());
+		
+		HsptVO loginHspt = null;
+		DgnssResultVO dgnssResult = null;
+		String toLtctNo = null;
+		
+		String msg = null;
+		
+		loginHspt = (HsptVO) session.getAttribute("loginInst");
+		
+		dgnssResult = new DgnssResultVO();
+		
+		dgnssResult.setDgnssNo(dgnssProcessCommand.getDgnssNo());
+		dgnssResult.setDgnssNote(dgnssProcessCommand.getDgnssNote());
+		dgnssResult.setDgnssResultCode(dgnssProcessCommand.getDgnssResultCode());
+		dgnssResult.setManageNo(dgnssProcessCommand.getManageNo());		
+
+		toLtctNo = dgnssProcessCommand.getToLtctNo();
+		
+		msg = hsptSerivceLKH.registSckbdreqIsoptntByDgnss(dgnssResult, loginHspt, toLtctNo);
+		
+		entity = new ResponseEntity<String>(msg, HttpStatus.OK);
+		
+		return entity;
+	}
+}

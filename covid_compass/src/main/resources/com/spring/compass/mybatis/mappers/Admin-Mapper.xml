@@ -78,9 +78,23 @@
                     )
 </update>
 
-<select id="selectInstTotalCount">
+<select id="selectInstTotalCount" resultType="java.lang.Integer">
 	SELECT COUNT(*) FROM INST
 </select>
+
+<select id="selectInspTotalCount" resultType="java.lang.Integer">
+	SELECT COUNT(*) FROM INSP
+</select>
+<select id="selectPbhtTotalCount" resultType="java.lang.Integer">
+	SELECT COUNT(*) FROM PBHT
+</select>
+<select id="selectHsptTotalCount" resultType="java.lang.Integer">
+	SELECT COUNT(*) FROM HSPT
+</select>
+<select id="selectLtctTotalCount" resultType="java.lang.Integer">
+	SELECT COUNT(*) FROM LTCT
+</select>
+
 <sql id="search">
 	<if test="searchType=='allInst'.toString()">
 	</if>

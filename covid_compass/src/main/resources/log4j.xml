@@ -25,7 +25,11 @@
 	<logger name="kr.or.ddit">
 		<level value="info" />
 	</logger>
-	
+
+	<logger name="com.spring.compass">
+		<level value="debug" />
+	</logger>
+		
 	  <!-- SQL문과 해당 SQL을 실행시키는데 수행된 시간 정보(milliseconds)를 포함한다. -->
 	<!-- <logger name="jdbc.sqltiming">
 		<level value="debug" />
