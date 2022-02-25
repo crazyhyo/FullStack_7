@@ -7,15 +7,9 @@
 <title></title>
 
 <body class="hold-transition sidebar-mini">
-   <div class="wrapper" style="background: #ffffff;">
-      <div class="card card-success">
-
-         <!-- Main content -->
-
-         <div class="row">
-            <div class="col-md-12">
-               <!-- /.card-header -->
-               <div class="card-body" style="height: 710px;">
+   <section class="content">
+      <div class="card card-success" style="margin-top: 15px;">
+               <div class="card-body" style="height: 750px;">
                <form role="form" action="notice-modify" method="post" enctype="multipart/form-data">
 		               	<input type="hidden" id="deleteFileName" name="deleteFileName" value="${fileName}">
 		                <input type="hidden" id="deleteFileCheck" name="deleteFileCheck" value="NO">
@@ -27,10 +21,10 @@
 
                   <div class="form-group">
                      <label for="inputWriter">작성자</label> <input type="text"
-                        id="inputWriter" class="form-control" name="noticeWriter"  value="${notice.writer }">
+                        id="inputWriter" class="form-control" name="noticeWriter"  value="시스템관리자" readonly="readonly">
                   </div>
 					
-				<c:if test="${notice.popUp eq 'Y'}">	
+				<%-- <c:if test="${notice.popUp eq 'Y'}">	
                   <div>
                   	<input type="hidden" id="startDateval" value="${startDate}">
                   	<input type="hidden" id="endDateval" value="${endDate}">
@@ -67,11 +61,11 @@
 
 						</div>
 					</div>
-                  </c:if>
+                  </c:if> --%>
 
                   <div class="form-group" style="margin-top: 1%;">
                      <label for="inputDescription">내용</label>
-                     <textarea name="noticeContent" id="summernote" style="height: 200px;" class="form-control" rows="3"
+                     <textarea name="noticeContent" id="summernote" style="height: 320px;" class="form-control" rows="3"
                         placeholder="내용" >${notice.content}</textarea>
                   </div>
 
@@ -81,10 +75,10 @@
 
                      
                      <div class="fileGroup">
-                     <input type="hidden" value="${originalFileName }" name="noticeModifyFile" id="hiddenFile">
+                     <c:if test="${fileName ne null }">
+                     <input type="hidden" value="${originalFileName }" name="hiddenModifyFile" id="hiddenFile">
                      <a href="getFile?fileName=${fileName}"><span style="font-weight: bold;">${originalFileName}</span></a> 
                      <%-- <input type="text" id="inputFile" style="border: none; display: block;" value="${fileName}"> --%>
-                     <c:if test="${fileName ne null }">
                      <button type="button" onclick="removeFile_go();" style="border:0;outline:0;" 
 																	class="badge bg-red">X</button>
 					</c:if>	
@@ -104,18 +98,16 @@
                <!-- /.card-body -->
                <!-- /.card -->
 
-            </div>
 
-         </div>
       </div>
       <!-- /.col-->
-   </div>
+   </section>
 	
 	<script>
 		window.onload = function() {
 			// Summernote
 			$('#summernote').summernote({
-				height : 200
+				height : 320
 			})
 		}
 		function removeFile_go(){

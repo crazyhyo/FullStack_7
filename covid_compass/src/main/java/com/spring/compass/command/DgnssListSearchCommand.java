@@ -9,6 +9,10 @@ public class DgnssListSearchCommand
 	extends SearchCriteria
 	implements Serializable{
 	
+	public DgnssListSearchCommand(int page, int perPageNum) {
+		super(page, perPageNum);
+	}
+	
 	public DgnssListSearchCommand(int page, int perPageNum, String searchType, String keyword) {
 		super(page, perPageNum, searchType, keyword);
 	}

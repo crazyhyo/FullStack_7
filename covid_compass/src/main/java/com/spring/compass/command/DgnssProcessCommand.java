@@ -15,9 +15,22 @@ public class DgnssProcessCommand implements Serializable {
 	private String dgnssNo;
 	private String toLtctNo;
 	private String toHsptNo;
+	private boolean closeWindow;
 	
 	
 	
+	public boolean isCloseWindow() {
+		return closeWindow;
+	}
+
+
+
+	public void setCloseWindow(boolean closeWindow) {
+		this.closeWindow = closeWindow;
+	}
+
+
+
 	public String getChildNo() {
 		return childNo;
 	}

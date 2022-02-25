@@ -21,12 +21,29 @@ public class SmplListDetailVO {
 	private String pbhtNo;
 	private String instNo;
 	private String manageNo;
+	private String pstiNo;
+	private String bir;
 
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);
 	}
 	
+	public String getBir() {
+		return bir;
+	}
+
+	public void setBir(String bir) {
+		this.bir = bir;
+	}
+
+	public String getPstiNo() {
+		return pstiNo;
+	}
+	
+	public void setPstiNo(String pstiNo) {
+		this.pstiNo = pstiNo;
+	}
 
 	public Date getReqYmd() {
 		return reqYmd;

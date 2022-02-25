@@ -1,21 +1,23 @@
 package com.spring.compass.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.spring.compass.command.PageMaker;
 import com.spring.compass.command.SearchCriteria;
+import com.spring.compass.command.SearchCriteriaGeon;
 import com.spring.compass.dao.AdminDAO;
 import com.spring.compass.vo.AttachVO;
 import com.spring.compass.vo.HsptVO;
 import com.spring.compass.vo.InspVO;
 import com.spring.compass.vo.InstVO;
+import com.spring.compass.vo.LtctStatsVO;
 import com.spring.compass.vo.LtctVO;
 import com.spring.compass.vo.MberVO;
 import com.spring.compass.vo.NoticeVO;
 import com.spring.compass.vo.PbhtVO;
+import com.spring.compass.vo.PstiVO;
 
 
 
@@ -33,15 +35,105 @@ public class AdminServiceImpl implements AdminService{
 	public void registInst(InstVO inst) throws Exception {
 		adminDAO.insertInst(inst);
 	}
+	
+	
+	
+	
+	
+	@Override
+	public Map<String, Object> getMainInspList(SearchCriteriaGeon cri) throws Exception {
+		Map<String, Object> inspMap = new HashMap<String, Object>();
+		
+		PageMaker inspPageMaker = new PageMaker();
+		
+		inspPageMaker.setCri(cri);
+		
+		int totalCount = adminDAO.selectInspTotalCount(cri);
+		
+		inspPageMaker.setTotalCount(totalCount);
+		
+		List<InspVO> inspList = adminDAO.selectAllInsp(cri);
+		
+		inspMap.put("inspList", inspList);
+		inspMap.put("inspPageMaker", inspPageMaker);
+		
+		return inspMap;
+	}
+
+
+
 
 	@Override
-	public Map<String, Object> getInstListPage(SearchCriteria cri) throws Exception {
+	public Map<String, Object> getMainPbhtList(SearchCriteriaGeon cri) throws Exception {
+		Map<String, Object> pbhtMap = new HashMap<String, Object>();
+		List<PbhtVO> pbhtList = adminDAO.selectAllPbht(cri);
+		
+		PageMaker pbhtPageMaker = new PageMaker();
+		
+		pbhtPageMaker.setCri(cri);
+		
+		int totalCount = adminDAO.selectPbhtTotalCount(cri);
+		
+		pbhtPageMaker.setTotalCount(totalCount);
+		
+		pbhtMap.put("pbhtList", pbhtList);
+		pbhtMap.put("pbhtPageMaker", pbhtPageMaker);
+		
+		
+		return pbhtMap;
+	}
+
+
+
+
+	@Override
+	public Map<String, Object> getMainHsptList(SearchCriteriaGeon cri) throws Exception {
+		Map<String, Object> hsptMap = new HashMap<String, Object>();
+		List<HsptVO> hsptList = adminDAO.selectAllHspt(cri);
+		
+		PageMaker hsptPageMaker = new PageMaker();
+		
+		hsptPageMaker.setCri(cri);
+		
+		int totalCount = adminDAO.selectHsptTotalCount(cri);
+		
+		hsptPageMaker.setTotalCount(totalCount);
+		
+		hsptMap.put("hsptList", hsptList);
+		hsptMap.put("hsptPageMaker", hsptPageMaker);
+		
+		
+		return hsptMap;
+	}
+
+
+
+
+	@Override
+	public Map<String, Object> getMainLtctList(SearchCriteriaGeon cri) throws Exception {
+		Map<String, Object> ltctMap = new HashMap<String, Object>();
+		List<LtctVO> ltctList = adminDAO.selectAllLtct(cri);
+		
+		PageMaker ltctPageMaker = new PageMaker();
+		
+		ltctPageMaker.setCri(cri);
+		
+		int totalCount = adminDAO.selectLtctTotalCount(cri);
+		
+		ltctPageMaker.setTotalCount(totalCount);
+		
+		ltctMap.put("ltctList", ltctList);
+		ltctMap.put("ltctPageMaker", ltctPageMaker);
+		
+		
+		return ltctMap;
+	}
+	
+
+	@Override
+	public Map<String, Object> getInstListPage(SearchCriteriaGeon cri) throws Exception {
 		
 		Map<String, Object> dataMap = new HashMap<String, Object>();
-		List<InspVO> inspList = new ArrayList<InspVO>();
-		List<PbhtVO> pbhtList = new ArrayList<PbhtVO>();
-		List<HsptVO> hsptList = new ArrayList<HsptVO>();
-		List<LtctVO> ltctList = new ArrayList<LtctVO>();
 		
 		PageMaker pageMaker = null;
 		
@@ -53,10 +145,6 @@ public class AdminServiceImpl implements AdminService{
 		pageMaker.setTotalCount(totalCount);
 		
 		List<InstVO> instList = adminDAO.selectAllInst(cri);
-		inspList = adminDAO.selectAllInsp();
-		pbhtList = adminDAO.selectAllPbht();
-		hsptList = adminDAO.selectAllHspt();
-		ltctList = adminDAO.selectAllLtct();
 		
 		for(int i=0; i<instList.size(); i++) {
 			String checkDivision=instList.get(i).getChildNo();
@@ -78,10 +166,6 @@ public class AdminServiceImpl implements AdminService{
 			}
 		}
 		dataMap.put("instList", instList);
-		dataMap.put("inspList", inspList);
-		dataMap.put("pbhtList", pbhtList);
-		dataMap.put("hsptList", hsptList);
-		dataMap.put("ltctList", ltctList);
 		dataMap.put("pageMaker", pageMaker);
 		
 		return dataMap;
@@ -286,12 +370,6 @@ public class AdminServiceImpl implements AdminService{
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(totalCount);
-		System.out.println("----------------cri.getPage:"+cri.getPage());
-		System.out.println("----------------startPage:"+pageMaker.getStartPage());
-		System.out.println("----------------endPage:"+pageMaker.getEndPage());
-		System.out.println("----------------realEndPage:"+pageMaker.getRealEndPage());
-		System.out.println(pageMaker);
-		
 		dataMap.put("noticeList", noticeList);
 		dataMap.put("pageMaker", pageMaker);
 		
@@ -317,7 +395,9 @@ public class AdminServiceImpl implements AdminService{
 
 	@Override
 	public void removeNotice(String atchNo, String noticeNo) throws Exception {
-		adminDAO.removeAttachByAtchNo(atchNo);
+		if(atchNo !=null) {
+			adminDAO.removeAttachByAtchNo(atchNo);
+		}
 		adminDAO.removeNoticeByNoticeNo(noticeNo);
 	}
 
@@ -376,13 +456,238 @@ public class AdminServiceImpl implements AdminService{
 
 
 
-	
+	@Override
+	public MberVO getMberByMberId(String mberId) throws Exception {
+		MberVO mber = adminDAO.selectMeberDetailByMberId(mberId);
+		return mber;
+	}
+
+
+
+
+	@Override
+	public void removeInspStatsByInspNo(String inspNo) throws Exception {
+		adminDAO.deleteInspStatsByInspNo(inspNo);
+	}
+
+
+
+
+	@Override
+	public void removePbhtStatsByPbhtNo(String pbhtNo) throws Exception {
+		adminDAO.deletePbhtStatsByPbhtNo(pbhtNo);
+	}
+
+
+
+
+	@Override
+	public void removeHsptStatsByHsptNo(String hsptNo) throws Exception {
+		adminDAO.deleteHsptStatsByHsptNo(hsptNo);
+	}
+
+
+
+
+	@Override
+	public void removeLtctStatsByLtctNo(String ltctNo) throws Exception {
+		adminDAO.deleteLtctStatsByLtctNo(ltctNo);
+	}
+
+
+
+
+	@Override
+	public List<String> getInspNoByPbhtNo(String pbhtNo) throws Exception {
+		return adminDAO.selectInspNoByPbhtNo(pbhtNo);
+	}
+
+
+
+
+	@Override
+	public String getInstNoByInspNo(String inspNo) throws Exception {
+		return adminDAO.selectInstNoByInspNo(inspNo);
+	}
+
+
+
+
+	@Override
+	public String getPstiNoByInspNo(String inspNo) throws Exception {
+		return adminDAO.selectPstiNoByInspNo(inspNo);
+	}
+
+
+
+
+	@Override
+	public void removeHtscByPstiNo(String pstiNo) throws Exception {
+		adminDAO.deleteHtscByPstiNo(pstiNo);
+	}
+
+
+
+
+	@Override
+	public void removePstiByInspNo(String inspNo) throws Exception {
+		adminDAO.deletePstiByInspNo(inspNo);
+	}
+
+
+	@Override
+	public void removeInspEmpByInspNo(String inspNo) throws Exception {
+		adminDAO.deleteInspEmpByInspNo(inspNo);
+	}
+
+
+
+
+	@Override
+	public void removeSmplByPbhtNo(String pbhtNo) throws Exception {
+		adminDAO.deleteSmplByPbhtNo(pbhtNo);
+	}
+
+
+
+
+	@Override
+	public void removeCnfmByPbhtNo(String pbhtNo) throws Exception {
+		adminDAO.deleteCnfmByPbhtNo(pbhtNo);
+	}
+
+
+
+
+	@Override
+	public void removeSlfptntByPbhtNo(String pbhtNo) throws Exception {
+		adminDAO.deleteSlfptntByPbhtNo(pbhtNo);
+	}
+
+
+
+
+	@Override
+	public void removePbhtEmp(String pbhtNo) throws Exception {
+		adminDAO.deletePbhtEmp(pbhtNo);
+	}
+
+
+	@Override
+	public void removeHsptEmpByHsptNo(String hsptNo) throws Exception {
+		adminDAO.deleteHsptEmpByHsptNo(hsptNo);
+	}
+
+
+	@Override
+	public void removeInptntByHsptNo(String hsptNo) throws Exception {
+		adminDAO.deleteInptntByHsptNo(hsptNo);
+	}
+
+
+	@Override
+	public void removeDgnssByHsptNo(String hsptNo) throws Exception {
+		adminDAO.deleteDgnssByHsptNo(hsptNo);
+	}
+
+
+	@Override
+	public void removeIsoptntByLtctNo(String ltctNo) throws Exception {
+		adminDAO.deleteIsoptntByLtctNo(ltctNo);
+	}
+
+
+	@Override
+	public void removeLtctEmpByLtctNo(String ltctNo) throws Exception {
+		adminDAO.deleteLtctEmpByLtctNo(ltctNo);
+	}
+
+
+
+
+	@Override
+	public List<PstiVO> getPstiBackupList() throws Exception {
+		List<PstiVO> pstiBackupList = adminDAO.selectPstiBackupList();
+		return pstiBackupList;
+	}
+
+
+
+
+	@Override
+	public Map<String, Object> getNoticeListByInstNo(SearchCriteria cri) throws Exception {
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		List<NoticeVO> noticeList = adminDAO.selectAllNoticeByInstNo(cri);
+		
+		int totalCount = adminDAO.selectSearchNoticeListByInstNoCount(cri);
+		
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(totalCount);
+		
+		System.out.println("================totalCount:"+pageMaker.getTotalCount());
+		System.out.println("=================endPage:"+pageMaker.getEndPage());
+		
+		
+		
+		dataMap.put("noticeList", noticeList);
+		dataMap.put("pageMaker", pageMaker);
+		
+		return dataMap;
+	}
+
+
+
+
+	@Override
+	public int getSearchNoticeListByInstNoCount(SearchCriteria cri) throws Exception {
+		return adminDAO.selectSearchNoticeListByInstNoCount(cri);
+	}
+
+
+
+
+	@Override
+	public void modifyNoticeByInst(NoticeVO notice) throws Exception {
+		adminDAO.noticeModifyByInst(notice);
+	}
+
+
+
+
+	@Override
+	public void registNoticeAdmin(NoticeVO notice) throws Exception {
+		adminDAO.registNoticeAdmin(notice);
+	}
+
+
+
+
+	@Override
+	public List<NoticeVO> getPopupNoticeList() throws Exception {
+		return adminDAO.selectPopupNotice();
+	}
+
+
+
+
+	@Override
+	public void removeAttachByMberNo(String mberNo) throws Exception {
+		adminDAO.deleteAttachByMberNo(mberNo);
+	}
+
+
+
+
+	@Override
+	public AttachVO getAttachByMberNo(String mberNo) throws Exception {
+		return adminDAO.selectAttachByMberNo(mberNo);
+	}
 
 
 
 
 
-	
 
 
 }

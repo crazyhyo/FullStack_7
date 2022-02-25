@@ -7,13 +7,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
 <script type="text/x-handlebars-template"  id="inst-list-template" >
 {{#each .}}
-		<tr class="each-inst-element" instNo='{{instNo}}' onclick="detail_go('{{instNo}}')">
+		<tr style="cursor: pointer;" class="each-inst-element" instNo='{{instNo}}' data-instNo="{{instNo}}" onclick="detail_go('{{instNo}}')">
 		<td onclick="event.cancelBubble=true" style="cursor: default;">
 		<input type="checkbox" name="instCheckBox" value="{{instNo}}" onclick="cancleAll()"></td>
 				<td><span class="badge badge-{{styleBadge division}}">{{division}}</span></td>
-				<td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{instNm}}</td>
-				<td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{instAdres}}</td>
-				<td>{{instTelno}}</td>
+				<td title="{{instNm}}" style="text-align:left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{instNm}}</td>
+				<td title="{{instAdres}}" style="text-align:left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{instAdres}}</td>
+				<td title="{{instTelNO}}">{{instTelno}}</td>
 		<td>{{empNo}}</td>
 		</tr>
 
@@ -55,14 +55,14 @@
 <script type="text/x-handlebars-template"  id="inst-detail-template" >
 <div class="delete-detail-tm">
  <div class="row" style="margin: 10px;">
+		<label style="text-align: right; margin: auto;" class="col-sm-2" for="note">기관명</label>
+		<div class="col-sm-4">
+			<input style="width: 220px;" type="text" class="form-control" readonly value="{{instNm}}">
+		</div>
+		
 		<label style="text-align: right; margin: auto;" class="col-sm-2" for="sort">구분</label>
 		<div class="col-sm-4">
 			<input id="division" type="text" class="form-control" readonly="readonly" value="{{division}}">
-		</div>
-	
-		<label style="text-align: right; margin: auto;" class="col-sm-2" for="note">기관명</label>
-		<div class="col-sm-4">
-			<input type="text" class="form-control" readonly value="{{instNm}}">
 		</div>
 	</div>
 	
@@ -95,19 +95,19 @@
 {{#each .}}
 	<div class="deleteEmpListtmp">
 			<div class="row">
-				<div class="col-3">
+				<div class="col-3" title="{{mberNm}}">
 					<input type="hidden" id="passwordResetValue" value="{{mberNo}}"/>
-					<input type="text" class="form-control user-list" placeholder="홍길동1" value="{{mberNm}}">
+					<input type="text" readonly class="form-control user-list" placeholder="홍길동1" value="{{mberNm}}">
 				</div>
-				<div class="col-3" style="padding: 0px;">
-					<input type="text" class="form-control user-list" placeholder="010-1234-5678" value="{{mberTelno}}">
+				<div class="col-4" title="{{mberId}}">
+					<input type="text" readonly class="form-control user-list" placeholder="아이디" value="{{mberId}}">
 				</div>
-				<div class="col-4 ">
-					<input type="text" class="form-control user-list" placeholder="abcdefg@naver.com" value="{{mberEmail}}">
+				<div class="col-2" style="padding: 0px;" title="{{mberTelno}}">
+					<input type="text" readonly class="form-control user-list" placeholder="010-1234-5678" value="{{mberTelno}}">
 				</div>
-				<div class="col-2">
-					<button type="button" onclick="password_reset()" class="btn btn-primary user-list" style="background: #1a4f72; border-color: #1a4f72;padding-top: 3px; ">
-					<span style="display: block;text-align: center; ">초기화</span>
+				<div class="col-3" style="text-align: center; ">
+					<button type="button" onclick="password_reset('{{mberNo}}')" class="btn btn-primary user-list" style="background: #1a4f72; border-color: #1a4f72;padding-top: 3px; ">
+					<span style="display: block;display:inline-block; ">초기화</span>
 					</button>
 				</div>
 			</div>
@@ -173,6 +173,7 @@ function make_form(pageParam){
 	jobForm.find("[name='page']").val(page);
 	jobForm.find("[name='perPageNum']").val($('select[name="perPageNum"]').val());
 	jobForm.find("[name='searchType']").val($('select[name="searchType"]').val());
+	jobForm.find("[name='searchType2']").val($('select[name="searchType2"]').val());
 	jobForm.find("[name='keyword']").val($('div.input-group>input[name="keyword"]').val());
 	
 	return jobForm;
@@ -190,10 +191,22 @@ function getPage(handlebarsProcessingURL, form){
 		dataType : 'json',
 		data : form.serialize(),
 		success : function(dataMap){
-			printData(dataMap.instList, $('#inst-list-table-tbody'),$('#inst-list-template'),'.each-inst-element');
-			printPagination(dataMap.pageMaker,$('#inst-list-pagination-ul'), $('#inst-pagination-template'), '.each-inst-pagination-element');
-			printDetail(dataMap.firstInst,$('#inst-detail-tm'),$('#inst-detail-template'), '.delete-detail-tm');
-			printEmp(dataMap.firstMberList, $('#appendEmpListtmp'),$('#inst-empList-template'),'.deleteEmpListtmp');
+			var len = dataMap.instList.length;
+			$('#inst-list-table-tbody').html('');
+			if(len == 0){
+				$('#inst-list-table-tbody').html('<tr class="each-inst-element"> <td id="initialTd" colspan="6">데이터가 없습니다.</td> </tr>');
+				dataMap.pageMaker.endPage=1;
+				dataMap.pageMaker.realEndPage=1;
+				printPagination(dataMap.pageMaker,$('#inst-list-pagination-ul'), $('#inst-pagination-template'), '.each-inst-pagination-element');
+				printDetail('',$('#inst-detail-tm'),$('#inst-detail-template'), '.delete-detail-tm');
+				printEmp('', $('#appendEmpListtmp'),$('#inst-empList-template'),'.deleteEmpListtmp');
+			}else{
+				printData(dataMap.instList, $('#inst-list-table-tbody'),$('#inst-list-template'),'.each-inst-element');
+				printPagination(dataMap.pageMaker,$('#inst-list-pagination-ul'), $('#inst-pagination-template'), '.each-inst-pagination-element');
+				printDetail(dataMap.firstInst,$('#inst-detail-tm'),$('#inst-detail-template'), '.delete-detail-tm');
+				printEmp(dataMap.firstMberList, $('#appendEmpListtmp'),$('#inst-empList-template'),'.deleteEmpListtmp');
+				$('#instModifyButton').val(dataMap.firstInst.instNo);
+			}
 		},
 		error : function(error){
 			alert('error'+error.status);
@@ -202,6 +215,15 @@ function getPage(handlebarsProcessingURL, form){
 }
 
  function detail_go(instNo){
+	 
+	 var trs = $('.each-inst-element');
+	 
+	 trs.removeClass('on');
+	 
+	 var target = $('.each-inst-element[data-instNo='+instNo+']');
+	 
+	 target.addClass('on');
+	 
 	 $('#instModifyButton').val(instNo);
 	 $.ajax({
 		url : '<%=request.getContextPath()%>/admin/inst-detail',
@@ -288,7 +310,7 @@ function printPagination(pageMaker, target, templateObject, removeClass){
 						<th style="width: 5%;"><input type="checkbox" name="inst" id="selectAll"
 							onclick="selectAll()"></th>
 						<th tabindex="0" aria-controls="example2" rowspan="1"
-							style="text-align: center; width: 15%;" colspan="1">구분</th>
+							style="text-align: center; width: 20%;" colspan="1">구분</th>
 						<th tabindex="0" aria-controls="example2" rowspan="1"
 							style="text-align: center; width: 30%;" colspan="1">기관명</th>
 						<th tabindex="0" aria-controls="example2" rowspan="1"
@@ -301,7 +323,7 @@ function printPagination(pageMaker, target, templateObject, removeClass){
 				</thead>
 				<tbody id="inst-list-table-tbody">
 					<tr class="each-inst-element">
-						<td colspan="6">페이지 로딩중 입니다.</td>
+						<td id="initialTd" colspan="6">페이지 로딩중 입니다.</td>
 					</tr>
 				</tbody>
 			</table>
@@ -319,6 +341,7 @@ function printPagination(pageMaker, target, templateObject, removeClass){
 	<input type='hidden' name="page" value="" />
 	<input type='hidden' name="perPageNum" value=""/>
 	<input type='hidden' name="searchType" value="" />
+	<input type='hidden' name="searchType2" value="" />
 	<input type='hidden' name="keyword" value="" />
 </form>
 

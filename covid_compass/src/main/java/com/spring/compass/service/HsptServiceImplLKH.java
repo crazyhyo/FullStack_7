@@ -1,6 +1,7 @@
 package com.spring.compass.service;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,15 +14,21 @@ import com.spring.compass.command.DgnssListSearchCommand;
 import com.spring.compass.command.DgnssListVO;
 import com.spring.compass.command.InptntListSearchCommand;
 import com.spring.compass.command.InptntListVO;
+import com.spring.compass.command.InstSearchCommand;
+import com.spring.compass.command.LtctListToSckbdreqCommand;
 import com.spring.compass.command.PageMaker;
 import com.spring.compass.command.ReqInptntListCommand;
+import com.spring.compass.command.SckbdreqHsptListCommand;
 import com.spring.compass.command.SckbdreqLtctListCommand;
 import com.spring.compass.dao.HsptDAO;
 import com.spring.compass.dao.LtctDAO;
 import com.spring.compass.dao.PbhtDAO;
 import com.spring.compass.dao.PstiDAO;
 import com.spring.compass.util.ErrorCodeUtil;
+import com.spring.compass.util.MakeStatisticsLogByLtct;
+import com.spring.compass.vo.BookmarkVO;
 import com.spring.compass.vo.DgnssResultVO;
+import com.spring.compass.vo.HsptStatsVO;
 import com.spring.compass.vo.HsptVO;
 import com.spring.compass.vo.InptntVO;
 import com.spring.compass.vo.IsoptntVO;
@@ -79,7 +86,7 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 	 * ---------------------------------------------------------------
 	 */
 	
-	private void updateManageChangeAllService(String msg, String manageNo, String sttusCode, HsptVO hspt) throws Exception{
+	private String updateManageChangeAllService(String msg, String manageNo, String sttusCode, HsptVO hspt) throws Exception{
 		
 		ManageVO manage = new ManageVO(); 
 		manage.setSttusCode(sttusCode);
@@ -92,10 +99,11 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 
-	private void updateManageChangeInstService(String msg, String manageNo, HsptVO hspt) throws Exception{
+	private String updateManageChangeInstService(String msg, String manageNo, HsptVO hspt) throws Exception{
 		ManageVO manage = new ManageVO();
 		manage.setInstNm(hspt.getInstNm());
 		manage.setInstNo(hspt.getInstNo());
@@ -108,10 +116,11 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 	
-	private void updateManageChangeStatusService(String msg, String manageNo, String sttusCode) throws Exception{
+	private String updateManageChangeStatusService(String msg, String manageNo, String sttusCode) throws Exception{
 		
 		ManageVO manage = new ManageVO();
 		manage.setSttusCode(sttusCode);
@@ -122,30 +131,33 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 	
-	private void updateDgnssCodeChkdService(String msg, String dgnssNo) throws Exception{
+	private String updateDgnssCodeChkdService(String msg, String dgnssNo) throws Exception{
 		
 		if(hsptDAO.updateDgnssCodeChkd(dgnssNo) == 0) 	{
 			msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_03");		
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 	
-	private void insertDgnssResultService(String msg, DgnssResultVO dgnssResult) throws Exception{
+	private String insertDgnssResultService(String msg, DgnssResultVO dgnssResult) throws Exception{
 		
 		if(hsptDAO.insertDgnssResult(dgnssResult) == 0) 	{
 			msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_04");		
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 
-	private void insertInptntService(String msg, String manageNo, String hsptNo) throws Exception{
+	private String insertInptntService(String msg, String manageNo, String hsptNo) throws Exception{
 		
 		String inptntNo = pstiDAO.selectInptntNextVal();
 		InptntVO inptnt = new InptntVO();
@@ -161,13 +173,15 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 	
-	private void insertSckbdreqService(String msg, String manageNo, String requestCode, String type, String childNo, HsptVO loginHspt) throws Exception{
+	private String insertSckbdreqService(String msg, String manageNo, String requestCode, String type, String childNo, HsptVO loginHspt) throws Exception{
 		
 		String sckbdreqNo = pstiDAO.selectSckbdreqNextVal();
 	    String hsptNo = loginHspt.getHsptNo();
+	    String hsptNm = loginHspt.getInstNm();
 
 	    SckbdreqVO sckbdreq = new SckbdreqVO();
 	    sckbdreq.setSckbdreqNo(sckbdreqNo);
@@ -176,6 +190,7 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 	    sckbdreq.setHsptNo(hsptNo);
 	    sckbdreq.setManageNo(manageNo);
 	    sckbdreq.setRequestCode(requestCode);
+	    sckbdreq.setHsptNm(hsptNm);
 	    
 	    LOGGER.debug("{}",sckbdreq);
 	    
@@ -184,50 +199,71 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 	
-	private void updateIncreaseRmndSckbdCntByHsptNoService(String msg, String hsptNo) throws Exception{
+	private String updateIncreaseRmndSckbdCntByHsptNoService(String msg, String hsptNo) throws Exception{
 		
 		if(hsptDAO.updateIncreaseRmndSckbdCntByHsptNo(hsptNo) == 0) 	{
 			msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_08");		
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 	
-	private void updateDecreaseRmndSckbdCntByHsptNoService(String msg, String hsptNo) throws Exception{
+	private String updateDecreaseRmndSckbdCntByHsptNoService(String msg, String hsptNo) throws Exception{
 
+		HsptVO targetHspt = hsptDAO.selectHsptByHsptNo(hsptNo);
+		
+		if(targetHspt.getRmndSckbdCnt() <= 0) {
+			msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_19");
+			LOGGER.debug(msg);
+			throw new Exception(msg);
+		}
+		
 		if(hsptDAO.updateDecreaseRmndSckbdCntByHsptNo(hsptNo) == 0) 	{
 			msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_08");		
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 
-	private void updateIncreaseRmndSckbdCntByLtctNoService(String msg, String ltctNo) throws Exception{
+	private String updateIncreaseRmndSckbdCntByLtctNoService(String msg, String ltctNo) throws Exception{
 		
 		if(hsptDAO.updateIncreaseRmndSckbdCntByLtctNo(ltctNo) == 0) 	{
 			msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_08");		
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 	
-	private void updateDecreaseRmndSckbdCntByLtctNoService(String msg, String ltctNo) throws Exception{
-
+	private String updateDecreaseRmndSckbdCntByLtctNoService(String msg, String ltctNo) throws Exception{
+		
+		LtctVO targetLtct = ltctDAO.selectLtctByLtctNo(ltctNo);
+		
+		if(targetLtct.getRmndSckbdCnt() <= 0) {
+			msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_19");
+			LOGGER.debug(msg);
+			throw new Exception(msg);
+		}
+		
 		if(hsptDAO.updateDecreaseRmndSckbdCntByLtctNo(ltctNo) == 0) 	{
 			msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_08");		
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 	
-	private void updateIsoptntExitService(String msg, String manageNo, String hsptlzCode) throws Exception{
+	private String updateIsoptntExitService(String msg, String manageNo, String hsptlzCode) throws Exception{
 
 		IsoptntVO isoptnt = pstiDAO.selectIsoptntByManageNo(manageNo);
 		String isoptntNo = isoptnt.getIsoptntNo();
@@ -242,10 +278,11 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 	
-	private void insertSmplService(String msg, String manageNo, String hsptNo, String pbhtNo) throws Exception{
+	private String insertSmplService(String msg, String manageNo, String hsptNo, String pbhtNo) throws Exception{
 
 		String smplNo = pstiDAO.selectSmplNextVal();
 		
@@ -263,10 +300,11 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 
-	private void updateSckbdreqAcceptService(String msg, String sckbdreqNo, String sckbdreqCode) throws Exception{
+	private String updateSckbdreqAcceptService(String msg, String sckbdreqNo, String sckbdreqCode) throws Exception{
 		
 		Date acceptYmd = new Date();
 		
@@ -282,10 +320,11 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 	
-	private void updateInptntExitService(String msg, String inptntNo, String hsptlzCode) throws Exception{
+	private String updateInptntExitService(String msg, String inptntNo, String hsptlzCode) throws Exception{
 		
 		InptntVO inptntOrigin = new InptntVO();
 		
@@ -299,10 +338,11 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 	
-	private void insertSlfptntService(String msg, String manageNo, String pbhtNo) throws Exception{
+	private String insertSlfptntService(String msg, String manageNo, String pbhtNo) throws Exception{
 		
 		String slfptntNo = pstiDAO.selectSlfptntNextVal();
 		
@@ -317,10 +357,11 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 	
-	private void updateSckbdreqCodeOnlyService(String msg, String sckbdreqNo, String sckbdreqCode) throws Exception{
+	private String updateSckbdreqCodeOnlyService(String msg, String sckbdreqNo, String sckbdreqCode) throws Exception{
 		
 		SckbdreqVO sckbdreq = new SckbdreqVO();
 		
@@ -334,6 +375,7 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		}
 		
 		LOGGER.debug(msg);
+		return msg;
 		
 	}
 	
@@ -392,6 +434,7 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		PageMaker pageMaker = null;
 		
 		pageMaker = new PageMaker();
+		
 		pageMaker.setCri(cri);
 		
 		int totalCount = hsptDAO.selectReqInptntListCount(cri);
@@ -401,11 +444,24 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		pageMaker.setTotalCount(totalCount);
 		
 		List<ReqInptntListCommand> reqInptntList = hsptDAO.selectReqInptntList(cri);
+		
 		dataMap = new HashMap<String, Object>();
 		
+		LOGGER.debug("{}","before!!!!!!!!!!");
 		for(ReqInptntListCommand reqInptnt : reqInptntList) {
 			LOGGER.debug("{}",reqInptnt);
+			
+			if(reqInptnt.getRequestCode().equals("M101")) {
+				LOGGER.debug("진료환자");
+			}
+			if(reqInptnt.getRequestCode().equals("M102")) {
+				LOGGER.debug("입원환자");
+			}
+			if(reqInptnt.getRequestCode().equals("M103")) {
+				LOGGER.debug("입소환자");
+			}
 		}
+		LOGGER.debug("{}","after!!!!!!!!!!");
 		
 		dataMap.put("reqInptntList", reqInptntList);
 		dataMap.put("pageMaker", pageMaker);
@@ -421,10 +477,6 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 
-
-		LOGGER.debug(String.valueOf(hsptDAO == null));
-
-
 		int totalCount = hsptDAO.selectInptntListCount(cri);
 
 		LOGGER.debug("{}",totalCount);
@@ -432,6 +484,13 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		pageMaker.setTotalCount(totalCount);
 
 		List<InptntListVO> inptntList = hsptDAO.selectInptntList(cri);
+		for(int i = 0; i < inptntList.size(); i++) {
+			Map<String,Object> data = new HashMap<String, Object>();
+			data.put("instNo", cri.getInstNo());
+			data.put("manageNo", inptntList.get(i).getManageNo());
+			int today = hsptDAO.selectSmplTodayByManageNo(data);
+			inptntList.get(i).setToday(today);
+		}
 
 		dataMap = new HashMap<String, Object>();
 
@@ -455,7 +514,7 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 
 		pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
-
+		
 		int totalCount = hsptDAO.selectSckbdReqHsptListCount(cri);
 
 		LOGGER.debug("{}",totalCount);
@@ -533,16 +592,16 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		LOGGER.debug("manageNo : {}, dgnssNo : {}", manageNo, dgnssNo);
 		
 		// 2. 진료 테이블 수정 #{dgnssNo}
-		updateDgnssCodeChkdService(msg, dgnssNo);
+		msg = updateDgnssCodeChkdService(msg, dgnssNo);
 		
 		// 3. 진료결과 등록 #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
-		insertDgnssResultService(msg, dgnssResult);
+		msg = insertDgnssResultService(msg, dgnssResult);
 		
 		// 4. 입원환자 등록 #{inptntNo} #{hsptNo} #{manageNo}
-		insertInptntService(msg, manageNo, hsptNo);
+		msg = insertInptntService(msg, manageNo, hsptNo);
 		
 		// 5. manage 테이블 수정 #{sttusCode} #{instNm} #{instNo} #{manageNo}
-		updateManageChangeAllService(msg, manageNo, "A105", loginHspt);
+		msg = updateManageChangeAllService(msg, manageNo, "A105", loginHspt);
 		
 		return msg;
 	}
@@ -565,19 +624,19 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		String dgnssNo = dgnssResult.getDgnssNo();
 		
 		// 2. 진료 테이블 수정 #{dgnssNo}
-		updateDgnssCodeChkdService(msg, dgnssNo);
+		msg = updateDgnssCodeChkdService(msg, dgnssNo);
 		
 		// 3. 진료결과 등록 #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
-		insertDgnssResultService(msg, dgnssResult);
+		msg = insertDgnssResultService(msg, dgnssResult);
 		
 		// 4. 병상신청 등록 #{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo} #{requestCode}
-		insertSckbdreqService(msg, manageNo, "M101", "A", toHsptNo, loginHspt);
+		msg = insertSckbdreqService(msg, manageNo, "M101", "A", toHsptNo, loginHspt);
 		
 		// 5. 이원대상 병원 잔여병상 수정
-		updateDecreaseRmndSckbdCntByHsptNoService(msg, toHsptNo);
+		msg = updateDecreaseRmndSckbdCntByHsptNoService(msg, toHsptNo);
 		
 		// 6. manage 테이블 수정  #{sttusCode} #{instNm} #{instNo} #{manageNo}
-		updateManageChangeAllService(msg, manageNo, "A110", loginHspt);
+		msg = updateManageChangeAllService(msg, manageNo, "A110", loginHspt);
 		
 		return msg;
 	}
@@ -600,19 +659,19 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		String dgnssNo = dgnssResult.getDgnssNo();
 		
 		// 2. 진료 테이블 수정 #{dgnssNo}
-		updateDgnssCodeChkdService(msg, dgnssNo);
+		msg = updateDgnssCodeChkdService(msg, dgnssNo);
 		
 		// 3. 진료결과 등록 #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
-		insertDgnssResultService(msg, dgnssResult);
+		msg = insertDgnssResultService(msg, dgnssResult);
 		
 		// 4. 병상신청 등록 #{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo} #{requestCode}
-		insertSckbdreqService(msg, manageNo, "M101", "B", toLtctNo, loginHspt);
+		msg = insertSckbdreqService(msg, manageNo, "M101", "B", toLtctNo, loginHspt);
 		
 		// 5. 입소대상 생활치료센터 잔여병상 수정
-		updateDecreaseRmndSckbdCntByLtctNoService(msg, toLtctNo);
+		msg = updateDecreaseRmndSckbdCntByLtctNoService(msg, toLtctNo);
 		
 		// 6. manage 테이블 수정  #{sttusCode} #{instNm} #{instNo} #{manageNo}
-		updateManageChangeAllService(msg, manageNo, "A111", loginHspt);
+		msg = updateManageChangeAllService(msg, manageNo, "A111", loginHspt);
 		
 		return msg;
 	}
@@ -637,19 +696,19 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		String hsptNo = loginHspt.getHsptNo();
 		
 		// 2. 진료 테이블 수정 #{dgnssNo}
-		updateDgnssCodeChkdService(msg, dgnssNo);
+		msg = updateDgnssCodeChkdService(msg, dgnssNo);
 		
 		// 3. 진료결과 등록 #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
-		insertDgnssResultService(msg, dgnssResult);
+		msg = insertDgnssResultService(msg, dgnssResult);
 		
 		// 4. 자가격리자 등록 #{slfptntNo} #{pbhtNo} #{manageNo}
-		insertSlfptntService(msg, manageNo, pbhtNo);
+		msg = insertSlfptntService(msg, manageNo, pbhtNo);
 
 		// 5. 병원 잔여병상 수정 #{hsptNo}
-		updateIncreaseRmndSckbdCntByHsptNoService(msg, hsptNo);
+		msg = updateIncreaseRmndSckbdCntByHsptNoService(msg, hsptNo);
 	    
 		// 6. manage 테이블 수정 #{sttusCode} #{manageNo}
-		updateManageChangeStatusService(msg, manageNo, "A107");
+		msg = updateManageChangeStatusService(msg, manageNo, "A107");
 		
 		return msg;
 	}
@@ -669,13 +728,13 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		String hsptNo = loginHspt.getHsptNo();
 		
 		// 2. 진료 테이블 수정 #{dgnssNo}
-		updateDgnssCodeChkdService(msg, dgnssNo);
+		msg = updateDgnssCodeChkdService(msg, dgnssNo);
 		
 		// 3. 진료결과 등록 #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
-		insertDgnssResultService(msg, dgnssResult);
+		msg = insertDgnssResultService(msg, dgnssResult);
 
 		// 4. 병원 잔여병상 수정 #{hsptNo}
-		updateIncreaseRmndSckbdCntByHsptNoService(msg, hsptNo);
+		msg = updateIncreaseRmndSckbdCntByHsptNoService(msg, hsptNo);
 		
 		return msg;
 	}
@@ -689,6 +748,8 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		//			dgnss_result		|	#{dgnssNo} #{dgnssResultCode} #{dgnssNote}
 		// update	manage				|	#{sttusCode} #{instNm} #{instNo} #{manageNo}
 		//			dgnss				|	#{dgnssNo}
+		//			ltct				|	#{ltctNo}
+		//			isoptnt				|	#{hsptlzCode} #{isoptntNo}
 		//			hspt				|	#{hsptNo}
 		//--------------------------------------------------
 		String msg = "success";
@@ -698,19 +759,25 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		String dgnssNo = dgnssResult.getDgnssNo();
 		
 		// 2. 진료 테이블 수정 #{dgnssNo}
-		updateDgnssCodeChkdService(msg, dgnssNo);
+		msg = updateDgnssCodeChkdService(msg, dgnssNo);
 		
 		// 3. 진료결과 등록 #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
-		insertDgnssResultService(msg, dgnssResult);
+		msg = insertDgnssResultService(msg, dgnssResult);
 		
 		// 4. 병상신청 등록 #{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo} #{requestCode}
-		insertSckbdreqService(msg, manageNo, "M103", "A", toHsptNo, loginHspt);
+		msg = insertSckbdreqService(msg, manageNo, "M103", "A", toHsptNo, loginHspt);
 	    
 		// 5. 이원대상 병원 잔여병상 수정 #{hsptNo}
-		updateDecreaseRmndSckbdCntByHsptNoService(msg, toHsptNo);
+		msg = updateDecreaseRmndSckbdCntByHsptNoService(msg, toHsptNo);
+		
+		// 6. 생활치료센터 잔여병상수 수정
+		msg = updateIncreaseRmndSckbdCntByLtctNoService(msg, fromLtctNo);
+		
+		// 7. 입소환자 퇴원처리
+		msg = updateIsoptntExitService(msg, manageNo, "E103");
 	    
-		// 6. manage 테이블 수정  #{sttusCode} #{instNm} #{instNo} #{manageNo}
-		updateManageChangeAllService(msg, manageNo, "A110", loginHspt);
+		// 8. manage 테이블 수정  #{sttusCode} #{instNm} #{instNo} #{manageNo}
+		msg = updateManageChangeAllService(msg, manageNo, "A110", loginHspt);
 		
 		return msg;
 	}
@@ -735,22 +802,24 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		String hsptNo = loginHspt.getHsptNo();
 		
 		// 2. 진료 테이블 수정 #{dgnssNo}
-		updateDgnssCodeChkdService(msg, dgnssNo);
+		msg = updateDgnssCodeChkdService(msg, dgnssNo);
 		
 		// 3. 진료결과 등록 #{dgnssNo} #{dgnssResultCode} #{dgnssNote}
-		insertDgnssResultService(msg, dgnssResult);
+		msg = insertDgnssResultService(msg, dgnssResult);
 		
 		// 4. 입원환자 등록 #{inpntNo} #{hsptNo} #{manageNo}
-		insertInptntService(msg, manageNo, hsptNo);
+		msg = insertInptntService(msg, manageNo, hsptNo);
 		
 		// 5. 생활치료센터 잔여병상 수정 #{ltctNo}
-		updateIncreaseRmndSckbdCntByLtctNoService(msg, fromLtctNo);
+		msg = updateIncreaseRmndSckbdCntByLtctNoService(msg, fromLtctNo);
 		
 		// 6. 입소자 상태 변경(퇴원처리) #{hsptlzCode} #{isoptntNo}
-		updateIsoptntExitService(msg, manageNo, "E103");
+		msg = updateIsoptntExitService(msg, manageNo, "E103");
 		
 		// 7. manage 테이블 수정 #{sttusCode} #{instNm} #{instNo} #{manageNo}
-		updateManageChangeAllService(msg, manageNo, "A105", loginHspt);
+		msg = updateManageChangeAllService(msg, manageNo, "A105", loginHspt);
+		
+		
 		
 		return msg;
 	}
@@ -764,13 +833,13 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		String msg = "success";
 		
 		// 1. 시료 입력 #{smplNo} #{manageNo} #{pbhtNo} #{instNo}
-		insertSmplService(msg, manageNo, hsptNo, pbhtNo);
+		msg = insertSmplService(msg, manageNo, hsptNo, pbhtNo);
 		
 		return msg;
 	}
 
 	@Override
-	public String registSmplByInptnt(String hsptNo, String pbhtNo, List<String> manageNoList) throws Exception {
+	public String registSmplByInptnt(String hsptNo, String pbhtNo, String[] manageNoList) throws Exception {
 		// 입원환자를 재검신청하는 메서드(일괄처리)
 		//-------------------------------------------------
 		// insert	smpl				|	#{smplNo} #{manageNo} #{pbhtNo} #{instNo}
@@ -784,7 +853,7 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 			test = msg.equals("success") ? test + 1 : test;
 		}
 		
-		if(test != manageNoList.size()) msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_12");
+		if(test != manageNoList.length) msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_12");
 		
 		return msg;
 	}
@@ -799,10 +868,10 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		String msg = "success";
 		
 		// 1. 병상신청 등록 #{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo} #{requestCode}
-		insertSckbdreqService(msg, manageNo, "M102", "A", toHsptNo, loginHspt);
+		msg = insertSckbdreqService(msg, manageNo, "M102", "A", toHsptNo, loginHspt);
 	    
 		// 2. 이원대상 병원 잔여병상 수정 #{hsptNo}
-		updateDecreaseRmndSckbdCntByHsptNoService(msg, toHsptNo);
+		msg = updateDecreaseRmndSckbdCntByHsptNoService(msg, toHsptNo);
 	    
 		return msg;
 	}
@@ -844,13 +913,13 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		insertInptntService(msg, manageNo, hsptNo);
 		
 		// 3. 병상신청 정보 변경 #{sckbdreqNo} #{sckbdreqCode} #{acceptYmd}
-		updateSckbdreqAcceptService(msg, sckbdreqNo, "H103");
+		msg = updateSckbdreqAcceptService(msg, sckbdreqNo, "H103");
 		
 		// 4. 진료병원(이원신청병원)의 잔여병상수 +1 #{hsptNo}
-		updateIncreaseRmndSckbdCntByHsptNoService(msg, fromHsptNo);
+		msg = updateIncreaseRmndSckbdCntByHsptNoService(msg, fromHsptNo);
 
 		// 5. manage 테이블 수정 #{sttusCode} #{instNm} #{instNo} #{manageNo}
-		updateManageChangeAllService(msg, manageNo, "A105", loginHspt);
+		msg = updateManageChangeAllService(msg, manageNo, "A105", loginHspt);
 		
 		return msg;
 	}
@@ -876,19 +945,19 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		String fromHsptNo = sckbdreqTemp.getHsptNo();
 		
 		// 2. 입원환자 등록 #{inpntNo} #{hsptNo} #{manageNo}
-		insertInptntService(msg, manageNo, hsptNo);
+		msg = insertInptntService(msg, manageNo, hsptNo);
 		
 		// 3. 병상신청 정보 변경 #{sckbdreqNo} #{sckbdreqCode} #{acceptYmd}
-		updateSckbdreqAcceptService(msg, sckbdreqNo, "H103");
+		msg = updateSckbdreqAcceptService(msg, sckbdreqNo, "H103");
 		 
 		// 4. 이원신청 병원의 입원환자 퇴원처리(퇴원-이원상태) #{hsptlzCode} #{inptntNo}
-		updateInptntExitService(msg, inptntNoOrigin, "E103");
+		msg = updateInptntExitService(msg, inptntNoOrigin, "E103");
 		
 		// 5. 이원신청 병원의 잔여병상수 +1 #{hsptNo}
-		updateIncreaseRmndSckbdCntByHsptNoService(msg, fromHsptNo);
+		msg = updateIncreaseRmndSckbdCntByHsptNoService(msg, fromHsptNo);
 		
 		// 6. manage 테이블 수정 #{instNm} #{instNo} #{manageNo}
-		updateManageChangeInstService(msg, manageNo, loginHspt);
+		msg = updateManageChangeInstService(msg, manageNo, loginHspt);
 		
 		return msg;
 	}
@@ -913,28 +982,27 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		String fromHsptNo = sckbdreqTemp.getHsptNo();
 		
 		// 2. 입원환자 등록 #{inpntNo} #{hsptNo} #{manageNo}
-		insertInptntService(msg, manageNo, hsptNo);
+		msg = insertInptntService(msg, manageNo, hsptNo);
 		
 		// 3. 병상신청 정보 변경 #{sckbdreqNo} #{sckbdreqCode} #{acceptYmd}
-		updateSckbdreqAcceptService(msg, sckbdreqNo, "H103");
-		 
-		// 4. 진료신청 생활치료센터의 입소환자 퇴원처리(퇴원-이원상태) #{hsptlzCode} #{isoptntNo}
-		updateIsoptntExitService(msg, manageNo, "E103");
-		
-		// 5. 진료신청 생활치료센터의 잔여병상수 +1 #{ltctNo}	
-		updateIncreaseRmndSckbdCntByLtctNoService(msg, fromLtctNo);
+		msg = updateSckbdreqAcceptService(msg, sckbdreqNo, "H103");
 
 		// 6. 진료병원의 잔여병상수 +1 #{hsptNo}	
-		updateIncreaseRmndSckbdCntByHsptNoService(msg, fromHsptNo);
+		msg = updateIncreaseRmndSckbdCntByHsptNoService(msg, fromHsptNo);
 		
 		// 7. manage 테이블 수정 #{sttusCode} #{instNm} #{instNo} #{manageNo}
-		updateManageChangeAllService(msg, manageNo, "A105", loginHspt);
+		msg = updateManageChangeAllService(msg, manageNo, "A105", loginHspt);
+
+		
+		// 이원신청 생활치료센터 입소환자의 퇴원(이원) 로그 생성
+		MakeStatisticsLogByLtct.getInstance().makeLtctStatisticsOutptnt(fromLtctNo);
+		
 		
 		return msg;
 	}
 
 	@Override
-	public String updateSckbdreqRejectByAll(String sckbdreqNo, HsptVO loginHspt) throws Exception {
+	public String updateSckbdreqRejectByInptnt(String sckbdreqNo, HsptVO loginHspt) throws Exception {
 		// 이원신청을 반려하는 메서드
 		// (보건소 - 진료 - 진료완료 후 이원신청 - 반려 flow)
 		// (생활치료센터 - 진료 - 진료완료 후 이원신청 - 반려 flow)
@@ -949,10 +1017,10 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		String hsptNo = loginHspt.getHsptNo();
 		
 		// 2. 병상신청 상태변경 (반려) #{sckbdreqNo} #{sckbdreqCode}
-		updateSckbdreqCodeOnlyService(msg, sckbdreqNo, "H105");
+		msg = updateSckbdreqCodeOnlyService(msg, sckbdreqNo, "H105");
 		
 		// 3. 로그인병원의 잔여병상수 +1 #{hsptNo}	
-		updateIncreaseRmndSckbdCntByHsptNoService(msg, hsptNo);
+		msg = updateIncreaseRmndSckbdCntByHsptNoService(msg, hsptNo);
 		
 		return msg;
 	}
@@ -968,12 +1036,18 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		// 1. 사전작업
 		String msg = "success";
 		
+		SckbdreqVO sckbdreq = pstiDAO.selectSckbdreqBySckbdreqNo(sckbdreqNo);
+		
+		if(!sckbdreq.getSckbdreqCode().equals("H101")) {
+			msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_20");
+			return msg;
+		}
 		
 		// 2. 병상신청 상태변경 (취소) #{sckbdreqNo} #{sckbdreqCode}
-		updateSckbdreqCodeOnlyService(msg, sckbdreqNo, "H104");
+		msg = updateSckbdreqCodeOnlyService(msg, sckbdreqNo, "H104");
 		
 		// 3. 이원대상 병원의 잔여병상수 +1 #{hsptNo}	
-		updateIncreaseRmndSckbdCntByHsptNoService(msg, toHsptNo);
+		msg = updateIncreaseRmndSckbdCntByHsptNoService(msg, toHsptNo);
 		
 		return msg;
 		
@@ -989,14 +1063,385 @@ public class HsptServiceImplLKH extends HsptServiceImpl implements HsptSerivceLK
 		// 1. 사전작업
 		String msg = "success";
 		
+		SckbdreqVO sckbdreq = pstiDAO.selectSckbdreqBySckbdreqNo(sckbdreqNo);
+		if(!sckbdreq.getSckbdreqCode().equals("H101")) {
+			msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_20");
+			return msg;
+		}		
 		// 2. 병상신청 상태변경 (취소) #{sckbdreqNo} #{sckbdreqCode}
-		updateSckbdreqCodeOnlyService(msg, sckbdreqNo, "H104");
+		msg = updateSckbdreqCodeOnlyService(msg, sckbdreqNo, "H104");
 		
 		// 3. 입소대상 생활치료센터의 잔여병상수 +1 #{hsptNo}	
-		updateIncreaseRmndSckbdCntByLtctNoService(msg, toLtctNo);
+		msg = updateIncreaseRmndSckbdCntByLtctNoService(msg, toLtctNo);
 		
 		return msg;
 	}
+
+	@Override
+	public Map<String, Object> getBookmardHsptList(InstSearchCommand cri, String hsptNo) throws Exception {
+		
+		Map<String, Object> dataMap = null;
+		
+		PageMaker pageMaker = null;
+		
+		int totalCount = hsptDAO.selectBookmarkHsptListCount(hsptNo);
+
+		pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(totalCount);
+		
+		LOGGER.debug("{}", pageMaker);
+		
+		List<SckbdreqHsptListCommand> hsptList = hsptDAO.selectBookmarkHsptList(hsptNo, cri);
+		
+		LOGGER.debug("{}", hsptList);
+		
+		List<String> instAdres = new ArrayList<String>();
+		
+		for(SckbdreqHsptListCommand hspt : hsptList) {
+			instAdres.add(hspt.getInstAdres());
+		}
+		
+		LOGGER.debug("{}", instAdres);
+		
+		dataMap = new HashMap<String, Object>();
+		
+		dataMap.put("hsptList", hsptList);
+		dataMap.put("pageMaker", pageMaker);
+		dataMap.put("instAdres", instAdres);
+		
+		LOGGER.debug("{}", dataMap);
+		
+		return dataMap;
+	}
+
+	@Override
+	public Map<String, Object> getAllHsptList(InstSearchCommand cri) throws Exception {
+		
+		Map<String, Object> dataMap = null;
+		
+		PageMaker pageMaker = null;
+		
+		LOGGER.debug("{}", "before");
+		LOGGER.debug("{}", cri);
+		LOGGER.debug("{}", "after");
+		
+		int totalCount = hsptDAO.selectHsptListWithRmndSckbdCount(cri);
+
+		pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(totalCount);
+		
+		LOGGER.debug("{}", pageMaker);
+		
+		List<SckbdreqHsptListCommand> hsptList = hsptDAO.selectHsptListWithRmndSckbd(cri);
+		
+		List<String> instAdres = new ArrayList<String>();
+		
+		for(SckbdreqHsptListCommand hspt : hsptList) {
+			instAdres.add(hspt.getInstAdres());
+		}
+		
+		LOGGER.debug("{}", hsptList);
+		
+		LOGGER.debug("{}", instAdres);
+		
+		dataMap = new HashMap<String, Object>();
+		
+		dataMap.put("hsptList", hsptList);
+		dataMap.put("pageMaker", pageMaker);
+		dataMap.put("instAdres", instAdres);
+		
+		LOGGER.debug("{}", dataMap);
+		
+		return dataMap;
+	}
+
+	@Override
+	public Map<String, Object> getBookmardLtctList(InstSearchCommand cri, String hsptNo) throws Exception {
+		
+		Map<String, Object> dataMap = null;
+		
+		PageMaker pageMaker = null;
+		
+		int totalCount = hsptDAO.selectBookmarkLtctListCount(hsptNo);
+
+		pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(totalCount);
+		
+		LOGGER.debug("{}", pageMaker);
+		
+		List<LtctListToSckbdreqCommand> ltctList = hsptDAO.selectBookmarkLtctList(hsptNo, cri);
+		
+		LOGGER.debug("{}", ltctList);
+		
+		List<String> instAdres = new ArrayList<String>();
+		
+		for(LtctListToSckbdreqCommand ltct : ltctList) {
+			instAdres.add(ltct.getInstAdres());
+		}
+		
+		LOGGER.debug("{}", instAdres);
+		
+		dataMap = new HashMap<String, Object>();
+		
+		dataMap.put("ltctList", ltctList);
+		dataMap.put("pageMaker", pageMaker);
+		dataMap.put("instAdres", instAdres);
+		
+		LOGGER.debug("{}", dataMap);
+		
+		return dataMap;
+	}
+
+	@Override
+	public Map<String, Object> getAllLtctList(InstSearchCommand cri) throws Exception {
+		
+		Map<String, Object> dataMap = null;
+		
+		PageMaker pageMaker = null;
+		
+		int totalCount = hsptDAO.selectLtctListWithRmndSckbdCount(cri);
+
+		pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(totalCount);
+		
+		LOGGER.debug("{}", pageMaker);
+		
+		List<LtctListToSckbdreqCommand> ltctList = hsptDAO.selectLtctListWithRmndSckbd(cri);
+		
+		LOGGER.debug("{}", ltctList);
+		
+		List<String> instAdres = new ArrayList<String>();
+		
+		for(LtctListToSckbdreqCommand ltct : ltctList) {
+			instAdres.add(ltct.getInstAdres());
+		}
+		
+		LOGGER.debug("{}", instAdres);
+		
+		dataMap = new HashMap<String, Object>();
+		
+		dataMap.put("ltctList", ltctList);
+		dataMap.put("pageMaker", pageMaker);
+		dataMap.put("instAdres", instAdres);
+		
+		LOGGER.debug("{}", dataMap);
+		
+		return dataMap;
+	}
+
+	@Override
+	public String registBookmark(BookmarkVO bookmark) throws Exception {
+		// 연계기관을 등록하는 메서드
+		//-------------------------------------------------
+		// insert	bookmark			|	#{fromInstNo} #{toInstNo} #{fromInstCode} #{toInstCode}
+		//--------------------------------------------------		
+		
+		LOGGER.debug("{}", bookmark);
+		
+		// 1. 사전작업
+		String msg = "success";
+		int test = -1;
+		
+		// 2. 연계기관 등록 #{fromInstNo} #{toInstNo} #{fromInstCode} #{toInstCode}
+		test = hsptDAO.insertBookmark(bookmark);
+		if(test == 0) msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_17");
+		
+		LOGGER.debug("{}", msg);
+		
+		return msg;
+		
+	}
+
+	@Override
+	public List<String> getToInstNoListByFromInstNo(String fromInstNo) throws Exception {
+		List<String> bookmarkList = hsptDAO.selectToInstNoListByFromInstNo(fromInstNo);
+		return bookmarkList;
+	}
+
+	@Override
+	public String modifyInptntExpired(String manageNo) throws Exception {
+		// 입원환자 사망처리
+		//-------------------------------------------------
+		// update	manage				|	#{sttusCode} #{manageNo}
+		//			inptnt				|	#{inptntNo}	
+		//--------------------------------------------------	
+		String msg = "success";
+		int test = -1;
+		
+		// 1. 사전준비
+		InptntVO inptnt = pstiDAO.selectInptntByManageNo(manageNo);
+		String inptntNo = inptnt.getInptntNo();
+		String hsptNo = inptnt.getHsptNo();
+		
+		// 2. 입원환자 사망처리
+		test = hsptDAO.updateExpireExit(inptntNo);
+		if(test == 0) msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_14");
+		
+		// 3. 잔여병사수 변경
+		updateIncreaseRmndSckbdCntByHsptNoService(msg, hsptNo);
+		
+		// 4. 관리테이블 상태변경
+		msg = updateManageChangeStatusService(msg, manageNo, "A109");
+		return msg;
+	}
+
+	@Override
+	public String registInptntByRejectedOrCancledDgnssOrIsoPtnt(String sckbdreqNo, String manageNo, HsptVO loginHspt)
+			throws Exception {
+		// 이원신청이 반려된 환자 혹은 이원신청을 취소한 환자를 입원처리하는 메서드
+		// 보건소 -> 병원(진료완료) -> 이원신청 -> 반려 -> 입원처리 flow
+		// 생활치료센터 -> 병원(진료완료) -> 이원신청 -> 반려 -> 입원처리 flow
+		//-------------------------------------------------
+		// insert	inptnt				|	#{sckbdreqNo} #{sckbdreqCode}
+		// update	manage				|	#{sttusCode} #{instNm} #{instNo} #{manageNo}
+		// 			sckbdreq			|	#{sckbdreqNo} #{sckbdreqCode}
+		//--------------------------------------------------
+		String msg = "success";
+		
+		// 1. 사전준비
+		String hsptNo = loginHspt.getHsptNo();
+		
+		// 2. 입원환자 등록
+		msg = insertInptntService(msg, manageNo, hsptNo);
+		
+		// 3. 병상신청 상태 수정
+		msg = updateSckbdreqCodeOnlyService(msg, sckbdreqNo, "H106");
+		
+		// 4. 환자 상태 수정 ( 입원대기 -> 병원입원 )
+		msg = updateManageChangeAllService(msg, manageNo, "A105", loginHspt);
+		
+		return msg;
+	}
+
+	@Override
+	public String registSckbdreqInptntByRejectedOrCancledAll(String sckbdreqNo, String manageNo, HsptVO loginHspt,
+			String toHsptNo)		throws Exception {
+		// 반려 혹은 취소된 이원신청을 다시 이원신청하는 메서드 
+		// 보건소 -> 병원(진료완료) -> 이원신청 -> 반려 -> 이원신청 flow
+		// 입원환자 -> 이원신청 -> 반려 -> 이원신청 flow
+		// 생활치료센터 -> 병원(진료완료) -> 이원신청 -> 반려 -> 이원신청 flow
+		// 보건소 -> 병원(진료완료) -> 이원신청 -> 취소 -> 이원신청 flow
+		// 입원환자 -> 이원신청 -> 취소 -> 이원신청 flow
+		// 생활치료센터 -> 병원(진료완료) -> 이원신청 -> 취소 -> 이원신청 flow
+		//-------------------------------------------------
+		// insert	sckbdreq			|	#{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo} #{requestCode}
+		// update	hspt				|	#{hsptNo}
+		//--------------------------------------------------
+		String msg = "success";
+		
+		// 1. 사전준비
+		SckbdreqVO sckbdreq = pstiDAO.selectSckbdreqBySckbdreqNo(sckbdreqNo);
+		
+		String requestCode = sckbdreq.getRequestCode();
+		
+		// 2. 병상등록
+		msg = insertSckbdreqService(msg, manageNo, requestCode, "A", toHsptNo, loginHspt);
+		
+		// 3. 잔여병상수 수정
+		msg = updateDecreaseRmndSckbdCntByHsptNoService(msg, toHsptNo);
+		
+		return msg;
+		
+	}
+
+	@Override
+	public String registSckbdreqIsoptntByRejectedOrCancledDgnss(String sckbdreqNo, String manageNo, HsptVO loginHspt,
+			String toLtctNo) throws Exception {
+		// 반려 혹은 취소된 입소신청을 다시 입소신청하는 메서드 
+		// 보건소 -> 병원(진료완료) -> 입소신청 -> 반려 -> 입소신청 flow
+		// 보건소 -> 병원(진료완료) -> 입소신청 -> 취소 -> 입소신청 flow
+		//-------------------------------------------------
+		// insert	sckbdreq			|	#{sckbdreqNo} #{type} #{childNo} #{hsptNo} #{manageNo} #{requestCode}
+		// update	ltct				|	#{ltctNo}
+		//--------------------------------------------------
+		String msg = "success";
+		
+		// 1. 사전준비
+		SckbdreqVO sckbdreq = pstiDAO.selectSckbdreqBySckbdreqNo(sckbdreqNo);
+		
+		String requestCode = sckbdreq.getRequestCode();
+		
+		// 2. 병상등록
+		msg = insertSckbdreqService(msg, manageNo, requestCode, "B", toLtctNo, loginHspt);
+		
+		// 3. 잔여병상수 수정
+		msg = updateDecreaseRmndSckbdCntByLtctNoService(msg, toLtctNo);
+		
+		return msg;
+	}
+
+	@Override
+	public List<PbhtVO> getPbhtListByAreaNo(String areaNo) throws Exception {
+		
+		List<PbhtVO> pbhtList = hsptDAO.selectPbhtListByAreaNo(areaNo);
+		
+		return pbhtList;
+	}
+
+	@Override
+	public String modifySckbdCntLKH(HsptVO hspt) throws Exception {
+		// 병상 등록
+		//-------------------------------------------------
+		// update	hspt				|	#{hsptNo} #{rmndSckbdCnt} #{sckbdCnt}
+		//--------------------------------------------------		
+		String msg = "success";
+		int test = -1;
+		test = hsptDAO.updateSckbdCnt(hspt);
+		if(test == 0) msg = ErrorCodeUtil.getCodeName("HSPT_ERROR_21");
+
+		return msg;
+	}
+
+	@Override
+	public HsptStatsVO getHsptMainStatisticsByHspt(HsptVO loginHspt) throws Exception {
+		HsptStatsVO hsptStats = hsptDAO.selectHsptMainStatisticsByHsptNo(loginHspt.getHsptNo()); 
+		return hsptStats;
+	}
+
+	@Override
+	public Map<String, Object> getMainChartDataMap(String hsptNo) throws Exception {
+		
+		Map<String, Object> dataMap = null;
+		
+		dataMap = new HashMap<String, Object>();
+		
+		int count = 0;
+		
+		List<HsptStatsVO> hsptStatsList = hsptDAO.selectHsptMainChartDataByHsptNo(hsptNo);
+		
+		LOGGER.debug("{}", hsptStatsList);
+		for(HsptStatsVO hsptStats : hsptStatsList) {
+			LOGGER.debug("{}", hsptStats);
+			count++;
+		}
+		LOGGER.debug("{}", count);
+		
+		dataMap.put("hsptStatsList", hsptStatsList);
+		dataMap.put("count", count);
+		
+
+		return dataMap;
+	}
+
+	@Override
+	public int getBookmarkCount(BookmarkVO bookmark) throws Exception {
+		return hsptDAO.selectBookmarkCount(bookmark);
+	}
+
+	@Override
+	public int removeBookMark(BookmarkVO bookmark) throws Exception {
+		return hsptDAO.deleteBookMark(bookmark);
+	}
+
+	@Override
+	public int getSckbdreqTodayByManageNo(String manageNo) throws Exception {
+		return hsptDAO.selectSckbdreqTodayByManageNo(manageNo);
+	}
+
 	
 
 }

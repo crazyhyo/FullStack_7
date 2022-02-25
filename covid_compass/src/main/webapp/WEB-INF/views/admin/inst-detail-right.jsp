@@ -17,15 +17,16 @@
 <div id="inst-detail-tm">
 <div class="delete-detail-tm">
 	<div class="row" style="margin: 10px;">
+		<label style="text-align: right; margin: auto;" class="col-sm-2" for="note">기관명</label>
+		<div class="col-sm-6">
+			<input style="width: 220px;" type="text" class="form-control" readonly value="${instNm}">
+		</div>
+		
 		<label style="text-align: right; margin: auto;" class="col-sm-2" for="sort">구분</label>
 		<div class="col-sm-4">
 			<input id="division" type="text" class="form-control" readonly="readonly" value="${division}">
 		</div>
 	
-		<label style="text-align: right; margin: auto;" class="col-sm-2" for="note">기관명</label>
-		<div class="col-sm-4">
-			<input type="text" class="form-control" readonly value="${instNm}">
-		</div>
 	</div>
 	
 	
@@ -60,23 +61,41 @@
 			<label class="col-sm-2">직원 목록</label>
 		</div>
 	</div>
-<div style="border:1px solid #e9e9e9; width: 585px;height: 342px; overFlow : auto; ">	
+<div style="border:1px solid #e9e9e9; width: 585px;height: 440px; overFlow : auto; ">	
 	<div class="card-body pl-3" style="padding-top: 10px; padding-bottom: 10px; ">
 	<div id="appendEmpListtmp">
+		<div class="row">
+				<div class="col-3" style="text-align: center;">
+					<span><strong>이름</strong></span>
+				</div>
+				<div class="col-4" style="text-align: center;">
+					<span><strong>아이디</strong></span>
+				</div>
+				<div class="col-2" style="text-align: center;">
+					<span><strong>연락처</strong></span>
+				</div>
+
+				<div class="col-3" style="text-align: center;">
+					<span><strong>비밀번호 초기화</strong></span>
+				</div>
+
+
+		</div>
+		<br>
 		<div class="deleteEmpListtmp">
 			<div class="row">
 				<div class="col-3">
-					<input type="text" class="form-control user-list" placeholder="홍길동1">
+					<input type="text" readonly class="form-control user-list" placeholder="홍길동1">
 				</div>
-				<div class="col-3" style="padding: 0px;">
-					<input type="text" class="form-control user-list" placeholder="010-1234-5678">
+				<div class="col-4">
+					<input type="text" readonly class="form-control user-list" placeholder="아이디">
 				</div>
-				<div class="col-4 ">
-					<input type="text" class="form-control user-list" placeholder="abcdefg@naver.com">
+				<div class="col-2" style="padding: 0px;">
+					<input type="text" readonly class="form-control user-list" placeholder="010-1234-5678">
 				</div>
-				<div class="col-2">
+				<div class="col-3">
 					<button type="button" class="btn btn-primary user-list" style="background: #1a4f72; border-color: #1a4f72;padding-top: 3px; ">
-					<span style="display: block;text-align: center; ">초기화</span>
+					<span style="display: block;text-align: center; ">비밀번호</span>
 					</button>
 				</div>
 			</div>
@@ -86,7 +105,7 @@
 	</div>
 </div> 
 <div>
-	<div class="card-footer" style="border: none; background-color:white; text-align: right;">
+	<div class="card-footer" style="border: none; background-color:white; text-align: right; width: 50%; height: 40px; margin-left: 133px;">
 		<button id="instModifyButton" onclick="modify_go()" class="btn btn-block btn-primary btn-sm s" style="background: #1a4f72; border-color: #1a4f72;padding-top: 3px;">수정</button>
 	</div>
 
@@ -98,9 +117,7 @@
 		var instNo=document.getElementById('instModifyButton').value;
 		OpenWindow("./inst-modifyForm?instNo="+instNo+"",'기관수정','668','300');
 	}
-	function password_reset(){
-		var mberNo = document.getElementById('passwordResetValue').value;
-		
+	function password_reset(mberNo){
 		$.ajax({
 			url :'<%=request.getContextPath()%>/admin/passwordReset',
 			type : 'get',
@@ -108,7 +125,6 @@
 			dataType : 'json',
 			contentType: 'application/json;charset=utf-8;',
 			success : function(res){
-				console.log(res.msg);
 				alert(res.msg);
 			},
 			error : function(xhr){

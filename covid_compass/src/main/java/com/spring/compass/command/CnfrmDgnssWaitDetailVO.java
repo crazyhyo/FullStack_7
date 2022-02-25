@@ -24,10 +24,28 @@ public class CnfrmDgnssWaitDetailVO {
 	private String pstiAdres;
 	private String pstiTelno;
 	private String symptms;
+	private String sttusCode;
+	private String manageNo;
+	private String bir;
 	
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);
+	}
+	
+	public String getBir() {
+		return bir;
+	}
+
+	public void setBir(String bir) {
+		this.bir = bir;
+	}
+
+	public String getManageNo() {
+		return manageNo;
+	}
+	public void setManageNo(String manageNo) {
+		this.manageNo = manageNo;
 	}
 	public String getPstiNm() {
 		return pstiNm;
@@ -89,7 +107,7 @@ public class CnfrmDgnssWaitDetailVO {
 		return pstvYn;
 	}
 	public void setPstvYn(String pstvYn) {
-		this.pstvYn = pstvYn;
+		this.pstvYn = pstvYn.equals("Y") ? "양성" : "음성";
 	}
 	public String getCnfmNo() {
 		return cnfmNo;
@@ -120,6 +138,12 @@ public class CnfrmDgnssWaitDetailVO {
 	}
 	public void setSymptms(String symptms) {
 		this.symptms = symptms;
+	}
+	public String getSttusCode() {
+		return sttusCode;
+	}
+	public void setSttusCode(String sttusCode) {
+		this.sttusCode = CommonCodeUtil.getCodeName(sttusCode + "_NM2");;
 	}
 	
 	

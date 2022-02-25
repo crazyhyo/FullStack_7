@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.spring.compass.command.ConfirmationVO;
 import com.spring.compass.command.PageMaker;
 import com.spring.compass.command.SearchCriteria;
 import com.spring.compass.dao.PstiDAO;
@@ -95,9 +96,40 @@ public class PstiServiceImpl implements PstiService{
 		
 		TestResultCheckVO trcRes = pstiDAO.selectTestResultCheck(testResultCheckVO);
 		
-		System.out.println(trcRes);
 		
 		return trcRes;
+	}
+
+	@Override
+	public ConfirmationVO getConfirmation(PstiVO psti) throws Exception {
+		
+		ConfirmationVO confirmation = pstiDAO.selectConfirmation(psti);
+		
+		return confirmation;
+	}
+
+	@Override
+	public int getConfirmationCheck(PstiVO psti) throws Exception {
+		int result = pstiDAO.selectConfirmationCheck(psti);
+		return result;
+	}
+
+	@Override
+	public int getQuestCheck(PstiVO psti) throws Exception {
+		int result = pstiDAO.selectQuestCheck(psti);
+		return result;
+	}
+
+	@Override
+	public int getregistPstiCheck(PstiVO psti) throws Exception {
+		int result = pstiDAO.registPstiCheck(psti);
+		return result;
+	}
+
+	@Override
+	public int registPstiUpdate(PstiVO psti) throws Exception {
+		int result = pstiDAO.registPstiUpdate(psti);
+		return result;
 	}
 
 

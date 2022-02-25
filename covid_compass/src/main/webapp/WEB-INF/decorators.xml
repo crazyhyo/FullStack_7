@@ -16,7 +16,8 @@
 	</decorator>
 	
 	<excludes>		
-		<pattern>/resources/*</pattern>					
+		<pattern>/resources/*</pattern>
+		<pattern>/common/login*</pattern>					
 	</excludes>
 	
 </decorators>

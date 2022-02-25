@@ -21,7 +21,7 @@
 					
 					<%-- ${tcrVO.smplResCode } --%>
 					 <c:choose>  
-						<c:when test="${trcVO.pstvYn eq 'Y' }"> 
+						<c:when test="${trcVO.pstvYn eq 'Y' || trcVO.pstvYn eq 'N' }"> 
 							<span style="color: red;">${trcVO.smplResCode}</span><span style="color:black;"> 입니다.</span>
 						</c:when> 
 						<c:otherwise> 
@@ -54,6 +54,9 @@
 							<div class="col-md-10">확정일자</div>
 						</div>
 						<div class="row" style="text-align: center; margin-top: 5px;margin-bottom: 5px;">
+							<div class="col-md-10">요청기관</div>
+						</div>
+						<div class="row" style="text-align: center; margin-top: 5px;margin-bottom: 5px;">
 							<div class="col-md-10">검사기관</div>
 						</div>
 					</div>
@@ -62,8 +65,7 @@
 							<div class="col-md-10">${trcVO.pstiNm }</div>
 						</div>
 						<div class="row" style="text-align: center; margin-top: 5px;margin-bottom: 5px;">
-							<c:set var="Birthday" value="${trcVO.rrn} "/>
-							<div class="col-md-10">${fn:substring(Birthday,0,6) }</div>
+							<div class="col-md-10">${trcVO.bir}</div>
 						</div>
 						<div class="row" style="text-align: center; margin-top: 5px;margin-bottom: 5px;">
 							<div class="col-md-10">
@@ -101,16 +103,62 @@
 						<div class="row" style="text-align: center; margin-top: 5px;margin-bottom: 5px;">
 							<div class="col-md-10">${trcVO.instNm }</div>
 						</div>
+						<div class="row" style="text-align: center; margin-top: 5px;margin-bottom: 5px;">
+							<div class="col-md-10">${trcVO.pbhtNm }</div>
+						</div>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-md-12">
-
-						<button style="margin-top: 15px; background-color: #1a4f72; border-color: #1a4f72;" type="button" class="btn btn-block btn-primary">증명서발급</button>
+					<div class="col-md-6">
+						<div class="row justify-content-center">
+							<c:if test="${trcVO.smplResCode eq '음성'}">
+								<button style="margin-top: 15px; background-color: #1a4f72; border-color: #1a4f72;width: 48%;
+							 				   margin-right: 5px;" type="button" onclick="confirmation_go();" class="btn btn-block btn-primary">확인서발급</button>
+							</c:if>
+								<button style="margin-top: 15px; background-color: #c82333; border-color: #bd2130;width: 48%;
+    										   margin-left: 5px;" type="button" onclick="closeCheck();"class="btn btn-block btn-primary">닫기</button>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="row">
+						</div>
 					</div>
 				</div>
 			</div>
-			
-	</div>
+			</div>
 	</section>
+	<form id="confirmation">
+		<input type="hidden" id="pstiNm" name="pstiNm" value="${psti.pstiNm}"/>
+		<input type="hidden" id="rrn" name="rrn" value="${psti.rrn}"/>
+	</form>
+<script>
+function closeCheck(){
+	
+	var check = confirm("닫으시겠습니까?");
+	
+	if(check){
+		window.close();
+	}else{
+		return;
+	}
+}
+
+function confirmation_go(){
+	var check = confirm("확인서를 발급하시겠습니까?");
+	
+      if(check) {
+      	 window.close();
+  		 var gsWin = window.open('about:blank','confirmation','width=950,height=900');
+  		 var frm = document.getElementById('confirmation');
+  	     frm.action ='confirmation';
+  	     frm.target ="confirmation";
+  	     frm.method ="post";
+  	     frm.submit();
+      }else{
+   	 	 return;
+      }
+}
+	
+	
+</script>
 </body>

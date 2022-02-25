@@ -36,6 +36,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 button {
 	background: #1a4f72;
 }
+.on{
+	background-color: rgb(236, 236, 236);
+}
 </style>
 
 </head>

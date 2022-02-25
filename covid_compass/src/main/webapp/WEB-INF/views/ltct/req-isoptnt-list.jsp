@@ -19,12 +19,12 @@
                     <select class="form-control " name="searchType" id="searchType">
                       <option value="" ${pageMaker.cri.searchType eq '' ? 'selected':''}>검색구분</option>
                       <option value="n" ${pageMaker.cri.searchType eq 'n' ? 'selected':''}>성 명</option>
-                      <option value="p" ${pageMaker.cri.searchType eq 'p' ? 'selected':''}>전화번호</option>
+                      <option value="t" ${pageMaker.cri.searchType eq 'p' ? 'selected':''}>연락처</option>
                     </select>
 
                     <!-- keyword -->
-                    <input class="form-control" type="text" name="keyword" value="${pageMaker.cri.keyword }" style="width: 18%; display: inline-block;" /> <span class="input-group-append">
-                      <button class="btn btn-primary" type="button" id="searchBtn" style="background: #1a4f72; color: #ffffff; border-color: #5b6f90; display: inline-block; margin-bottom: 4px; margin-left: -7px;" data-card-widget="search" onclick="">
+                    <input class="form-control" type="text" id="keyword" name="keyword" value="${pageMaker.cri.keyword }" style="width: 18%; display: inline-block;" /> <span class="input-group-append">
+                      <button class="btn btn-primary" type="button" id="searchBtn" style="background: #1a4f72; color: #ffffff; border-color: #5b6f90; display: inline-block; margin-bottom: 4px;" data-card-widget="search" onclick="list_go(1, '<%=request.getContextPath()%>/rest-ltct/sckbd-list');">
                         <i class="fa fa-fw fa-search"></i>
                       </button>
                     </span>
@@ -48,17 +48,21 @@
       <div class="col-lg-6 pr-0">
         <section class="content">
           <div class="card" style="margin: 1px; height: 763px; margin-top: 13px;">
-            <div class="card-header d-flex p-0">
-              <ul class="nav nav-pills ml-auto p-2" role="tablist">
-                <li class="nav-item"><a style="background-color: #1a4f72; cursor: default;" class="nav-link active" id="psti-detail-tab" data-toggle="pill" href="#custom-dgnss-detail" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">환자 상세</a></li>
-              </ul>
-            </div>
             <div class="card-body">
-              <div class="tab-content" id="custom-tabs-three-tabContent">
-                <div class="tab-pane fade show active" id="custom-dgnss-detail" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+            <table class="table table-bordered" style="border-left-color: white; border-right-color: white;">
+					<thead>
+						<tr>
+							<th style="font-size: 17px;">
+								<div class="row m-0" style="justify-content: space-between;">
+		                    		<label style="font-size: 17px; margin: 0px;">입소신청 상세정보</label>
+		                    		<button type="button" class="btn btn-sm btn-primary" id="enableReadRrn" onclick="enableReadRrn(this);" data-enable="N" data-rrn="" data-manageNo="">개인정보 열람</button>
+		                    	</div>
+							</th>
+						</tr>
+					</thead>
+						<tr class="ddoing" style="height: 12px; border : 1px solid white;"></tr>
+					</table>
                   <%@ include file="./sckbd-detail-module-work.jsp"%>
-                </div>
-              </div>
             </div>
             <!-- /.card -->
           </div>

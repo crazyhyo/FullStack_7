@@ -6,6 +6,10 @@ import java.util.Date;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.slf4j.LoggerFactory;
+
+import com.spring.compass.util.CommonCodeUtil;
+import com.spring.compass.util.XSSUtil;
+
 import org.slf4j.Logger;
 
 public class PstiVO implements Serializable{
@@ -32,6 +36,7 @@ public class PstiVO implements Serializable{
 	private String rechkdYn = "N";
 	private String manageNo;
 	private String areaNo;
+	
 	
 	public String getAreaNo() {
 		return areaNo;
@@ -71,7 +76,7 @@ public class PstiVO implements Serializable{
 		return nlty;
 	}
 	public void setNlty(String nlty) {
-		this.nlty = nlty;
+		this.nlty = XSSUtil.xssProcess(nlty);
 	}
 	public String getChkdYn() {
 		return chkdYn;
@@ -83,7 +88,7 @@ public class PstiVO implements Serializable{
 		return pstiAdres;
 	}
 	public void setPstiAdres(String pstiAdres) {
-		this.pstiAdres = pstiAdres;
+		this.pstiAdres = XSSUtil.xssProcess(pstiAdres);
 	}
 	public String getRrn() {
 		return rrn;
@@ -95,7 +100,7 @@ public class PstiVO implements Serializable{
 		return pstiNm;
 	}
 	public void setPstiNm(String pstiNm) {
-		this.pstiNm = pstiNm;
+		this.pstiNm = XSSUtil.xssProcess(pstiNm);
 	}
 	public String getJobCode() {
 		return jobCode;

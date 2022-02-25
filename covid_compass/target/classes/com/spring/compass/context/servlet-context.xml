@@ -37,6 +37,23 @@
 	
 	<beans:bean id="downloadFile" class="com.spring.compass.view.FileDownloadView"/>
 	
+	<beans:bean id="downloadInspFile" class="com.spring.compass.view.InspBackupFileDownloadView"/>
+	
+	<beans:bean id="downloadPbhtFile" class="com.spring.compass.view.PbhtBackupFileDownloadView"/>
+	
+	<beans:bean id="downloadHsptFile" class="com.spring.compass.view.HsptBackupFileDownloadView"/>
+	
+	<beans:bean id="downloadLtctFile" class="com.spring.compass.view.LtctBackupFileDownloadView"/>
+	
+	<beans:bean id="downloadPstiFile" class="com.spring.compass.view.PstiBackupFileDownloadView"/>
+	
+	<beans:bean id="downloadSampleInspFile" class="com.spring.compass.view.downloadSampleInspFileDownloadView"/>
+	<beans:bean id="downloadSamplePbhtFile" class="com.spring.compass.view.downloadSamplePbhtFileDownloadView"/>
+	<beans:bean id="downloadSampleHsptFile" class="com.spring.compass.view.downloadSampleHsptFileDownloadView"/>
+	<beans:bean id="downloadSampleLtctFile" class="com.spring.compass.view.downloadSampleLtctFileDownloadView"/>
+	
+	
+	
 	<interceptors>
 		<interceptor>
 			<mapping path="/common/set-session" />

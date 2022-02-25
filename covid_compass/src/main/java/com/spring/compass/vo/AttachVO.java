@@ -1,5 +1,7 @@
 package com.spring.compass.vo;
 
+import java.util.Date;
+
 public class AttachVO {
 	private String atchNo;
 	private String uploadPath;
@@ -7,6 +9,29 @@ public class AttachVO {
 	private String fileType;
 	private String noticeNo;
 	private String mberNo;
+	private Date regDate;
+	private String type="A";
+	private String instNo;
+	
+	
+	public Date getRegDate() {
+		return regDate;
+	}
+	public void setRegDate(Date regDate) {
+		this.regDate = regDate;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public String getInstNo() {
+		return instNo;
+	}
+	public void setInstNo(String instNo) {
+		this.instNo = instNo;
+	}
 	public String getAtchNo() {
 		return atchNo;
 	}

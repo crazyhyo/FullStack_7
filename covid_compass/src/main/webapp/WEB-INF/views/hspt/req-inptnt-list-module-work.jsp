@@ -6,14 +6,16 @@
 <script type="text/x-handlebars-template"  id="req-inptnt-list-template" >
 {{#each .}}
           <tr
-			data-hspt-no="{{hsptNo}}" data-manage-no="{{manageNo}}"
+			data-hspt-no="{{hsptNo}}" data-manage-no="{{manageNo}}" data-sckbdreq-no="{{sckbdreqNo}}"
+			data-child-no="{{childNo}}" data-request-code="{{requestCode}}" data-type="{{type}}"
             onclick="showDetail('{{manageNo}}')"
-            class="each-req-inptnt-element">
-            <td>{{pstiNm}}</td>
+            class="each-req-inptnt-element" style="cursor: pointer;">
+            <td><span class="badge badge-{{classifyBadge requestCode}}">{{classifyReqInptnt requestCode}}</span></td>
+            <td style="text-align: left;">{{pstiNm}}</td>
             <td>{{age}}</td>
             <td>{{pstiTelno}}</td>
             <td>{{prettifyDate sckbdreqYmd}}</td>
-            <td>{{hsptNm}}</td>
+            <td style="text-align: left;">{{hsptNm}}</td>
           </tr>
 {{/each}}
 </script>
@@ -21,14 +23,14 @@
 <script type="text/x-handlebars-template"  id="inptnt-pagination-template" >
     <li class="page-item each-inptnt-pagination-element"><a class="page-link" href="1"> <i class="fas fa-angle-double-left" style="color:#1a4f72;"></i>
     </a></li>
-    <li class="page-item each-inptnt-pagination-element"><a class="page-link" href="{{#if prev}}{{prevPageNum}}{{/if}}"> <i class="fas fa-angle-left" style="color:#1a4f72;"></i>
+    <li class="page-item each-inptnt-pagination-element"><a class="page-link {{checkDisabled prev}}" href="{{#if prev}}{{prevPageNum}}{{/if}}"> <i class="fas fa-angle-left" style="color:#1a4f72;"></i>
     </a></li>
 
 {{#each pageNum}}
     <li class="page-item each-inptnt-pagination-element {{signActive this}}" ><a class="page-link" href="{{this}}" >{{this}}</a></li>
 {{/each}}
 
-    <li class="page-item each-inptnt-pagination-element"><a class="page-link" href="{{#if next}}{{nextPageNum}}{{/if}}"> <i class="fas fa-angle-right" style="color:#1a4f72;"></i>
+    <li class="page-item each-inptnt-pagination-element"><a class="page-link {{checkDisabled next}}" href="{{#if next}}{{nextPageNum}}{{/if}}"> <i class="fas fa-angle-right" style="color:#1a4f72;"></i>
     </a></li>
     <li class="page-item each-inptnt-pagination-element"><a class="page-link" href="{{realEndPage}}"> <i class="fas fa-angle-double-right" style="color:#1a4f72;"></i>
 </a></li>
@@ -40,14 +42,51 @@
 
 Handlebars.registerHelper({
 "prettifyDate" : function(timeValue){
-  var dateObj = new Date(timeValue);
-  var year = dateObj.getFullYear();
-  var month = dateObj.getMonth() + 1;
-  var date = dateObj.getDate();
-  return year + "-" + month + "-" + date;
+	if(timeValue){
+		var dateObj = new Date(timeValue);
+		var year = dateObj.getFullYear();
+		var month = dateObj.getMonth() + 1;
+		month += '';
+		if(month.length < 2){
+			month = '0' + month;
+		}
+		var date = dateObj.getDate();
+		date += '';
+		if(date.length < 2){
+			date = '0' + date;
+		}
+		return year + "-" + month + "-" + date;
+	}
+},
+"checkDisabled" : function(flag){
+    if(!flag) return 'disabled';
 },
 "signActive" : function(pageNum){
   if(pageNum == page) return 'active';
+},
+"classifyReqInptnt" : function(requestCode){
+	if(!requestCode) return '';
+	if(requestCode == 'M101'){
+		return '진료환자';
+	}
+	if(requestCode == 'M102'){
+		return '입원환자'; 
+	}
+	if(requestCode == 'M103'){
+		return '입소환자'; 
+	}
+},
+"classifyBadge" : function(requestCode){
+	if(!requestCode) return '';
+	if(requestCode == 'M101'){
+		return 'info';
+	}
+	if(requestCode == 'M102'){
+		return 'primary'; 
+	}
+	if(requestCode == 'M103'){
+		return 'success'; 
+	}
 }
 });
 
@@ -99,8 +138,42 @@ function getPage(handelbarsProcessingURL, form){
     dataType : 'json',
     data : form.serialize(),
     success : function(dataMap){
-      printData(dataMap.reqInptntList, $('#req-inptnt-list-table-tbody'), $('#req-inptnt-list-template'), '.each-req-inptnt-element');
-      printPagination(dataMap.pageMaker, $('#inptnt-list-pagination-ul'), $('#inptnt-pagination-template'), '.each-inptnt-pagination-element');
+
+		if(dataMap.reqInptntList.length == 0){
+			$('#enableReadRrn').attr('disabled', true);
+			$('#agree-btn').attr('disabled', true);
+			$('#reject-btn').attr('disabled', true);
+			
+			$('#req-inptnt-list-table-tbody').html('<tr class="each-req-inptnt-element"><td colspan="6" id="initialTd">페이지를 로딩중입니다.</td></tr>');
+	          
+			
+    		$('#initialTd').html('데이터가 없습니다.');
+    		dataMap.pageMaker.endPage = 1;
+    		printPagination(dataMap.pageMaker, $('#inptnt-list-pagination-ul'), $('#inptnt-pagination-template'), '.each-inptnt-pagination-element');
+    		
+      	  $('#enableReadRrn').data('rrn', '');
+    	  $('#enableReadRrn').data('manageNo', '');
+    	  
+    	  printData('', $('#req-inptnt-detail-info-module'), $('#req-inptnt-detail-template'), '.req-inptnt-detail-info');
+        
+        $('#dgnssHsptNm').html('');
+        $('#dgnssResultCode').html('');
+        $('#dgnssNote').html('');
+	      
+    	}else{
+			$('#enableReadRrn').attr('disabled', false);
+			$('#agree-btn').attr('disabled', false);
+			$('#reject-btn').attr('disabled', false);
+			
+	      printData(dataMap.reqInptntList, $('#req-inptnt-list-table-tbody'), $('#req-inptnt-list-template'), '.each-req-inptnt-element');
+	      printPagination(dataMap.pageMaker, $('#inptnt-list-pagination-ul'), $('#inptnt-pagination-template'), '.each-inptnt-pagination-element');
+	      
+	      if(dataMap.firstRecord){
+	    	  showDetail(dataMap.firstRecord.manageNo);
+	      }
+    	}
+    	
+      
     },
     error : function(error){
       alert('error' + error.status);
@@ -154,6 +227,7 @@ function printPagination(pageMaker, target, templateObject, removeClass){
 
         <thead>
           <tr role="row">
+            <th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">환자구분</th>
             <th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">성명</th>
             <th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">나이</th>
             <th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="">연락처</th>
@@ -164,10 +238,12 @@ function printPagination(pageMaker, target, templateObject, removeClass){
         <tbody id="req-inptnt-list-table-tbody">
 
           <tr class="each-req-inptnt-element">
-            <td colspan="5">페이지를 로딩중입니다.</td>
+            <td colspan="6" id="initialTd">페이지를 로딩중입니다.</td>
           </tr>
         </tbody>
       </table>
+        <div id="req-inptnt-page-info-div" style="float: right;">
+        </div>       
     </div>
   </div>
   <div class="card-footer clearfix" style="background-color: white;">

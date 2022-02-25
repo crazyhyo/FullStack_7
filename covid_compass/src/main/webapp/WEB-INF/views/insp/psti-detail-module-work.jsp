@@ -3,7 +3,6 @@
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script type="text/x-handlebars-template" id="psti-detail-template">
   <div class="psti-detail-element">
-	<div class="register-card-body" style="padding: 0px;">
 		<div class="card" style="padding: 10px;">
 			<div class="row">
 				<div class="form-group col-lg-4">
@@ -58,7 +57,7 @@
 					</div>
 					<div class="row">
 						<div class="col-sm-12" style="padding-left: 5px;">
-							<input name="rrn" id="rrn" type="text" class="form-control" value="{{rrn}}" readonly>
+							<input name="rrn" id="inputRrn" type="text" class="form-control" value="{{rrn}}" readonly>
 						</div>
 					</div>
 				</div>
@@ -76,7 +75,7 @@
 					<div class="row">
 						<label for="jobCode" class="col-sm-4 control-label text-left">직업</label>
 						<div class="col-sm-12">
-							<input name="jobCode" type="text" class="form-control" id="jobCode" value="{{job}}" readonly>
+							<input title="{{job}}" name="jobCode" type="text" class="form-control" id="jobCode" value="{{job}}" readonly>
 						</div>
 					</div>
 				</div>
@@ -168,19 +167,21 @@
 
 		<div class="card pt-0 pb-0" style="padding: 10px;">
 			<div class="row">
-				<div class="form-group col-lg-5">
-					<div class="row">
+
+				<div id="qrPrintId" class="form-group col-lg-5">
+					<div class="row" style="margin: 0 auto; float: none;">
+								<div class="col-md-12 text-center" style="justify-content: center; display: flex;">
 						<form name="psti-regist-form" action="${pageContext.request.contextPath }/insp/psti-regist" method="post" style="text-align: center;">
 							<input type="hidden" id="pstiNo" name="pstiNo" value="{{pstiNo}}" />
 
 							<div class="col-md-12">
-								<div id="qrBox" class="brand-link mt-2 pb-3 mb-3 d-flex" style="height: 155px; margin-left: 25px; background-size: cover; background-position: center; background-repeat: no-repeat;"></div>
+								<div id="qrBox" class="brand-link d-flex" style="height: 155px; width: 150px; background-size: cover; background-position: center; background-repeat: no-repeat;"></div>
 							</div>
 						</form>
-
+						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-10" style="padding-left: 5px;">
+						<div class="col-sm-12">
 							<input type="text" class="form-control" value="{{pstiNo}}" readonly style="text-align: center;">
 						</div>
 					</div>
@@ -192,7 +193,7 @@
 							<label for="minBrssr" class="col-sm-12 control-label text-left" style="padding-top: 0px;"><i class="fas fa-heart"></i>&nbsp;&nbsp;최저혈압</label>
 							<div class="row">
 								<div class="col-sm-12">
-									<input name="minBrssr" type="text" class="form-control" id="minBrssr" value="">
+									<input name="minBrssr" type="number" class="form-control" id="minBrssr" value="" oninput="negativeCheck(this);">
 								</div>
 							</div>
 						</div>
@@ -200,7 +201,7 @@
 							<label for="maxBrssr" class="col-sm-12 control-label text-left" style="padding-top: 0px;"><i class="fas fa-heart"></i>&nbsp;&nbsp;최고혈압</label>
 							<div class="row">
 								<div class="col-sm-12">
-									<input name="maxBrssr" type="text" class="form-control" id="maxBrssr" value="">
+									<input name="maxBrssr" type="number" class="form-control" id="maxBrssr" value="" oninput="negativeCheck(this);">
 								</div>
 							</div>
 						</div>
@@ -211,7 +212,7 @@
 							<label for="bdheight" class="col-sm-12 control-label text-left" style="padding-top: 4px;"><i class="fas fa-ruler-vertical"></i>&nbsp;&nbsp;신장</label>
 							<div class="row">
 								<div class="col-sm-12">
-									<input name="bdheight" type="text" class="form-control" id="bdheight" value="">
+									<input name="bdheight" type="number" class="form-control" id="bdheight" value="" oninput="negativeCheck(this);">
 								</div>
 							</div>
 						</div>
@@ -219,7 +220,7 @@
 							<label for="bdweight" class="col-sm-12 control-label text-left" style="padding-top: 4px;"><i class="fas fa-weight"></i>&nbsp;&nbsp;체중</label>
 							<div class="row">
 								<div class="col-sm-12">
-									<input name="bdweight" type="text" class="form-control" id="bdweight" value="">
+									<input name="bdweight" type="number" class="form-control" id="bdweight" value="" oninput="negativeCheck(this);">
 								</div>
 							</div>
 						</div>
@@ -231,7 +232,7 @@
 							<label for="bdheat" class="col-sm-12 control-label text-left" style="padding-top: 4px;"><i class="fas fa-thermometer-half"></i>&nbsp;&nbsp;체온</label>
 							<div class="row">
 								<div class="col-sm-12">
-									<input name="bdheat" type="text" class="form-control" id="bdheat" value="">
+									<input name="bdheat" type="number" class="form-control" id="bdheat" value="" oninput="negativeCheck(this);">
 								</div>
 							</div>
 						</div>
@@ -247,25 +248,77 @@
 
 	</div>
 
-	<div class="form-group row">
+	<div class="form-group row psti-detail-element">
 		<div class="col-md-6">
 			<div class="row">
 				<div class="col-md-9">
-					<button style="background-color: #1a4f72; border-color: #1a4f72;" type="button" class="btn btn-block btn-primary">QR코드 출력</button>
+					<button id="qrCodePrintBtn" style="background-color: #1a4f72; border-color: #1a4f72;" type="button" class="btn btn-block btn-primary" onclick="OpenQR('{{pstiNo}}');">QR코드 출력</button>
 				</div>
 			</div>
 		</div>
 		<div class="col-md-3">
-			<button id="submitbutton" onclick="registsubmit();" style="background-color: #1a4f72; border-color: #1a4f72;" type="button" class="btn btn-block btn-primary">등록</button>
+			<button id="modifysubmitbutton" onclick="modifysubmit();" style="background-color: #1a4f72; border-color: #1a4f72; display:none;" type="button" class="btn btn-block btn-primary">수정 등록</button>
+			<button id="submitbutton" onclick="registsubmit();" style="margin-top:0px; background-color: #1a4f72; border-color: #1a4f72;" type="button" class="btn btn-block btn-primary">등록</button>
 		</div>
 		<div class="col-md-3">
-			<button id="modifybutton" style="background-color: #1a4f72; border-color: #1a4f72;" type="button" onclick="modify();" class="btn btn-block btn-primary">수정</button>
-			<button id="modifysubmitbutton" onclick="modifysubmit();" style="background-color: #1a4f72; border-color: #1a4f72; display:none;" type="button" class="btn btn-block btn-primary">등록</button>
+			<button id="modifycancelbutton" onclick="modifycancel();" style="background-color: #c82333; border-color: #bd2130; display: none;" type="button" class="btn btn-block btn-primary">취소</button>
+			<button id="modifybutton" style="margin-top:0px; background-color: #1a4f72; border-color: #1a4f72;" type="button" onclick="modify();" class="btn btn-block btn-primary">수정</button>
 		</div>
-	</div>
 </div>
 </script>
 <script>
+
+function negativeCheck(target) {
+	
+	const value = parseFloat(target.value);
+	
+	if(value < 0){
+		target.value = '';
+		alert('음수는 입력할 수 없습니다.');
+		target.style.borderColor = 'red';
+		return;
+	}
+	
+	target.style.borderColor = '';
+	
+}
+
+function minMaxCheck(){
+
+	if(parseInt(document.getElementById('minBrssr').value) > parseInt(document.getElementById('maxBrssr').value)){
+		var temp = document.getElementById('minBrssr').value;
+		document.getElementById('minBrssr').value = document.getElementById('maxBrssr').value;
+		document.getElementById('maxBrssr').value = temp;
+		alert('최소혈압은 최대혈압보다 클 수 없습니다.');
+		
+		return 'N';
+	}
+	
+	return 'Y';
+}
+
+function generateQR(pstiNo){
+	
+	console.log('test');
+	console.log(pstiNo);
+	
+	$("#qrBox").empty();
+	 
+	console.log('after empty()');
+	var qrcode = new QRCode(document.getElementById("qrBox"));
+	console.log('after qrcode');
+	
+	console.log(qrcode);
+	
+	var url = 'http://192.168.143.14<%=request.getContextPath()%>/common/qrInfo?pstiNo=' + pstiNo;
+	if(!pstiNo) url = "";
+	
+	console.log(qrcode);
+	console.log(url);
+	
+	qrcode.makeCode(url);
+}
+
 function showDetail(pstiNo){
 	var trs = $('tr.each-psti-element');
 	
@@ -281,7 +334,15 @@ function showDetail(pstiNo){
 		type : 'post',
 		dataType : 'json',
 		success : function(vInspPstiVO){
+			
+			$('#enableReadRrn').data('rrn', vInspPstiVO.rrn);
+			$('#enableReadRrn').data('manageNo', pstiNo);
+	      	vInspPstiVO.rrn = (vInspPstiVO.rrn.substring(0,8) + '******');
+			
 			printData(vInspPstiVO, $('#psti-detail-module'), $('#psti-detail-template'), '.psti-detail-element')
+			
+			generateQR(vInspPstiVO.pstiNo);
+			
 		},
 		error : function(error){
 			alert('error' + error.status);
@@ -289,16 +350,28 @@ function showDetail(pstiNo){
 	});
 }
 function modify(){
-	$('#pstiNm').attr('readonly', false);
-	$('#pregnYn').attr('readonly', false);
+	$('#pstiNm').   attr('readonly', false);
+	$('#pregnYn').  attr('readonly', false);
 	$('#pstiTelno').attr('readonly', false);
 	$('#pstiAdres').attr('readonly', false);
+	
+	$('#pstiNm').   css('border', '1px solid blue');
+	$('#pregnYn').  css('border', '1px solid blue');
+	$('#pstiTelno').css('border', '1px solid blue');
+	$('#pstiAdres').css('border', '1px solid blue');
+	
 	$('#modifybutton').css('display', 'none');
 	$('#modifysubmitbutton').css('display', 'inline');
 	$('#submitbutton').css('display', 'none');
 	$('#changeclass').removeClass('col-sm-12');
 	$('#changeclass').addClass('col-sm-9');
 	$('#showAdress').css('display', 'inline');
+	$('#modifycancelbutton').css('display', 'inline');
+	$('#bdheat').attr('readonly', true);
+	$('#bdweight').attr('readonly', true);
+	$('#bdheight').attr('readonly', true);
+	$('#maxBrssr').attr('readonly', true);
+	$('#minBrssr').attr('readonly', true);
 }
 function modifysubmit(){
 	var pstiNm = $('#pstiNm').val();
@@ -315,15 +388,27 @@ function modifysubmit(){
 			$('#pregnYn').attr('readonly', true);
 			$('#pstiTelno').attr('readonly', true);
 			$('#pstiAdres').attr('readonly', true);
+			
+			$('#pstiNm').   css('border', '');
+			$('#pregnYn').  css('border', '');
+			$('#pstiTelno').css('border', '');
+			$('#pstiAdres').css('border', '');
+			
 			$('#modifybutton').css('display', 'inline');
 			$('#modifysubmitbutton').css('display', 'none');
 			$('#submitbutton').css('display', 'inline');
 			$('#showAdress').css('display', 'none');
+			$('#modifycancelbutton').css('display', 'none');
 			$('#changeclass').removeClass('col-sm-9');
 			$('#changeclass').addClass('col-sm-12');
 			$('tr[data-psti-no="'+pstiNo+'"] td div.pstiNm').text("").text(pstiNm);
 			$('tr[data-psti-no="'+pstiNo+'"] td div.pstiTelno').text("").text(pstiTelno);
 			alert(pstiNm + "님의 정보가 성공적으로 수정되었습니다.")
+			$('#bdheat').attr('readonly', false);
+			$('#bdweight').attr('readonly', false);
+			$('#bdheight').attr('readonly', false);
+			$('#maxBrssr').attr('readonly', false);
+			$('#minBrssr').attr('readonly', false);
 		},
 		error : function(error){
 			alert('error' + error.status);
@@ -339,27 +424,74 @@ function registsubmit(){
 	var bdweight = $('#bdweight').val();
 	var bdheat = $('#bdheat').val();
 	
+	if(minMaxCheck() == 'N') 	return;
+	
 	if(maxBrssr == "" || maxBrssr == null|| minBrssr =="" || minBrssr == null || bdheight =="" || bdheight == null || bdweight == "" || bdweight == null || bdheat == "" || bdheat == null) {
 		alert("기초검사 정보를 입력해주세요.");
 		return;
 	}
 		
+	var pstiNm = $('#pstiNm').val();
 	
 	var psti = {"pstiNo" : pstiNo, "maxBrssr" : maxBrssr, "minBrssr" : minBrssr, "bdheight" : bdheight, "bdweight" : bdweight, "bdheat" : bdheat}
 	$.ajax({
-		url : '<%=request.getContextPath()%>/insp/regist-Question',
+		url : '<%=request.getContextPath()%>/rest-insp/regist-Question',
 		type : 'post',
 		data : psti,
-		dataType : "json",
 		success:function(result){
-			alert(result);
+			alert(pstiNm +"님의 문진표를 성공적으로 등록하였습니다.");
 			location.reload();
 		},
 		error: function(error){
-			alert('error' + error.status);
+			var errorCode = error.status;
+			if(errorCode == '400'){
+				alert("PCR키트가 없어 검사가 불가합니다.\nPCR키트를 등록해주세요.");
+			}
 		}
 	})
 	
+}
+
+function modifycancel(){
+	var pstiNo = $('#pstiNo').val();
+	var pstiNm = $('#pstiNm').val();
+	$.ajax({
+		url : '<%=request.getContextPath()%>/insp/psti-modify-cancel',
+		type : 'post',
+		data : {"pstiNo" : pstiNo},
+		success : function(res){
+			$('#pstiNm').attr('readonly', true);
+			$('#pregnYn').attr('readonly', true);
+			$('#pstiAdres').attr('readonly', true);
+			$('#pstiTelno').attr('readonly', true);
+			
+			$('#pstiNm').   css('border', '');
+			$('#pregnYn').  css('border', '');
+			$('#pstiTelno').css('border', '');
+			$('#pstiAdres').css('border', '');
+			
+			$('#changeclass').removeClass('col-sm-9');
+			$('#changeclass').addClass('col-sm-12');
+			$('#showAdress').css('display', 'none');
+			$('#modifybutton').css('display', 'inline');
+			$('#modifysubmitbutton').css('display', 'none');
+			$('#modifycancelbutton').css('display', 'none');
+			$('#pstiNm').val(res.pstiNm);
+			$('#pregnYn').val(res.pregnYn);
+			$('#pstiAdres').val(res.pstiAdres);
+			$('#pstiTelno').val(res.pstiTelno);
+			$('#submitbutton').css('display', 'inline');
+			alert(pstiNm +"님의 정보 수정이 취소되었습니다.");
+			$('#bdheat').attr('readonly', false);
+			$('#bdweight').attr('readonly', false);
+			$('#bdheight').attr('readonly', false);
+			$('#maxBrssr').attr('readonly', false);
+			$('#minBrssr').attr('readonly', false);
+		},
+		error : function(error){
+			alert('error'+ error.status);
+		}
+	})
 }
 
 function adress() {
@@ -411,4 +543,327 @@ function adress() {
 </script>
 
 <div id="psti-detail-module">
+  <div class="psti-detail-element">
+		<div class="card" style="padding: 10px;">
+			<div class="row">
+				<div class="form-group col-lg-4">
+					<div class="row">
+						<label for="pstiNm" class="col-sm-5 control-label text-left">성명</label>
+					</div>
+					<div class="row">
+						<div class="col-sm-12" style="padding-left: 5px;">
+							<input name="pstiNm" type="text" class="form-control" id="pstiNm" value="" readonly>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group col-lg-4">
+					<div class="row">
+						<label for="nlty" class="col-sm-6 control-label text-left" style="padding-top: 0px;">국적</label>
+						<div class="col-sm-12">
+							<input name="nlty" type="text" class="form-control" id="nlty" value="" readonly>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group col-lg-4">
+					<div class="row">
+						<div class="col-lg-6">
+							<label for="age" class="col-sm-12 control-label text-left">나이</label>
+							<div class="row">
+								<div class="col-sm-12">
+									<input name="age" type="text" class="form-control" id="age" value="" readonly>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<label for="gender" class="col-sm-12 control-label text-left">성별</label>
+							<div class="row">
+								<div class="col-sm-12">
+									<input name="gender" type="text" class="form-control" id="gender" value="" readonly>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+
+
+			<div class="row">
+				<div class="form-group col-lg-4">
+					<div class="row">
+						<label for="rrn" class="col-sm-12 control-label text-left">주민/외국인등록번호 </label>
+					</div>
+					<div class="row">
+						<div class="col-sm-12" style="padding-left: 5px;">
+							<input name="rrn" id="inputRrn" type="text" class="form-control" value="" readonly>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group col-lg-4">
+					<div class="row">
+						<label for="pstiTelno" class="col-sm-4 control-label text-left">연락처</label>
+						<div class="col-sm-12">
+							<input name="pstiTelno" type="text" class="form-control" id="pstiTelno" value="" readonly>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group col-lg-4">
+					<div class="row">
+						<label for="jobCode" class="col-sm-4 control-label text-left">직업</label>
+						<div class="col-sm-12">
+							<input name="jobCode" type="text" class="form-control" id="jobCode" value="" readonly>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="row">
+				<div class="form-group col-lg-12">
+					<div class="row">
+						<label for="pstiAdres" class="col-sm-12 control-label text-left">주소</label>
+					</div>
+					<div class="row">
+						<div id="changeclass" class="col-sm-12" style="padding-left: 5px;">
+							<input name="pstiAdres" type="text" class="form-control" id="pstiAdres" value="" readonly>
+						</div>
+						<div id="showAdress" class="col-sm-3" style="display:none;">
+							<button type="button" style="background-color: #1a4f72; border-color: #1a4f72;" onclick="adress();" class="btn btn-block btn-primary">주소 검색</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="card" style="padding: 10px;">
+			<div class="row">
+				<div class="form-group col-lg-3">
+					<div class="row">
+						<label for="wrtYmd" class="col-sm-12 control-label text-left">작성일</label>
+					</div>
+					<div class="row">
+						<div class="col-sm-12" style="padding-left: 5px;">
+							<input name="wrtYmd" type="text" class="form-control" id="wrtYmd" value="" readonly>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group col-lg-3">
+					<div class="row">
+						<label for="rechkdYn" class="col-sm-12 control-label text-left">검사경위</label>
+						<div class="col-sm-12">
+							<input name="rechkdYn" type="text" class="form-control" id="rechkdYn" value="" readonly>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="form-group col-lg-2">
+					<div class="row">
+						<label for="vacCode" class="col-sm-12 control-label text-left" style="padding-top: 0px;">백신접종</label>
+						<div class="col-sm-12">
+							<input name="vacCode" type="text" class="form-control" id="vacCode" value="" readonly>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group col-lg-2">
+					<div class="row">
+						<label for="feverYn" class="col-sm-12 control-label text-left" style="padding-top: 0px;">발열여부</label>
+						<div class="col-sm-12">
+							<input name="feverYn" type="text" class="form-control" id="feverYn" value="" readonly>
+						</div>
+					</div>
+				</div>
+				<div class="form-group col-lg-2">
+					<div class="row">
+						<label for="pregnYn" class="col-sm-12 control-label text-left" style="padding-top: 0px;">임신여부</label>
+						<div class="col-sm-12">
+							<input name="pregnYn" type="text" class="form-control" id="pregnYn" value="" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="form-group col-lg-12">
+					<div class="row">
+						<label for="symptms" class="col-sm-12 control-label text-left">증상</label>
+					</div>
+					<div class="row">
+						<div class="col-sm-12" style="padding-left: 5px;">
+							<input name="symptms" type="text" class="form-control" id="symptms" value="" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="card pt-0 pb-0" style="padding: 10px;">
+			<div class="row">
+
+				<div id="qrPrintId" class="form-group col-lg-5">
+					<div class="row" style="margin: 0 auto; float: none;">
+								<div class="col-md-12 text-center" style="justify-content: center; display: flex;">
+						<form name="psti-regist-form" action="${pageContext.request.contextPath }/insp/psti-regist" method="post" style="text-align: center;">
+							<input type="hidden" id="pstiNo" name="pstiNo" value="" />
+
+							<div class="col-md-12">
+								<div id="qrBox" class="brand-link d-flex" style="height: 155px; width: 150px; background-size: cover; background-position: center; background-repeat: no-repeat;"></div>
+							</div>
+						</form>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<input type="text" class="form-control" value="" readonly style="text-align: center;" readonly>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group col-lg-7 pt-4">
+					<div class="row">
+						<div class="col-lg-6">
+							<label for="minBrssr" class="col-sm-12 control-label text-left" style="padding-top: 0px;"><i class="fas fa-heart"></i>&nbsp;&nbsp;최저혈압</label>
+							<div class="row">
+								<div class="col-sm-12">
+									<input name="minBrssr" type="text" class="form-control" id="minBrssr" value="" readonly>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<label for="maxBrssr" class="col-sm-12 control-label text-left" style="padding-top: 0px;"><i class="fas fa-heart"></i>&nbsp;&nbsp;최고혈압</label>
+							<div class="row">
+								<div class="col-sm-12">
+									<input name="maxBrssr" type="text" class="form-control" id="maxBrssr" value="" readonly>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-lg-6">
+							<label for="bdheight" class="col-sm-12 control-label text-left" style="padding-top: 4px;"><i class="fas fa-ruler-vertical"></i>&nbsp;&nbsp;신장</label>
+							<div class="row">
+								<div class="col-sm-12">
+									<input name="bdheight" type="text" class="form-control" id="bdheight" value="" readonly>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<label for="bdweight" class="col-sm-12 control-label text-left" style="padding-top: 4px;"><i class="fas fa-weight"></i>&nbsp;&nbsp;체중</label>
+							<div class="row">
+								<div class="col-sm-12">
+									<input name="bdweight" type="text" class="form-control" id="bdweight" value="" readonly>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<div class="row">
+						<div class="col-lg-12">
+							<label for="bdheat" class="col-sm-12 control-label text-left" style="padding-top: 4px;"><i class="fas fa-thermometer-half"></i>&nbsp;&nbsp;체온</label>
+							<div class="row">
+								<div class="col-sm-12">
+									<input name="bdheat" type="text" class="form-control" id="bdheat" value="" readonly>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+
+
+			</div>
+		</div>
+
+
+	</div>
+
+	<div class="form-group row psti-detail-element">
+		<div class="col-md-6">
+			<div class="row">
+				<div class="col-md-9">
+					<button id="qrCodePrintBtn" style="background-color: #1a4f72; border-color: #1a4f72;" type="button" class="btn btn-block btn-primary">QR코드 출력</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<button id="modifysubmitbutton" style="background-color: #1a4f72; border-color: #1a4f72; display:none;" type="button" class="btn btn-block btn-primary">수정 등록</button>
+			<button id="submitbutton" style="margin-top:0px; background-color: #1a4f72; border-color: #1a4f72;" type="button" class="btn btn-block btn-primary">등록</button>
+		</div>
+		<div class="col-md-3">
+			<button id="modifycancelbutton" style="background-color: #c82333; border-color: #bd2130; display: none;" type="button" class="btn btn-block btn-primary">취소</button>
+			<button id="modifybutton" style="margin-top:0px; background-color: #1a4f72; border-color: #1a4f72;" type="button" class="btn btn-block btn-primary">수정</button>
+		</div>
 </div>
+</div>
+
+<script>
+
+function OpenQR(pstiNo){
+	
+	OpenWindow('<%=request.getContextPath()%>/common/qrPage?pstiNo=' + pstiNo, 'qrPage', 350, 500);
+	
+}
+
+function savePDF() {
+	
+	
+	console.log($('#qrPrintId')[0]);
+	
+	//저장 영역 div id
+	html2canvas($('#qrPrintId')[0], {
+		//logging : true,		// 디버그 목적 로그
+		//proxy: "html2canvasproxy.php",
+		allowTaint : true, // cross-origin allow 
+		useCORS : true, // CORS 사용한 서버로부터 이미지 로드할 것인지 여부
+		scale : 2
+	// 기본 96dpi에서 해상도를 두 배로 증가
+
+	})
+			.then(
+					function(canvas) {
+						// 캔버스를 이미지로 변환
+						var imgData = canvas.toDataURL('image/png');
+
+						var imgWidth = 190; // 이미지 가로 길이(mm) / A4 기준 210mm
+						var pageHeight = imgWidth * 1.414; // 출력 페이지 세로 길이 계산 A4 기준
+						var imgHeight = canvas.height * imgWidth
+								/ canvas.width;
+						var heightLeft = imgHeight;
+						var margin = 10; // 출력 페이지 여백설정
+						var doc = new jsPDF('p', 'mm');
+						var position = 80;
+
+						// 첫 페이지 출력
+						doc.addImage(imgData, 'PNG', margin, position,
+								imgWidth, imgHeight);
+						heightLeft -= pageHeight;
+
+						// 한 페이지 이상일 경우 루프 돌면서 출력
+						while (heightLeft >= 20) { // 35
+							position = heightLeft - imgHeight;
+							position = position - 20; // -25
+
+							doc.addPage();
+							doc.addImage(imgData, 'PNG', margin,
+									position, imgWidth, imgHeight);
+							heightLeft -= pageHeight;
+						}
+
+						// 파일 저장
+						doc.save('filename.pdf');
+					}); 
+}
+
+</script>

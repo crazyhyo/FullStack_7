@@ -19,7 +19,16 @@ public class SmplResultVO implements Serializable {
 	private Date resYmd;
 	private String smplResCode;
 	private String smplNo;
+	private String instCode;
 	
+	public String getInstCode() {
+		return instCode;
+	}
+
+	public void setInstCode(String instCode) {
+		this.instCode = instCode;
+	}
+
 	public String getInstNo() {
 		return instNo;
 	}

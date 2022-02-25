@@ -20,6 +20,8 @@ public class SckbdreqDetailCommand extends ReqInptntDetailCommand implements Ser
 	private int rmndSckbdCnt;
 	private int sckbdCnt;
 	
+	private boolean lastRecord;
+	
 	public String getLtctAreaNo() {
 		return ltctAreaNo;
 	}
@@ -82,6 +84,14 @@ public class SckbdreqDetailCommand extends ReqInptntDetailCommand implements Ser
 
 	public void setSckbdCnt(int sckbdCnt) {
 		this.sckbdCnt = sckbdCnt;
+	}
+
+	public boolean isLastRecord() {
+		return lastRecord;
+	}
+
+	public void setLastRecord(boolean lastRecord) {
+		this.lastRecord = lastRecord;
 	}
 
 	public void setData(LtctVO ltct) {

@@ -21,13 +21,19 @@ public class NoticeModifyCommand {
 	private String popUp;
 	private String deleteFileCheck;
 	private String deleteFileName;
+	private String hiddenModifyFile;
 	
 	
 	
 	
-	
-	
-	
+	public String getHiddenModifyFile() {
+		return hiddenModifyFile;
+	}
+
+	public void setHiddenModifyFile(String hiddenModifyFile) {
+		this.hiddenModifyFile = hiddenModifyFile;
+	}
+
 	public String getDeleteFileCheck() {
 		return deleteFileCheck;
 	}

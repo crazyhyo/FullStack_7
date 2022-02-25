@@ -29,7 +29,7 @@ public class VPstiCommand implements Serializable{
 	private Date delYmd;
 	private String pstiNo;
 	private String rechkdYn;
-	private int age;
+	private String age;
 	private String areaNo;
 	public String getAreaNo() {
 		return areaNo;
@@ -151,10 +151,10 @@ public class VPstiCommand implements Serializable{
 	public void setRechkdYn(String rechkdYn) {
 		this.rechkdYn = rechkdYn;
 	}
-	public int getAge() {
+	public String getAge() {
 		return age;
 	}
-	public void setAge(int age) {
+	public void setAge(String age) {
 		this.age = age;
 	}
 	@Override

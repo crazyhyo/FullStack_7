@@ -17,5 +17,5 @@ public interface MenuDAO {
 	
 	public List<MenuVO> selectEmpSubMenuList(String menuNo) throws SQLException;
 	
-	
+	public List<MenuVO> selectAllSubMenuList(String menuNo) throws SQLException;
 }

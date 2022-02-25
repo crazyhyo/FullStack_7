@@ -6,6 +6,8 @@ import java.util.Date;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import com.spring.compass.util.XSSUtil;
+
 @SuppressWarnings("serial")
 public class MberVO implements Serializable{
 
@@ -13,6 +15,7 @@ public class MberVO implements Serializable{
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);		
 	}
+	private String instNm;
 	private String mberNo;		//회원고유번호
 	private String instNo;		//기관고유번호
 	private String mberCode;	//회원구분코드
@@ -26,6 +29,12 @@ public class MberVO implements Serializable{
 	private String mberAdres;	//주소
 	private Date mberBir;		//생년월일
 
+	public String getInstNm() {
+		return instNm;
+	}
+	public void setInstNm(String instNm) {
+		this.instNm = instNm;
+	}
 	public String getMberNo() {
 		return mberNo;
 	}
@@ -48,13 +57,13 @@ public class MberVO implements Serializable{
 		return mberId;
 	}
 	public void setMberId(String mberId) {
-		this.mberId = mberId;
+		this.mberId = XSSUtil.xssProcess(mberId);
 	}
 	public String getMberPwd() {
 		return mberPwd;
 	}
 	public void setMberPwd(String mberPwd) {
-		this.mberPwd = mberPwd;
+		this.mberPwd = XSSUtil.xssProcess(mberPwd);
 	}
 	public String getMberTelno() {
 		return mberTelno;
@@ -84,13 +93,13 @@ public class MberVO implements Serializable{
 		return mberNm;
 	}
 	public void setMberNm(String mberNm) {
-		this.mberNm = mberNm;
+		this.mberNm = XSSUtil.xssProcess(mberNm);
 	}
 	public String getMberAdres() {
 		return mberAdres;
 	}
 	public void setMberAdres(String mberAdres) {
-		this.mberAdres = mberAdres;
+		this.mberAdres = XSSUtil.xssProcess(mberAdres);
 	}
 	public Date getMberBir() {
 		return mberBir;

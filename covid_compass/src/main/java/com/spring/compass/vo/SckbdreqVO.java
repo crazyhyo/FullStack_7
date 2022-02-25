@@ -18,7 +18,14 @@ public class SckbdreqVO implements Serializable{
 	private String sckbdreqNo;
 	private Date acceptYmd;
 	private String requestCode;
+	private String hsptNm;
 	
+	public String getHsptNm() {
+		return hsptNm;
+	}
+	public void setHsptNm(String hsptNm) {
+		this.hsptNm = hsptNm;
+	}
 	public Date getAcceptYmd() {
 		return acceptYmd;
 	}

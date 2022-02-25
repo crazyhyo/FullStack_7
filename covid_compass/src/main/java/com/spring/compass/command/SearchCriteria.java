@@ -10,7 +10,7 @@ public class SearchCriteria implements Serializable{
 	
 	private String searchType = "";
 	private String keyword = "";
-	
+	private String instNo;
 	private int page = 1;
 	private int startRowNum = 0;
 	private int perPageNum = 15;
@@ -35,7 +35,7 @@ public class SearchCriteria implements Serializable{
 		calcData();
 	}
 	
-	private void calcData() {
+	public void calcData() {
 		setStartRowNum((page - 1) * perPageNum + 1);
 		setEndRowNum(page * perPageNum);
 		
@@ -82,6 +82,15 @@ public class SearchCriteria implements Serializable{
 		this.perPageNum = perPageNum > 0 ? perPageNum : 1;
 	}
 	
+	
+	public String getInstNo() {
+		return instNo;
+	}
+
+	public void setInstNo(String instNo) {
+		this.instNo = instNo;
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);

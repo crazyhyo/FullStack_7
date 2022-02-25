@@ -9,28 +9,11 @@ public class SckbdreqProcessCommand implements Serializable{
 	
 	private String manageNo;
 	private String sckbdreqNo;
-	private String fromLtctNo;
 	private String type;
 	private String requestCode;
-	private String toLtctNo;
-	private String toHsptNo;
+	private String hsptNo;
+	private String childNo;
 	
-	public String getToLtctNo() {
-		return toLtctNo;
-	}
-
-	public void setToLtctNo(String toLtctNo) {
-		this.toLtctNo = toLtctNo;
-	}
-
-	public String getToHsptNo() {
-		return toHsptNo;
-	}
-
-	public void setToHsptNo(String toHsptNo) {
-		this.toHsptNo = toHsptNo;
-	}
-
 	public String getManageNo() {
 		return manageNo;
 	}
@@ -45,14 +28,6 @@ public class SckbdreqProcessCommand implements Serializable{
 
 	public void setSckbdreqNo(String sckbdreqNo) {
 		this.sckbdreqNo = sckbdreqNo;
-	}
-
-	public String getFromLtctNo() {
-		return fromLtctNo;
-	}
-
-	public void setFromLtctNo(String fromLtctNo) {
-		this.fromLtctNo = fromLtctNo;
 	}
 
 	public String getType() {
@@ -71,7 +46,22 @@ public class SckbdreqProcessCommand implements Serializable{
 		this.requestCode = requestCode;
 	}
 
-	
+	public String getHsptNo() {
+		return hsptNo;
+	}
+
+	public void setHsptNo(String hsptNo) {
+		this.hsptNo = hsptNo;
+	}
+
+	public String getChildNo() {
+		return childNo;
+	}
+
+	public void setChildNo(String childNo) {
+		this.childNo = childNo;
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);	

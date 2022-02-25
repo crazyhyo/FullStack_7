@@ -11,6 +11,10 @@ import com.spring.compass.command.PageMaker;
 import com.spring.compass.command.VInspPstiResultVO;
 import com.spring.compass.command.VInspPstiVO;
 import com.spring.compass.dao.InspDAO;
+import com.spring.compass.vo.InspChckdVO;
+import com.spring.compass.vo.InspPstiVO;
+import com.spring.compass.vo.InspResultVO;
+import com.spring.compass.vo.InspStatsVO;
 import com.spring.compass.vo.InspVO;
 import com.spring.compass.vo.KitHistVO;
 import com.spring.compass.vo.PcrKitVO;
@@ -22,7 +26,9 @@ public class InspServiceImpl implements InspService{
 	public void setInspDAO(InspDAO inspDAO) {
 		this.inspDAO = inspDAO;
 	}
-
+	
+	
+	
 	@Override
 	public InspVO getInspByInstNo(String instNo) throws Exception {
 		InspVO insp = inspDAO.selectInspByInstNo(instNo);
@@ -80,8 +86,18 @@ public class InspServiceImpl implements InspService{
 		
 		pageMaker.setTotalCount(totalCount);
 		
-		List<VInspPstiVO> pstiList = inspDAO.selectPstiList(cri);
+		List<InspPstiVO> pstiList = inspDAO.selectPstiList(cri);
 		
+		if(!pstiList.isEmpty()) {
+			for(int i = 0; i < pstiList.size(); i++) {
+				String manageNo = pstiList.get(i).getManageNo();
+				if(manageNo != null) {
+					InspPstiVO result = inspDAO.selectResultByManageNo(manageNo);
+					pstiList.get(i).setPstvYn(result.getPstvYn());
+					pstiList.get(i).setResYmd(result.getResYmd());
+				}
+			}
+		}
 		dataMap.put("pstiList", pstiList);
 		dataMap.put("pageMaker", pageMaker);
 		
@@ -100,11 +116,42 @@ public class InspServiceImpl implements InspService{
 		
 		pageMaker.setTotalCount(totalCount);
 		
-		List<VInspPstiVO> chckdList = inspDAO.selectChckdList(cri);
+		List<InspChckdVO> chckdList = inspDAO.selectChckdList(cri);
+		
+		if(!chckdList.isEmpty()) {
+			for(int i = 0; i < chckdList.size(); i++) {
+				String manageNo = chckdList.get(i).getManageNo();
+				if(manageNo != null) {
+					InspPstiVO result = inspDAO.selectResultByManageNo(manageNo);
+					if(result != null) {
+						chckdList.get(i).setPstvYn(result.getPstvYn());
+						chckdList.get(i).setResYmd(result.getResYmd());
+					}
+					
+				}
+			}
+		}
+		
 		
 		dataMap.put("chckdList", chckdList);
 		dataMap.put("pageMaker", pageMaker);
 		
+		return dataMap;
+	}
+	
+	@Override
+	public Map<String, Object> getPcrKitList(InspPstiSearchCommand cri) throws Exception {
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		PageMaker pageMaker = null;
+		pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		int totalCount = inspDAO.selectPcrKitListCount(cri);
+		
+		pageMaker.setTotalCount(totalCount);
+
+		List<PcrKitVO> pcrKitList = inspDAO.selectPcrKitList(cri);
+		dataMap.put("pcrKitList", pcrKitList);
+		dataMap.put("pageMaker", pageMaker);
 		return dataMap;
 	}
 
@@ -120,7 +167,17 @@ public class InspServiceImpl implements InspService{
 		
 		pageMaker.setTotalCount(totalCount);
 		
-		List<VInspPstiResultVO> resultList = inspDAO.selectResultList(cri);
+		List<InspResultVO> resultList = inspDAO.selectResultList(cri);
+		
+		for(int i = 0; i < resultList.size(); i++) {
+			
+			String manageNo = resultList.get(i).getManageNo();
+			
+			int smplCnt = inspDAO.selectSmplCountByManageNo(manageNo);
+			
+			resultList.get(i).setSmplCnt(smplCnt);
+			
+		}
 		
 		dataMap.put("resultList", resultList);
 		dataMap.put("pageMaker", pageMaker);
@@ -128,27 +185,21 @@ public class InspServiceImpl implements InspService{
 	}
 
 	@Override
-	public VInspPstiVO getPstiDetail(String pstiNo) throws Exception {
-		VInspPstiVO psti = inspDAO.selectPstiDetail(pstiNo);
+	public InspPstiVO getPstiDetail(String pstiNo) throws Exception {
+		InspPstiVO psti = inspDAO.selectPstiDetail(pstiNo);
 		return psti;
 	}
 	
 	@Override
-	public VInspPstiVO getChckdDetail(String pstiNo) throws Exception {
-		VInspPstiVO Chckd = inspDAO.selectChckdDetail(pstiNo);
+	public InspChckdVO getChckdDetail(String pstiNo) throws Exception {
+		InspChckdVO Chckd = inspDAO.selectChckdDetail(pstiNo);
 		return Chckd;
 	}
 
 	@Override
-	public VInspPstiResultVO getResultDetail(String pstiNo) throws Exception {
-		VInspPstiResultVO result = inspDAO.selectResultDetail(pstiNo);
+	public InspResultVO getResultDetail(String smplNo) throws Exception {
+		InspResultVO result = inspDAO.selectResultDetail(smplNo);
 		return result;
-	}
-
-	@Override
-	public List<PcrKitVO> getPcrKitList(String inspNo) throws Exception {
-		List<PcrKitVO> pcrKitList = inspDAO.selectPcrKitList(inspNo);
-		return pcrKitList;
 	}
 
 	@Override
@@ -159,20 +210,39 @@ public class InspServiceImpl implements InspService{
 
 	@Override
 	public int getTotalKitCount(String inspNo) throws Exception {
-		int totalKitCount = inspDAO.selectTotalKitCount(inspNo);
+		
+		int result = inspDAO.selectKitYnCount(inspNo);
+		
+		int totalKitCount = 0;
+
+		if(result > 0) {
+			totalKitCount = inspDAO.selectTotalKitCount(inspNo);
+		}
+		
 		return totalKitCount;
 	}
 
 	@Override
-	public void modifyPstiInfo(VInspPstiVO psti) throws Exception {
+	public void modifyPstiInfo(InspPstiVO psti) throws Exception {
 		inspDAO.updatePstiInfo(psti);
 	}
 	
 	// 문진표 등록
 	@Override
 	public void registQuestion(InspPstiRegistCommand questionInfo) throws Exception{
-			inspDAO.insertHtscQuestion(questionInfo);
-			inspDAO.insertPstiQuestion(questionInfo.getPstiNo());
+			
+			// 기초검사 있는지 select
+			String pstiNo = questionInfo.getPstiNo();
+			int result = inspDAO.selectHtscByPstiNo(pstiNo);
+			
+			// 있으면 update 없으면 insert
+			if(result == 0) {
+				inspDAO.insertHtscQuestion(questionInfo);
+			}else {
+				inspDAO.updateHtscQuestion(questionInfo);
+			}
+			
+			inspDAO.insertPstiQuestion(pstiNo);
 			inspDAO.updateInspKit(questionInfo);
 	}
 	
@@ -187,12 +257,19 @@ public class InspServiceImpl implements InspService{
 		
 		if(manageNo == null || manageNo.isEmpty() || manageNo == "") {// manageNo 없으면 Seq생성.
 			manageNo = inspDAO.selectManageSeq(); // seq 받아오기
+			
+			smplRequestInfo.setManageNo(manageNo); // manageNo 세팅
+			inspDAO.insertManageInfo(smplRequestInfo); // 매니지 테이블에 등록
+			inspDAO.updateManageInfo(smplRequestInfo); // psti에 manageNo 심어줌.
 		}
-		smplRequestInfo.setManageNo(manageNo); // manageNo 세팅
+//		else {
+//			inspDAO.updateManageInfoManage(smplRequestInfo); // 매니저No가 존재하면 업데이트 처리.
+//		}
 		
-		inspDAO.updateManageInfo(smplRequestInfo); // psti에 manageNo 심어줌.
+		inspDAO.updatePstiReq(smplRequestInfo.getPstiNo());
+		
+		
 		inspDAO.insertSmplInfo(smplRequestInfo); // 시료테이블에 시료 등록
-		inspDAO.insertManageInfo(smplRequestInfo); // 매니지 테이블에 등록
 		
 	}
 
@@ -217,5 +294,99 @@ public class InspServiceImpl implements InspService{
 		kitHist.setKithistNo(kithistNo);
 		inspDAO.insertKitHist(kitHist); // 키트히스토리 등록
 	}
+
+	@Override
+	public void registInspStats(InspStatsVO inspstats) throws Exception {
+		inspDAO.insertInspStats(inspstats);
+	}
+
+	@Override
+	public List<String> inspNoList() throws Exception {
+		List<String> inspNoList = inspDAO.selectInspAllInspNo();
+		return inspNoList;
+	}
+	
+	@Override
+	public String getInspStatsSeq() throws Exception {
+		return inspDAO.selectInspstatsSeq();
+	}
+
+
+
+	@Override
+	public String getInspStatsNo(InspStatsVO inspstats) throws Exception {
+		return inspDAO.selectInspStatusNo(inspstats);
+	}
+
+
+
+	@Override
+	public void modifyInspStats(InspStatsVO inspstats) throws Exception {
+		inspDAO.updateInspStatus(inspstats);
+	}
+
+
+
+	@Override
+	public List<InspVO> getInspListBackup() throws Exception {
+		List<InspVO> inspList = inspDAO.selectInspBackup();
+		return inspList;
+	}
+
+
+
+	@Override
+	public InspResultVO getPbhtInfoByPbhtNo(String pbhtNo) throws Exception {
+		InspResultVO pbht = inspDAO.selectPbhtInfoByPbhtNo(pbhtNo);
+		return pbht;
+	}
+	@Override
+	public InspVO getInspByInspNo(String inspNo) throws Exception {
+		InspVO insp = inspDAO.selectInspByInspNo(inspNo);
+		return insp;
+	}
+
+
+
+	@Override
+	public List<InspStatsVO> getInspStatsByInspNo(String inspNo) throws Exception {
+		List<InspStatsVO> statsList = inspDAO.selectInspStatsByInspNo(inspNo);
+		return statsList;
+	}
+
+
+
+	@Override
+	public InspPstiVO getModifyCancel(String pstiNo) throws Exception {
+		return inspDAO.selectModifyCancel(pstiNo);
+	}
+
+
+
+	@Override
+	public InspPstiVO getResultByManageNo(String manageNo) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public String getSelectInspNm(String inspNo) throws Exception {
+		String inspNm = inspDAO.selectInspNm(inspNo);
+		return inspNm;
+	}
+
+
+
+	@Override
+	public void removePsti() throws Exception {
+		inspDAO.deletePsti();
+	}
+
+
+
+
+
 
 }

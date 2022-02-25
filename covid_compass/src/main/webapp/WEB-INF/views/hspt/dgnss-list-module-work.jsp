@@ -7,11 +7,11 @@
 {{#each .}}
           <tr
 			data-inst-no="{{instNo}}" data-manage-no="{{manageNo}}" data-dgnss-no="{{dgnssNo}}" data-child-no="{{childNo}}"
-			data-type="{{type}}"
+			data-type="{{type}}" data-psti-nm="{{pstiNm}}"
             onclick="showDetail('{{manageNo}}', '{{dgnssNo}}', '{{type}}')"
-            class="each-dgnss-element">
-            <td><span class="{{addClass pbhtNm ltctNm}}" data-inst-nm="{{manageNo}}">{{getInstNm pbhtNm ltctNm}}</span></td>
-            <td>{{pstiNm}}</td>
+            class="each-dgnss-element" style="cursor: pointer;">
+            <td style="text-align: left;"><span class="{{addClass pbhtNm ltctNm}}" data-inst-nm="{{manageNo}}">{{getInstNm pbhtNm ltctNm}}</span></td>
+            <td style="text-align: left;">{{pstiNm}}</td>
             <td>{{age}}</td>
             <td>{{pstiTelno}}</td>
             <td>{{prettifyDate reqYmd}}</td>
@@ -23,14 +23,14 @@
 <script type="text/x-handlebars-template"  id="inptnt-pagination-template" >
     <li class="page-item each-inptnt-pagination-element"><a class="page-link" href="1"> <i class="fas fa-angle-double-left" style="color:#1a4f72;"></i>
     </a></li>
-    <li class="page-item each-inptnt-pagination-element"><a class="page-link" href="{{#if prev}}{{prevPageNum}}{{/if}}"> <i class="fas fa-angle-left" style="color:#1a4f72;"></i>
+    <li class="page-item each-inptnt-pagination-element"><a class="page-link {{checkDisabled prev}}" href="{{#if prev}}{{prevPageNum}}{{/if}}"> <i class="fas fa-angle-left" style="color:#1a4f72;"></i>
     </a></li>
 
 {{#each pageNum}}
     <li class="page-item each-inptnt-pagination-element {{signActive this}}" ><a class="page-link" href="{{this}}" >{{this}}</a></li>
 {{/each}}
 
-    <li class="page-item each-inptnt-pagination-element"><a class="page-link" href="{{#if next}}{{nextPageNum}}{{/if}}"> <i class="fas fa-angle-right" style="color:#1a4f72;"></i>
+    <li class="page-item each-inptnt-pagination-element"><a class="page-link {{checkDisabled next}}" href="{{#if next}}{{nextPageNum}}{{/if}}"> <i class="fas fa-angle-right" style="color:#1a4f72;"></i>
     </a></li>
     <li class="page-item each-inptnt-pagination-element"><a class="page-link" href="{{realEndPage}}"> <i class="fas fa-angle-double-right" style="color:#1a4f72;"></i>
 </a></li>
@@ -42,14 +42,27 @@
 
 Handlebars.registerHelper({
 "prettifyDate" : function(timeValue){
-  var dateObj = new Date(timeValue);
-  var year = dateObj.getFullYear();
-  var month = dateObj.getMonth() + 1;
-  var date = dateObj.getDate();
-  return year + "-" + month + "-" + date;
+	if(timeValue){
+		var dateObj = new Date(timeValue);
+		var year = dateObj.getFullYear();
+		var month = dateObj.getMonth() + 1;
+		month += '';
+		if(month.length < 2){
+			month = '0' + month;
+		}
+		var date = dateObj.getDate();
+		date += '';
+		if(date.length < 2){
+			date = '0' + date;
+		}
+		return year + "-" + month + "-" + date;
+	}
 },
 "signActive" : function(pageNum){
   if(pageNum == page) return 'active';
+},
+"checkDisabled" : function(flag){
+  if(!flag) return 'disabled';
 },
 "getInstNm" : function(pbhtNm, ltctNm){
 	
@@ -95,9 +108,8 @@ function make_form(pageParam){
   
   jobForm.find("[name='page']").val(page);
   jobForm.find("[name='perPageNum']").val($('select[name="perPageNum"]').val());
-//  jobForm.find("[name='perPageNum']").val(2);
   jobForm.find("[name='searchType']").val($('select[name="searchType"]').val());
-  jobForm.find("[name='keyword']").val($('div.input-group>input[name="keyword"]').val());
+  jobForm.find("[name='keyword']").val($('#keyword').val());
   
   return jobForm;
 }
@@ -109,16 +121,34 @@ function list_go(pageParam, url){
 
 function getPage(handelbarsProcessingURL, form){
 
-	
-	
 	$.ajax({
     url : handelbarsProcessingURL,
     type : 'get',
     dataType : 'json',
     data : form.serialize(),
     success : function(dataMap){
-      printData(dataMap.dgnssList, $('#dgnss-list-table-tbody'), $('#dgnss-list-template'), '.each-dgnss-element');
-      printPagination(dataMap.pageMaker, $('#inptnt-list-pagination-ul'), $('#inptnt-pagination-template'), '.each-inptnt-pagination-element');
+    	
+    	 if(dataMap.dgnssList.length == 0){
+    		$('#enableReadRrn').attr('disabled', true);
+    		
+    		$('#dgnss-list-table-tbody').html('<tr class="each-dgnss-element"><td colspan="6" id="initialTd">페이지를 로딩중입니다.</td></tr>');
+    		
+    		$('#initialTd').html('데이터가 없습니다.');
+    		dataMap.pageMaker.endPage = 1;
+    		printPagination(dataMap.pageMaker, $('#inptnt-list-pagination-ul'), $('#inptnt-pagination-template'), '.each-inptnt-pagination-element');
+    		
+    		printData('', $('#dgnss-detail-info-module'), $('#dgnss-detail-template'), '.dgnss-detail-info');
+            $('#req-inst-nm').html('');
+	      
+    	}else{
+    		
+    		$('#enableReadRrn').attr('disabled', false);
+  	      printData(dataMap.dgnssList, $('#dgnss-list-table-tbody'), $('#dgnss-list-template'), '.each-dgnss-element');
+	      printPagination(dataMap.pageMaker, $('#inptnt-list-pagination-ul'), $('#inptnt-pagination-template'), '.each-inptnt-pagination-element');
+	      if(dataMap.firstRecord){
+		      showDetail(dataMap.firstRecord.manageNo, dataMap.firstRecord.dgnssNo ,dataMap.firstRecord.type);
+	      }
+    	} 
     },
     error : function(error){
       alert('error' + error.status);
@@ -164,9 +194,60 @@ function printPagination(pageMaker, target, templateObject, removeClass){
 	target.html("").html(html);
 }
 
+function prettifyDetailDate(timeValue){
+	  if(timeValue){
+	    var dateObj = new Date(timeValue);
+	    var year = dateObj.getFullYear();
+	    var month = dateObj.getMonth() + 1;
+	    var date = dateObj.getDate();
+	    
+	    var hour = dateObj.getHours();
+	    var minute = dateObj.getMinutes();
+	    var second = dateObj.getSeconds();
+	    
+	    date += '';
+	    if(date.length < 2){
+	      date = '0' + date;
+	    }
+	    month += '';
+	    if(month.length < 2){
+	      month = '0' + month;
+	    }
+	    hour += '';
+	    if(hour.length < 2){
+	      hour = '0' + hour;
+	    }
+	    minute += '';
+	    if(minute.length < 2){
+	      minute = '0' + minute;
+	    }
+	    second += '';
+	    if(second.length < 2){
+	      second = '0' + second;
+	    }
+	    
+	    
+	    return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
+	  }
+	}
+	
 function inputData(type){
 	
 	reset();
+	
+	var dgnssNotes = [
+		'인후통을 앓고있지만, 심각하지않다.'
+		,'상태가 빠르게 호전되고 있습니다.음성 판정이 3번 이상 나온다면 곧바로 퇴소하셔도 됩니다.'
+		,'상태가 많이 좋아졌습니다.'
+		,'미열이 있었으나, 상태가 호전되어 생활치료센터에서 지속적으로 입소하며 상태를 지켜보는것이 좋겠습니다.'
+		,'다소 열이 날 경우가 있으니 처방 약을 복용해주세요.'
+		,'다소 기침을 하나, 심각한 수준이 아님.'
+		,'기침을 심하게 하나, 진료 결과 중증은 아닙니다.'
+	];                                                                                 
+	
+	var random = Math.floor(Math.random() * dgnssNotes.length);
+	
+	var dgnssNote = dgnssNotes[random];
 	
 	if(type){
 		$('button[name="isoptnt-dgnss-button"]').attr('disabled', false);
@@ -176,33 +257,39 @@ function inputData(type){
 	
 	if(type == '1'){
     	$('select[name="statusCode"]').val('D101').prop('selected', true);
-    	$('textarea[name="dgnssNote"]').html('중증 및 중등증 입력 테스트');
+    	//$('textarea[name="dgnssNote"]').html('중증 및 중등증 입력 테스트');
+    	$('textarea[name="dgnssNote"]').html(dgnssNote);
     
     	$('button[name="inptnt-button"]').attr('disabled', false);
     	$('button[name="sckbdreq-inptnt-button"]').attr('disabled', false);
     	
-    	$('form[name="dgnssResultForm"] input[name="dgnssResultCode"]').val('D101');
-    	$('form[name="dgnssResultForm"] input[name="dgnssNote"]').val('중증 및 중등증 입력 테스트');
+    	$('form[name="processForm"] input[name="dgnssResultCode"]').val('D101');
+//    	$('form[name="processForm"] input[name="dgnssNote"]').val('중증 및 중등증 입력 테스트');
+    	$('form[name="processForm"] input[name="dgnssNote"]').val(dgnssNote);
     	return;
 	}
 	if(type == '2'){
     	$('select[name="statusCode"]').val('D102').prop('selected', true);
-    	$('textarea[name="dgnssNote"]').html('미중증 및 경증 입력 테스트');
+    	//$('textarea[name="dgnssNote"]').html('미중증 및 경증 입력 테스트');
+    	$('textarea[name="dgnssNote"]').html(dgnssNote);
     
     	$('button[name="sckbdreq-isoptnt-button"]').attr('disabled', false);
     	
-    	$('form[name="dgnssResultForm"] input[name="dgnssResultCode"]').val('D102');
-    	$('form[name="dgnssResultForm"] input[name="dgnssNote"]').val('미중증 및 경증 입력 테스트');
+    	$('form[name="processForm"] input[name="dgnssResultCode"]').val('D102');
+    	//$('form[name="processForm"] input[name="dgnssNote"]').val('미중증 및 경증 입력 테스트');
+    	$('form[name="processForm"] input[name="dgnssNote"]').val(dgnssNote);
     	return;
 	}
 	if(type == '3'){
     	$('select[name="statusCode"]').val('D103').prop('selected', true);
-    	$('textarea[name="dgnssNote"]').html('무증상 입력 테스트');
+    	//$('textarea[name="dgnssNote"]').html('무증상 입력 테스트');
+    	$('textarea[name="dgnssNote"]').html(dgnssNote);
     
     	$('button[name="slfptnt-button"]').attr('disabled', false);
     	
-    	$('form[name="dgnssResultForm"] input[name="dgnssResultCode"]').val('D103');
-    	$('form[name="dgnssResultForm"] input[name="dgnssNote"]').val('무증상 입력 테스트');
+    	$('form[name="processForm"] input[name="dgnssResultCode"]').val('D103');
+    	//$('form[name="processForm"] input[name="dgnssNote"]').val('무증상 입력 테스트');
+    	$('form[name="processForm"] input[name="dgnssNote"]').val(dgnssNote);
     	return;
 	}
 }
@@ -214,7 +301,7 @@ function inputData(type){
       <table class="table table-hover text-nowrap" style="text-align: center;">
 
         <thead>
-          <tr role="row" style="background-color: #1A4F72; color: white;">
+          <tr role="row">
             <th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">요청기관</th>
             <th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">성명</th>
             <th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="">나이</th>
@@ -226,10 +313,12 @@ function inputData(type){
         <tbody id="dgnss-list-table-tbody">
 
           <tr class="each-dgnss-element">
-            <td colspan="6">페이지를 로딩중입니다.</td>
+            <td colspan="6" id="initialTd">페이지를 로딩중입니다.</td>
           </tr>
         </tbody>
       </table>
+        <div id="dgnss-page-info-div" style="float: right;">
+        </div>      
     </div>
   </div>
   <div class="card-footer clearfix" style="background-color: white;">
@@ -244,6 +333,8 @@ function inputData(type){
 </form>
 </section>
 
+<form style="display : none;">
 <input type="button" value="입원 및 이원" onclick="inputData('1');">
 <input type="button" value="생활치료센터" onclick="inputData('2');">
 <input type="button" value="자가격리" onclick="inputData('3');">
+</form>

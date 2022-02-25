@@ -6,6 +6,7 @@ import java.util.Date;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+@SuppressWarnings("serial")
 public class InptntListVO implements Serializable{
 
 	private int ngtvCnt;
@@ -18,6 +19,15 @@ public class InptntListVO implements Serializable{
 	private String pstiNo;
 	private Date inYmd;
 	private String manageNo;
+	private int age;
+	private int today;
+	
+	public int getToday() {
+		return today;
+	}
+	public void setToday(int today) {
+		this.today = today;
+	}
 	public String getManageNo() {
 		return manageNo;
 	}
@@ -25,7 +35,6 @@ public class InptntListVO implements Serializable{
 		this.manageNo = manageNo;
 	}
 
-	private int age;
 	public int getNgtvCnt() {
 		return ngtvCnt;
 	}

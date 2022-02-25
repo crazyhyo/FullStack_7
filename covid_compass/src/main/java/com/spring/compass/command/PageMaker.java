@@ -22,6 +22,10 @@ public class PageMaker implements Serializable{
 
 	private int displayPageNum = 10; // 한 페이지에 보여줄 페이지번호 개수
 	
+	public void custumSetDisplayPageNum(int displayPageNum) {
+		this.displayPageNum = displayPageNum; 
+	}
+	
 	SearchCriteria cri = new SearchCriteria(); 
 
 	public int getTotalCount() {

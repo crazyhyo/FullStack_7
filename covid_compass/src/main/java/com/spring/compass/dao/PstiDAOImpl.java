@@ -6,11 +6,13 @@ import java.util.List;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
+import com.spring.compass.command.ConfirmationVO;
 import com.spring.compass.command.SearchCriteria;
 import com.spring.compass.command.VPstiCommand;
 import com.spring.compass.vo.CnfmVO;
 import com.spring.compass.vo.DgnssResultVO;
 import com.spring.compass.vo.InptntVO;
+import com.spring.compass.vo.InspPstiVO;
 import com.spring.compass.vo.InspVO;
 import com.spring.compass.vo.IsoptntVO;
 import com.spring.compass.vo.ManageVO;
@@ -238,4 +240,35 @@ public class PstiDAOImpl implements PstiDAO{
 		CnfmVO cnfm = sqlSession.selectOne(nameSpace + "selectCnfmByManageNo", manageNo);
 		return cnfm;
 	}
+
+	@Override
+	public ConfirmationVO selectConfirmation(PstiVO psti) throws SQLException {
+		ConfirmationVO confirmation = sqlSession.selectOne(nameSpace + "selectConfirmation", psti);
+		return confirmation;
+	}
+
+	@Override
+	public int selectConfirmationCheck(PstiVO psti) throws SQLException {
+		int result = sqlSession.selectOne(nameSpace + "selectConfirmationCheck", psti);
+		return result;
+	}
+
+	@Override
+	public int selectQuestCheck(PstiVO psti) throws SQLException {
+		int result = sqlSession.selectOne(nameSpace + "selectQuestCheck", psti);
+		return result;
+	}
+
+	@Override
+	public int registPstiCheck(PstiVO psti) throws SQLException {
+		int result = sqlSession.selectOne(nameSpace + "registPstiCheck", psti);
+		return result;
+	}
+
+	@Override
+	public int registPstiUpdate(PstiVO psti) throws SQLException {
+		int result = sqlSession.update(nameSpace + "registPstiUpdate", psti);
+		return result;
+	}
+
 }

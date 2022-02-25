@@ -22,7 +22,6 @@ public class MenuServiceImpl implements MenuService{
 
 	@Override
 	public MenuVO getMenu(String menuNo) throws Exception {
-		System.out.println("test in service");
 		MenuVO menu = menuDAO.selectMenuByMenuNo(menuNo);
 		return menu;
 	}
@@ -42,6 +41,12 @@ public class MenuServiceImpl implements MenuService{
 	@Override
 	public List<MenuVO> getEmpSubMenuList(String menuNo) throws Exception {
 		List<MenuVO> menuList = menuDAO.selectEmpSubMenuList(menuNo);
+		return menuList;
+	}
+
+	@Override
+	public List<MenuVO> getAllSubMenuList(String menuNo) throws Exception {
+		List<MenuVO> menuList = menuDAO.selectAllSubMenuList(menuNo);
 		return menuList;
 	}
 	

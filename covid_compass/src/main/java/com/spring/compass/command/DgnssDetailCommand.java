@@ -36,6 +36,21 @@ public class DgnssDetailCommand implements Serializable{
 	private String dgnssResultCode;
 	private String areaNo;
 	
+	private String dgnssHsptNo;
+	private String dgnssHsptNm;
+	
+	public String getDgnssHsptNo() {
+		return dgnssHsptNo;
+	}
+	public void setDgnssHsptNo(String dgnssHsptNo) {
+		this.dgnssHsptNo = dgnssHsptNo;
+	}
+	public String getDgnssHsptNm() {
+		return dgnssHsptNm;
+	}
+	public void setDgnssHsptNm(String dgnssHsptNm) {
+		this.dgnssHsptNm = dgnssHsptNm;
+	}
 	public String getAreaNo() {
 		return areaNo;
 	}
@@ -55,9 +70,8 @@ public class DgnssDetailCommand implements Serializable{
 		this.dgnssResultCode = dgnssResultCode;
 	}
 
-
-
-	private int age;
+	private String age;
+	
 	public String getDgnssNote() {
 		return dgnssNote;
 	}
@@ -68,10 +82,10 @@ public class DgnssDetailCommand implements Serializable{
 
 
 	
-	public int getAge() {
+	public String getAge() {
 		return age;
 	}
-	public void setAge(int age) {
+	public void setAge(String age) {
 		this.age = age;
 	}
 	public String getGender() {
@@ -112,16 +126,6 @@ public class DgnssDetailCommand implements Serializable{
 		this.vacType = vacType;
 	}
 
-/*	public DgnssDetailCommand(VPstiCommand psti, SmplResultVO smplResult, DgnssResultVO dgnssResult) {
-		setData(psti, smplResult, dgnssResult);
-	}
-	
-	public void setData(VPstiCommand psti, SmplResultVO smplResult, DgnssResultVO dgnssResult) {
-		if(psti!=null) setData(psti);
-		if(smplResult!=null) setData(smplResult);
-		if(dgnssResult!=null) setData(dgnssResult);
-	}*/
-
 	public void setData(VPstiCommand psti) {
 		
 		if(psti== null) return; 
@@ -139,7 +143,12 @@ public class DgnssDetailCommand implements Serializable{
 		this.pstiAdres = psti.getPstiAdres();
 		this.symptms = psti.getSymptms();
 		this.manageNo = psti.getManageNo();
-		this.gender = psti.getGender().equals("M") ? "남" : "여"; 
+		
+		if(psti.getGender() != null) {
+			this.gender = psti.getGender().equals("M") ? "남" : "여"; 
+		}else {
+			this.gender = "";
+		}
 		this.pstiNo = psti.getPstiNo();
 		this.age = psti.getAge();
 		this.areaNo = psti.getAreaNo();
@@ -150,9 +159,21 @@ public class DgnssDetailCommand implements Serializable{
 		
 		if(smplResult == null) return;
 		
-		this.resYmd = smplResult.getResYmd();
-		this.pstvYn = smplResult.getPstvYn().equals("Y") ? "양성" : "음성" ;
+		if(smplResult.getResYmd() != null) {
+			this.resYmd = smplResult.getResYmd();
+		}else {
+			// 임시방편, 에러 막으려고 한 것임
+			// 반드시 고칠것!!!!!!!!!!
+			this.resYmd = new Date(); 
+		}
+		
+		if(smplResult.getPstvYn() != null) {
+			this.pstvYn = smplResult.getPstvYn().equals("Y") ? "양성" : "음성" ;
+		}else {
+			this.pstvYn = "검사중";
+		}
 		this.smplNo = smplResult.getSmplNo();
+		this.pstvYn = smplResult.getPstvYn();
 	}
 	public void setData(DgnssResultVO dgnssResult) {
 		
@@ -163,6 +184,7 @@ public class DgnssDetailCommand implements Serializable{
 		this.dgnssNote = dgnssResult.getDgnssNote();
 		this.dgnssResultCode = "정보없음";
 		this.dgnssCode = "정보없음";
+		this.dgnssHsptNo = dgnssResult.getHsptNo();
 		
 		if(dgnssResult.getDgnssCode() != null) {
 			this.dgnssCode = CommonCodeUtil.getCodeName(dgnssResult.getDgnssCode());

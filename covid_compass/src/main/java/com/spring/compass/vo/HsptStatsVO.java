@@ -1,30 +1,34 @@
 package com.spring.compass.vo;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class HsptStatsVO {
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
+public class HsptStatsVO implements Serializable{
 
 	private String hsptStatsNo;
 	private String hsptNo;
-	private int dgnssCnt     ;
-	private int reqSckbdCnt ;
-	private int inptntCnt    ;
-	private int goLtctCnt   ;
-	private int goSlfCnt    ;
-	private int outCnt       ;
-	private int deathCnt     ;
-	private int rlsedCnt     ;
-	private int curInptntCnt;
-	private int reqSmpleCnt ;
-	private int smplePstvCnt;
-	private int smpleNgtvCnt;
-	private int rmndSckbdCnt;
-	private int sckbdCnt     ;
-	private int avgInptntAge;
-	private int avgOutPeriod;
-    private Date statsYmd;
-
-
+	private int dgnssCnt=0;
+	private int reqSckbdCnt=0;
+	private int inptntCnt=0;
+	private int goLtctCnt=0;
+	private int goSlfCnt=0;
+	private int outCnt=0;
+	private int deathCnt=0;
+	private int rlsedCnt=0;
+	private int curInptntCnt=0;
+	private int rmndSckbdCnt=0;
+	private int sckbdCnt=0;
+	//private Date statsYmd;
+	private String statsYmd;
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);
+	}
+	
 	public String getHsptStatsNo() {
 		return hsptStatsNo;
 	}
@@ -91,24 +95,6 @@ public class HsptStatsVO {
 	public void setCurInptntCnt(int curInptntCnt) {
 		this.curInptntCnt = curInptntCnt;
 	}
-	public int getReqSmpleCnt() {
-		return reqSmpleCnt;
-	}
-	public void setReqSmpleCnt(int reqSmpleCnt) {
-		this.reqSmpleCnt = reqSmpleCnt;
-	}
-	public int getSmplePstvCnt() {
-		return smplePstvCnt;
-	}
-	public void setSmplePstvCnt(int smplePstvCnt) {
-		this.smplePstvCnt = smplePstvCnt;
-	}
-	public int getSmpleNgtvCnt() {
-		return smpleNgtvCnt;
-	}
-	public void setSmpleNgtvCnt(int smpleNgtvCnt) {
-		this.smpleNgtvCnt = smpleNgtvCnt;
-	}
 	public int getRmndSckbdCnt() {
 		return rmndSckbdCnt;
 	}
@@ -121,24 +107,23 @@ public class HsptStatsVO {
 	public void setSckbdCnt(int sckbdCnt) {
 		this.sckbdCnt = sckbdCnt;
 	}
-	public int getAvgInptntAge() {
-		return avgInptntAge;
-	}
-	public void setAvgInptntAge(int avgInptntAge) {
-		this.avgInptntAge = avgInptntAge;
-	}
-	public int getAvgOutPeriod() {
-		return avgOutPeriod;
-	}
-	public void setAvgOutPeriod(int avgOutPeriod) {
-		this.avgOutPeriod = avgOutPeriod;
-	}
-	public Date getStatsYmd() {
+	/*public Date getStatsYmd() {
 		return statsYmd;
 	}
 	public void setStatsYmd(Date statsYmd) {
 		this.statsYmd = statsYmd;
+	}*/
+	public String getStatsYmd() {
+		return statsYmd;
 	}
+	public void setStatsYmd(String statsYmd) {
+		this.statsYmd = statsYmd;
+	}
+	
+	
+
+
+	
 
 
 }

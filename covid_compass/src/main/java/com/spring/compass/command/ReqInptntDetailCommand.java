@@ -172,12 +172,6 @@ public class ReqInptntDetailCommand extends InptntDetailCommand implements Seria
 	public ReqInptntDetailCommand() {
 	}
 
-/*	public ReqInptntDetailCommand(VPstiCommand psti, DgnssResultVO dgnssResult, InptntVO inptnt, SckbdreqVO sckbdreq, HsptVO hspt) {
-		super(psti, dgnssResult, inptnt);
-		if(hspt != null) setData(hspt);
-		if(sckbdreq != null)	setData(sckbdreq);
-	}*/
-
 	public void setData(SckbdreqVO sckbdreq) {
 		if(sckbdreq == null) return;
 		this.sckbdreqCode = CommonCodeUtil.getCodeName(sckbdreq.getSckbdreqCode());

@@ -5,6 +5,8 @@ import java.util.Date;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import com.spring.compass.util.CommonCodeUtil;
+
 public class CnfrmDgnssListVO {
 
 	private String cnfmNo;
@@ -18,11 +20,31 @@ public class CnfrmDgnssListVO {
 	private String instNm;
 	private String hsptNo;
 	private String sttusCode;
+	private String pstiAdres;
+	private String areaNo;
 	
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);
 	}
+	
+	public String getPstiAdres() {
+		return pstiAdres;
+	}
+
+	public void setPstiAdres(String pstiAdres) {
+		this.pstiAdres = pstiAdres;
+	}
+
+	public String getAreaNo() {
+		return areaNo;
+	}
+
+	public void setAreaNo(String areaNo) {
+		this.areaNo = CommonCodeUtil.getCodeName(areaNo);
+	}
+
+
 
 	public String getCnfmNo() {
 		return cnfmNo;
@@ -109,7 +131,7 @@ public class CnfrmDgnssListVO {
 	}
 
 	public void setSttusCode(String sttusCode) {
-		this.sttusCode = sttusCode;
+		this.sttusCode = CommonCodeUtil.getCodeName(sttusCode);
 	}
 	
 	

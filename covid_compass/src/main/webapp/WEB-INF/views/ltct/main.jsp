@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page trimDirectiveWhitespaces="true"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <head>
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -8,6 +11,38 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	
+	<style>
+	.card-title {
+	font-weight: bold;
+	color: #333333;
+	font-size: 16px;
+}
+.badge-primary{
+	color: #fff;
+	background-color: #007bff;
+}
+.badge-danger {
+    color: #fff;
+    background-color: #dc3545;
+}
+.badge-success {
+    color: #fff;
+    background-color: #28a745;
+}
+.badge-info {
+    color: #fff;
+    background-color: #17a2b8;
+}
+.badge-secondary {
+    color: #fff;
+    background-color: #6c757d;
+}
+.badge-warning {
+    color: #1f2d3d;
+    background-color: #ffc107;
+}
+	</style>
 </head>
 
 <title></title>
@@ -45,43 +80,54 @@ function printPagination(pageMaker, target, templateObject, removeClass){
 <script>
 Handlebars.registerHelper({
 "prettifyDate" : function(timeValue){
-	var dateObj = new Date(timeValue);
-	var year = dateObj.getFullYear();
-	var month = dateObj.getMonth() + 1;
-	var date = dateObj.getDate();
-	return year + "-" + month + "-" + date;
+	if(timeValue){
+		var dateObj = new Date(timeValue);
+		var year = dateObj.getFullYear();
+		var month = dateObj.getMonth() + 1;
+		month += '';
+		if(month.length < 2){
+			month = '0' + month;
+		}
+		var date = dateObj.getDate();
+		date += '';
+		if(date.length < 2){
+			date = '0' + date;
+		}
+		return year + "-" + month + "-" + date;
+	}
+	return "없음";
 },
 "isoptntSignActive" : function(pageNum){
-	if(pageNum == pstiListPage){
+	if(pageNum == isoptntListPage){
 		return 'active';
 	}
 },
 "sckbdSignActive" : function(pageNum){
-	if(pageNum == chckdListPage){
+	if(pageNum == sckbdListPage){
 		return 'active';
 	}
 },
 "resSignActive" : function(pageNum){
-	if(pageNum == resultListPage){
+	if(pageNum == resListPage){
 		return 'active';
 	}
 },
 "isoptntStyleActive" : function(pageNum){
-	if(pageNum == pstiListPage){
+	if(pageNum == isoptntListPage){
 		return 'background:#1a4f72; border-color:#1a4f72;';
 	}else{
 		return 'color:#1a4f72';
 	}
 },
 "sckbdStyleActive" : function(pageNum){
-	if(pageNum == chckdListPage){
+	if(pageNum == sckbdListPage){
 		return 'background:#1a4f72; border-color:#1a4f72;';
 	}else{
 		return 'color:#1a4f72';
 	}
 },
 "resStyleActive" : function(pageNum){
-	if(pageNum == resultListPage){
+	if(pageNum == resListPage){
 		return 'background:#1a4f72; border-color:#1a4f72;';
 	}else{
 		return 'color:#1a4f72';
@@ -91,25 +137,76 @@ Handlebars.registerHelper({
 	if(gender == "M"){
 		return "남자";
 	}
-	return "여자";
+	if(gender =="F"){
+		return "여자";
+	}
 },
-"fnBadgetPstvYn" : function(chkdYn, pstvYn){
-	if(chkdYn == "Y"){
-		if(pstvYn == "Y"){
-			return "info";
-		}
+"fnBadgetPstvYn" : function(pstvYn){
+	if(pstvYn == "Y"){
+		return "danger";
+	}
+	if(pstvYn =="N"){
 		return "success";
 	}
 	return "secondary";
 },
-"fnPstvYn" : function(chkdYn, pstvYn){
-	if(chkdYn == "Y"){
-		if(pstvYn == "Y"){
-			return "양성";
-		}
+"fnPstvYn" : function(pstvYn){
+	if(pstvYn == "Y"){
+		return "양성";
+	}
+	if(pstvYn == "N"){
 		return "음성";
 	}
-	return "검사중"
+	return "대기"
+},
+"fnBadgesckbdCnt" : function(rmndSckbdCnt, sckbdCnt){
+	var a = ((sckbdCnt - rmndSckbdCnt) / sckbdCnt) * 100;
+	if(a > 80){
+		return "danger";
+	}
+	if(a > 60){
+		return "warning";
+	}
+	if(a > 40){
+		return "success";
+	}
+	else{
+		return "primary"
+	}
+},
+"fnUsePer" : function(rmndSckbdCnt, sckbdCnt){
+	if(rmndSckbdCnt != 0 && sckbdCnt != 0){
+		return Math.round(((sckbdCnt - rmndSckbdCnt)/sckbdCnt)*100);
+	}else{
+		return 0;
+	}
+},
+"fnFeverBadge" : function(bdtemp){
+	if(bdtemp < 37.5){
+		return "success";
+	}else if(bdtemp < 38.0){
+		return "warning";
+	}
+	return "danger";
+},
+"fnBdtempCheck" : function(bdtemp){
+	a = bdtemp + "";
+	if(a.length == 2){
+		return a+".0";
+	}
+	return bdtemp;
+},
+"fnToday" : function(today){
+	if(today == 1){
+		return "disabled";
+	}
+},
+"fnRmndSckbdCnt" : function(rmndSckbdCnt){
+	$('#rmndSckbdCount').text(rmndSckbdCnt);
+	return rmndSckbdCnt;
+},
+"checkDisabled" : function(flag){
+  if(!flag) return 'disabled';
 }
 })
 </script>
@@ -170,8 +267,17 @@ function getSckbdList(handlebarsProcessingURL, form){
 		dataType : 'json',
 		data : form.serialize(),
 		success: function(dataMap){
-			printData(dataMap.sckbdList, $('#sckbd-table-tbody'), $('#sckbd-template'), '.each-sckbd-element');
-			printPagination(dataMap.pageMaker, $('#sckbd-pagination-ul'), $('#sckbd-pagination-template'), '.each-sckbd-pagination-element');
+			$('#sckbd-table-tbody').html("");
+			if(dataMap.sckbdList.length == 0){
+				$('#sckbd-table-tbody').html("<tr class='each-sckbd-element'><td colspan='7'>데이터가 없습니다.</td></tr>");
+				dataMap.pageMaker.endPage = 1;
+				dataMap.pageMaker.realEndPage = 1;
+				printPagination(dataMap.pageMaker, $('#sckbd-pagination-ul'), $('#sckbd-pagination-template'), '.each-sckbd-pagination-element');
+				
+			}else{
+				printData(dataMap.sckbdList, $('#sckbd-table-tbody'), $('#sckbd-template'), '.each-sckbd-element');
+				printPagination(dataMap.pageMaker, $('#sckbd-pagination-ul'), $('#sckbd-pagination-template'), '.each-sckbd-pagination-element');
+			}
 		},
 		error : function(error){
 			alert("error" + error.status);
@@ -185,8 +291,18 @@ function getIsoptntList(handlebarsProcessingURL, form){
 		dataType : 'json',
 		data : form.serialize(),
 		success: function(dataMap){
-			printData(dataMap.isoptntList, $('#isoptnt-table-tbody'), $('#isoptnt-template'), '.each-isoptnt-element');
-			printPagination(dataMap.pageMaker, $('#isoptnt-pagination-ul'), $('#isoptnt-pagination-template'), '.each-isoptnt-pagination-element');
+			$('#isoptnt-table-tbody').html("");
+			if(dataMap.isoptntList.length == 0){
+				$('#isoptnt-table-tbody').html('<tr class="each-isoptnt-element"><td colspan="8">데이터가 없습니다.</td></tr>');
+				dataMap.pageMaker.endPage = 1;
+				dataMap.pageMaker.realEndPage = 1;
+				printPagination(dataMap.pageMaker, $('#isoptnt-pagination-ul'), $('#isoptnt-pagination-template'), '.each-isoptnt-pagination-element');
+				printData(dataMap.pbhtList, $('#pbhtlist-select'), $('#pbht-list-template'), '.each-pbhtlist-element')
+			}else{
+				printData(dataMap.pbhtList, $('#pbhtlist-select'), $('#pbht-list-template'), '.each-pbhtlist-element')
+				printData(dataMap.isoptntList, $('#isoptnt-table-tbody'), $('#isoptnt-template'), '.each-isoptnt-element');
+				printPagination(dataMap.pageMaker, $('#isoptnt-pagination-ul'), $('#isoptnt-pagination-template'), '.each-isoptnt-pagination-element');
+			}
 		},
 		error : function(error){
 			alert("error" + error.status);
@@ -200,8 +316,16 @@ function getResList(handlebarsProcessingURL, form){
 		dataType : 'json',
 		data : form.serialize(),
 		success: function(dataMap){
-			printData(dataMap.resList, $('#res-table-tbody'), $('#res-template'), '.each-res-element');
-			printPagination(dataMap.pageMaker, $('#res-pagination-ul'), $('#res-pagination-template'), '.each-res-pagination-element');
+			$('#res-table-tbody').html("");
+			if(dataMap.resList.length == 0){
+				$('#res-table-tbody').html('<tr class="each-res-element"><td colspan="3">데이터가 없습니다.</td></tr>');
+				dataMap.pageMaker.endPage = 1;
+				dataMap.pageMaker.realEndPage = 1;
+				printPagination(dataMap.pageMaker, $('#res-pagination-ul'), $('#res-pagination-template'), '.each-res-pagination-element');
+			}else{
+				printData(dataMap.resList, $('#res-table-tbody'), $('#res-template'), '.each-res-element');
+				printPagination(dataMap.pageMaker, $('#res-pagination-ul'), $('#res-pagination-template'), '.each-res-pagination-element');
+			}
 		},
 		error : function(error){
 			alert("error" + error.status);
@@ -209,14 +333,21 @@ function getResList(handlebarsProcessingURL, form){
 	})
 }
 window.onload = function(){
-	var sckbdListURL = '<%=request.getContextPath()%>/rest-insp/main-sckbd-list';
-	var isoptntListURL = '<%=request.getContextPath()%>/rest-insp/main-isoptnt-list';
-	var resListURL = '<%=request.getContextPath()%>/rest-insp/main-res-list';
+// 	if(${popupCheck eq 'YES'}){
+// 		if(${popupList !='' || popupList ne null}){
+// 			var size = '${popupList.size()}';
+// 			var noticeNo = '${popupList[0].noticeNo}';
+// 			OpenWindow('notice-popup?noticeNo='+noticeNo, '공지사항 등록', 800,530);
+// 		}
+// 	}  
+	var sckbdListURL = '<%=request.getContextPath()%>/rest-ltct/main-sckbd-list';
+	var isoptntListURL = '<%=request.getContextPath()%>/rest-ltct/main-isoptnt-list';
+	var resListURL = '<%=request.getContextPath()%>/rest-ltct/main-res-list';
 	
 	sckbdListGo(sckbdListPage, sckbdListURL);
 	isoptntListGo(isoptntListPage, isoptntListURL);
 	resListGo(resListPage, resListURL);
-	
+	getSckbdCountAndStats();
 	
 	$('ul.sckbd-pagination').on('click', 'li a', function(event){
 		if($(this).attr("href")){
@@ -243,255 +374,166 @@ window.onload = function(){
 	});
 }
 
+function proc(ele){
+	var manageNo = $('#openButton').attr('data-manage-no');
+	var name = $('#openButton').attr('data-name');
+  	window.open("cnfrm-detail-dgnss-regist?manageNo="+manageNo+"&pstiNm="+name+"", "진료 신청 정보", "width=1260, height=715" );  
+}
+
+function showMore(type){
+	  
+//  alert(type);
+  if(type == "A"){
+    parent.goPage('<%=request.getContextPath()%>/ltct/isoptnt-list','M050100');
+  }
+  if(type == "B"){
+    parent.goPage('<%=request.getContextPath()%>/ltct/res-smple-list','M050200');
+  }
+  if(type == "C"){
+    parent.goPage('<%=request.getContextPath()%>/ltct/req-isoptnt-list','M050300');
+  }
+}
 </script>
+<c:set var="highTempCardList" value="${highTempCardList }" />
+<section class="content">
+<div style="box-sizing: content-box; padding:1px; margin-top: 10px; min-width : 1000px;">
+  <div class="row" style="margin: 0px;">
+   <div class="col-md-12 pr-0 pl-0">
 	<div class="card" style="box-sizing: content-box; padding: 16px;">
-
-		<div id="myCarousel" class="carousel slide" data-ride="carousel">
-			<!-- Indicators -->
-
-			<!-- Wrapper for slides -->
+			<div id="myCarousel" class="carousel slide" data-ride="carousel">
+		<!-- Indicators -->
+	
+		<!-- Wrapper for slides -->
 			<div class="carousel-inner" role="listbox">
-
-				<div class="item active">
-
+		
+				
+		<!-- 값이없으면 카드 1개에 입소자가 존재하지않습니다.		 -->
+					<c:if test="${empty highTempCardList }">
+					<c:forEach begin='1' end='8' varStatus='indexN'>
+						<c:if test="${indexN.count eq 1}">
+							<div class="item active">
+						</c:if>
+						<c:if test='${indexN.count ne 1 }'>
+							<c:if test="${indexN.count % 4 == 1 }">
+								<div class="item">
+							</c:if>
+						</c:if>
+							<div class="col-sm-3">
+								<div class="card card-dark card-outline" style="height: 180px;">
+									<div class="card-header">
+										<div class="col-sm-8" style="text-align: center;">
+											<span></span>
+										</div>
+										<div class="col-sm-4">
+											<span class="badge badge-primary" style="background: #dc3545;"></span>
+										</div>
+									</div>
+									<div class="card-body" style="text-align: center;">
+									입소자가 존재하지않습니다.
+									</div>
+								</div>
+							</div>
+						<c:if test='${indexN.count % 4 == 0}'>
+							</div>
+						</c:if>
+					</c:forEach>
+					</c:if>
+		
+		<c:if test="${!empty highTempCardList }">
+		<c:set var='listSize'	value='${fn:length(highTempCardList) }' />
+			<c:forEach items='${highTempCardList }' var='highTempCard' varStatus='indexN'>
+				<c:if test="${indexN.count eq 1}">
+					<div class="item active">
+				</c:if>
+				<c:if test='${indexN.count ne 1 }'>
+					<c:if test="${indexN.count % 4 == 1 }">
+						<div class="item">
+					</c:if>
+				</c:if>
 					<div class="col-sm-3">
 						<div class="card card-dark card-outline" style="height: 180px;">
 							<div class="card-header">
-								<div class="col-sm-8" style="text-align: center;">
-									<span>하기재</span>
+								<div class="col-sm-5">
+									<span style="font-size:15px; text-align:left;"><c:out value='${highTempCard.pstiNm}'></c:out></span>
+								</div>
+								<div class="col-sm-3">
+									<span style="margin:4px auto; text-align:left;" class="badge badge-${highTempCard.bdtemp lt 38.0 ? 'warning' : 'danger'}">${highTempCard.bdtemp}</span>
 								</div>
 								<div class="col-sm-4">
-									<span class="badge badge-primary" style="background: #dc3545;">38.5</span>
+									<c:if test="${highTempCard.today eq 0 }">
+										<button id="openButton" data-manage-no="${highTempCard.manageNo}" data-name="${highTempCard.pstiNm}" onclick="proc(this);" class="btn btn-block btn-primary" style="background: #1a4f72; border: #1a4f72; width:69px; height: 26px; font-size:11px;  margin:0 auto; padding-bottom: 6px;">진료신청</button>
+									</c:if>
+									<c:if test="${highTempCard.today eq 1 }">
+										<button disabled id="openButton" data-manage-no="${highTempCard.manageNo}" data-name="${highTempCard.pstiNm}" onclick="proc(this);" class="btn btn-block btn-primary" style="background: #1a4f72; border: #1a4f72; width:69px; height: 26px; font-size:11px;  margin:0 auto; padding-bottom: 6px;">진료신청</button>
+									</c:if>
+									
 								</div>
 							</div>
 							<div class="card-body" style="text-align: center;">
-								기본정보<br> 기본정보<br>
+								<table class="table border">
+									<tr>
+										<th style="text-align: center;">연락처</th>
+										<td style="text-align: left;">${highTempCard.pstiTelno }</td>
+									</tr>
+									<tr>
+										<th style="text-align: center;">증상</th>
+										<td style="text-align: left;">${highTempCard.symptms }</td>
+									</tr>
+									<tr>
+										<th style="text-align: center;">입소일</th>
+										<td style="text-align: left;"><fmt:formatDate value='${highTempCard.inYmd }' pattern="yyyy-MM-dd"/></td>
+									</tr>
+								</table>
 							</div>
 						</div>
 					</div>
-					<div class="col-sm-3">
-						<div class="card card-dark card-outline" style="height: 180px;">
-							<div class="card-header">
-								<div class="col-sm-8" style="text-align: center;">
-									<span>하기재</span>
-								</div>
-								<div class="col-sm-4">
-									<span class="badge badge-primary" style="background: #dc3545;">38.5</span>
-								</div>
-							</div>
-							<div class="card-body" style="text-align: center;">
-								기본정보<br> 기본정보<br>
-							</div>
-						</div>
+				<c:if test='${indexN.count % 4 == 0 || indexN.count eq listSize}'>
 					</div>
-					<div class="col-sm-3">
-						<div class="card card-dark card-outline" style="height: 180px;">
-							<div class="card-header">
-								<div class="col-sm-8" style="text-align: center;">
-									<span>하기재</span>
-								</div>
-								<div class="col-sm-4">
-									<span class="badge badge-primary" style="background: #dc3545;">38.5</span>
-								</div>
-							</div>
-							<div class="card-body" style="text-align: center;">
-								기본정보<br> 기본정보<br>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-sm-3">
-						<div class="card card-dark card-outline" style="height: 180px;">
-							<div class="card-header">
-								<div class="col-sm-8" style="text-align: center;">
-									<span>하기재</span>
-								</div>
-								<div class="col-sm-4">
-									<span class="badge badge-primary" style="background: #dc3545;">38.5</span>
-								</div>
-							</div>
-							<div class="card-body" style="text-align: center;">
-								기본정보<br> 기본정보<br>
-							</div>
-						</div>
-					</div>
-
-
-				</div>
-
-				<div class="item">
-					<div class="col-sm-3">
-						<div class="card card-dark card-outline" style="height: 180px;">
-							<div class="card-header">
-								<div class="col-sm-8" style="text-align: center;">
-									<span>하기재</span>
-								</div>
-								<div class="col-sm-4">
-									<span class="badge badge-primary" style="background: #dc3545;">38.5</span>
-								</div>
-							</div>
-							<div class="card-body" style="text-align: center;">
-								기본정보<br> 기본정보<br>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-sm-3">
-						<div class="card card-dark card-outline" style="height: 180px;">
-							<div class="card-header">
-								<div class="col-sm-8" style="text-align: center;">
-									<span>하기재</span>
-								</div>
-								<div class="col-sm-4">
-									<span class="badge badge-primary" style="background: #dc3545;">38.5</span>
-								</div>
-							</div>
-							<div class="card-body" style="text-align: center;">
-								기본정보<br> 기본정보<br>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-sm-3">
-						<div class="card card-dark card-outline" style="height: 180px;">
-							<div class="card-header">
-								<div class="col-sm-8" style="text-align: center;">
-									<span>하기재</span>
-								</div>
-								<div class="col-sm-4">
-									<span class="badge badge-primary" style="background: #dc3545;">38.5</span>
-								</div>
-							</div>
-							<div class="card-body" style="text-align: center;">
-								기본정보<br> 기본정보<br>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-sm-3">
-						<div class="card card-dark card-outline" style="height: 180px;">
-							<div class="card-header">
-								<div class="col-sm-8" style="text-align: center;">
-									<span>하기재</span>
-								</div>
-								<div class="col-sm-4">
-									<span class="badge badge-primary" style="background: #dc3545;">38.5</span>
-								</div>
-							</div>
-							<div class="card-body" style="text-align: center;">
-								기본정보<br> 기본정보<br>
-							</div>
-						</div>
-					</div>
-				</div>
-
-
+				</c:if>
+			</c:forEach>
 			</div>
-
+  </div>
+		</c:if>
+				</div>
+		
 			<!-- Left and right controls -->
 			<a class="left carousel-control" href="#myCarousel" role="button"
-				data-slide="prev" style="background-image: none;"> <span
+				data-slide="prev" style="background-image: none; width: 20px;"> <span
 				class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
 				<span class="sr-only">Previous</span>
-			</a> <a class="right carousel-control" href="#myCarousel" role="button"
-				data-slide="next" style="background-image: none;"> <span
+			</a>
+			<a class="right carousel-control" href="#myCarousel" role="button"
+				data-slide="next" style="background-image: none; width: 20px;"> <span
 				class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 				<span class="sr-only">Next</span>
 			</a>
-
+		
+		</div>
 		</div>
 
-
-		<div class="row" style="margin-top: 12px;">
-			<div class="col-8 p-0" style="max-height: 308px; min-height: 308px;">
+		<div class="row" style="margin: 0px; top: 12px;">
+			<div class="col-md-8 pl-0">
 				<%@ include file="./main-sckbd-list-module-work.jsp" %>
 				
 			</div>
 
-			<div class="col-4 pr-0 pl-4"
-				style="max-height: 308px; min-height: 308px;">
-				<div class="card" style="max-height: 308px; min-height: 308px;">
-					<div class="card-header ui-sortable-handle pb-1">
-						<tr role="row">
-							<th tabindex="0" aria-controls="example2" rowspan="1"
-								style="text-align: center;" colspan="1" aria-label="">
-								<div class="col-md-8" style="font-size: 16px;">
-									<b>잔여병상수 15개</b>
-								</div>
-								<div class="card-tools ">
-									<button type="button" class="btn btn-tool"
-										onclick="OpenWindow('./sckbd-modify','', 800,765)">
-										<i class="fas fa-plus" style="color: black"></i>
-									</button>
-
-								</div>
-							</th>
-						</tr>
-
-					</div>
-					<div class="card-body">
-						<table class="table table-bordered">
-							<thead>
-								<tr
-									style="text-align: center; font-weight: bold; background-color: #f5fafc">
-									<th>잔여병상수</th>
-									<th>입원환자수</th>
-									<th>총 병상수</th>
-									<th>가동률</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr style="text-align: center">
-									<td>15</td>
-									<td>105</td>
-									<td>120</td>
-									<td><span class="badge badge-warning">85%</span></td>
-								</tr>
-							</tbody>
-						</table>
-						<table class="table table-bordered">
-							<thead>
-								<tr
-									style="text-align: center; font-weight: bold; background-color: #f5fafc">
-									<th>입원수</th>
-									<th>퇴원수(완치)</th>
-									<th>퇴원수(이원)</th>
-									<th>퇴원수(사망)</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr style="text-align: center">
-									<td>50</td>
-									<td>100</td>
-									<td>15</td>
-									<td>3</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-
-
-				</div>
+			<div class="col-md-4 pr-0">
+				<%@ include file="./main-sckbdCountAndStats.jsp" %>
 			</div>
 
 		</div>
 
 
-		<div class="#">
-			<div class="row" style="margin-top: 12px;">
-			
+		<div class="row" style="margin: 0px; top: 12px;">
+			<div class="col-md-8 pl-0" >	
 				<%@ include file="./main-isoptnt-list-module-work.jsp" %>
-				
+			</div>
+			<div class="col-md-4 pr-0">
 				<%@ include file="./main-res-list-module-work.jsp" %>
-				
 			</div>
 		</div>
-
-
-
 
 	</div>
-
+</div>	
+</section>
 </body>
-
-

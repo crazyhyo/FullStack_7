@@ -1,6 +1,7 @@
 package com.spring.compass.command;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -13,9 +14,17 @@ public class InspPstiRegistCommand implements Serializable {
 	private int minBrssr;
 	private int bdheight;
 	private int bdweight;
-	private int bdheat;
+	private double bdheat;
 	private int rmndKitCnt;
 	private String inspNo;
+	private Date htscYmd;
+	
+	public Date getHtscYmd() {
+		return htscYmd;
+	}
+	public void setHtscYmd(Date htscYmd) {
+		this.htscYmd = htscYmd;
+	}
 	public String getPstiNo() {
 		return pstiNo;
 	}
@@ -46,10 +55,10 @@ public class InspPstiRegistCommand implements Serializable {
 	public void setBdweight(int bdweight) {
 		this.bdweight = bdweight;
 	}
-	public int getBdheat() {
+	public double getBdheat() {
 		return bdheat;
 	}
-	public void setBdheat(int bdheat) {
+	public void setBdheat(double bdheat) {
 		this.bdheat = bdheat;
 	}
 	public int getRmndKitCnt() {

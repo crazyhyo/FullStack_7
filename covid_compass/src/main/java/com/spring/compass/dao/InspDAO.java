@@ -1,20 +1,35 @@
 package com.spring.compass.dao;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import com.spring.compass.command.InspPstiRegistCommand;
 import com.spring.compass.command.InspPstiSearchCommand;
 import com.spring.compass.command.InspSmplRequestCommand;
-import com.spring.compass.command.VInspPstiResultVO;
 import com.spring.compass.command.VInspPstiVO;
+import com.spring.compass.vo.InspChckdVO;
+import com.spring.compass.vo.InspPstiVO;
+import com.spring.compass.vo.InspResultVO;
+import com.spring.compass.vo.InspStatsVO;
 import com.spring.compass.vo.InspVO;
 import com.spring.compass.vo.KitHistVO;
 import com.spring.compass.vo.PcrKitVO;
 import com.spring.compass.vo.PstiVO;
 
 public interface InspDAO {
-
+	
+	public void updateInspStatus(InspStatsVO inspStats) throws SQLException;
+	
+	public String selectInspStatusNo(InspStatsVO inspstats) throws SQLException;
+	
+	public List<String> selectInspAllInspNo() throws SQLException;
+	
+	public String selectInspstatsSeq() throws SQLException;
+	
+	public void insertInspStats(InspStatsVO inspstats) throws SQLException;
+	
+	
 	/**
 	 * 인풋 : 피검자 번호
 	 * 아웃풋 : 피검자VO
@@ -119,31 +134,34 @@ public interface InspDAO {
 	
 	public String selectVacByCode(String vacCode) throws SQLException;
 	
+	public String selectInspNm(String inspNo) throws SQLException;
+	
 	
 	// 리스트
-	public List<VInspPstiVO> selectPstiList(InspPstiSearchCommand cri) throws SQLException;
+	public List<InspPstiVO> selectPstiList(InspPstiSearchCommand cri) throws SQLException;
 	public int selectPstiListCount(InspPstiSearchCommand cri) throws SQLException;
 
-	public List<VInspPstiVO> selectChckdList(InspPstiSearchCommand cri) throws SQLException;
+	public List<InspChckdVO> selectChckdList(InspPstiSearchCommand cri) throws SQLException;
 	public int selectChckdListCount(InspPstiSearchCommand cri) throws SQLException;
 	
-	public List<VInspPstiResultVO> selectResultList(InspPstiSearchCommand cri) throws SQLException;
+	public List<InspResultVO> selectResultList(InspPstiSearchCommand cri) throws SQLException;
 	public int selectResultListCount(InspPstiSearchCommand cri) throws SQLException;
 	
 	//디테일
-	public VInspPstiVO selectPstiDetail(String pstiNo) throws SQLException;
+	public InspPstiVO selectPstiDetail(String pstiNo) throws SQLException;
 	
-	public VInspPstiVO selectChckdDetail(String pstiNo) throws SQLException;
+	public InspChckdVO selectChckdDetail(String pstiNo) throws SQLException;
 	
-	public VInspPstiResultVO selectResultDetail(String pstiNo)throws SQLException;
+	public InspResultVO selectResultDetail(String pstiNo)throws SQLException;
 	
-	public List<PcrKitVO> selectPcrKitList(String inspNo) throws SQLException;
+	public List<PcrKitVO> selectPcrKitList(InspPstiSearchCommand cri) throws SQLException;
+	public int selectPcrKitListCount(InspPstiSearchCommand cri) throws SQLException;
 	
 	public int selectPcrKitCount(String inspNo) throws SQLException;
 	
 	public int selectTotalKitCount(String inspNo) throws SQLException;
 	
-	void updatePstiInfo(VInspPstiVO psti) throws SQLException;
+	void updatePstiInfo(InspPstiVO psti) throws SQLException;
 	
 	// 문진표 등록
 	void insertHtscQuestion(InspPstiRegistCommand pstiInfo) throws SQLException;
@@ -157,8 +175,33 @@ public interface InspDAO {
 	void insertManageInfo(InspSmplRequestCommand manageInfo) throws SQLException;
 	void updateManageInfo(InspSmplRequestCommand manageNo) throws SQLException;
 	String selectManageNoByPstiNo(String pstiNo) throws SQLException;
-	
+	void updateManageInfoManage(InspSmplRequestCommand manageInfo) throws SQLException;
+	void updatePstiReq(String pstiNo) throws SQLException;
 	//진단키트 등록
 	String selectKitHistSeq() throws SQLException;
 	void insertKitHist(KitHistVO kitHist) throws SQLException;
+	
+	//검사소백업리스트
+	public List<InspVO> selectInspBackup() throws SQLException;
+	
+	InspResultVO selectPbhtInfoByPbhtNo(String pbhtNo)throws SQLException;
+
+	// 검사소 찾기
+	public InspVO selectInspByInspNo(String inspNo) throws SQLException;
+	
+	List<InspStatsVO> selectInspStatsByInspNo(String inspNo) throws SQLException;
+	
+	InspPstiVO selectModifyCancel(String pstiNo) throws SQLException;
+	
+	InspPstiVO selectResultByManageNo(String manageNo) throws SQLException;
+	
+	void deletePsti() throws SQLException;
+	
+	int selectHtscByPstiNo(String pstiNo) throws SQLException;
+	
+	void updateHtscQuestion(InspPstiRegistCommand pstiInfo) throws SQLException;
+	
+	int selectSmplCountByManageNo(String manageNo) throws SQLException;
+	
+	int selectKitYnCount(String inspNo) throws SQLException;
 }

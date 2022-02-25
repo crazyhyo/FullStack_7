@@ -7,13 +7,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
 <script type="text/x-handlebars-template" id="res-template">
 {{#each .}}
-	<tr onclick="showDetail('{{manageNo}}')" class="each-res-element" data-manage-no="{{manageNo}}">
-		<td>{{pstiNm</td>
+	<tr style="cursor:pointer;" onclick="showDetail('{{manageNo}}')" class="each-res-element" data-manage-no="{{manageNo}}">
+		<td style="text-align:left;">{{pstiNm}}</td>
 		<td>{{age}}</td>
 		<td>{{fnGender gender}}</td>
 		<td>{{prettifyDate reqYmd}}</td>
-		<td><span class="badge badge-{{fnBadgetPstvYn chkdYn pstvYn}}">{{fnPstvYn chkdYn pstvYn}}</span></td>
+		<td>{{prettifyDate resYmd}}</td>
 		<td>{{ngtvCnt}}</td>
+		<td><span class="badge badge-{{fnBadgetPstvYn pstvYn}}">{{fnPstvYn pstvYn}}</span></td>
 	</tr>
 {{/each}}
 </script>
@@ -25,7 +26,7 @@
 	</li>
 
 	<li class="page-item each-res-pagination-element">
-		<a class="page-link" href="{{#if prev}}{{prevPageNum}}{{/if}}">
+		<a class="page-link {{checkDisabled prev}}" href="{{#if prev}}{{prevPageNum}}{{/if}}">
 			<i class="fas fa-angle-left" style="color:#1a4f72;"></i>
 		</a>
 	</li>
@@ -39,13 +40,13 @@
 	{{/each}}
 	
 	<li class="page-item each-res-pagination-element">
-		<a class="page-link" href="{{#if next}}{{nextPageNum}}{{/if}}">
+		<a class="page-link {{checkDisabled next}}" href="{{#if next}}{{nextPageNum}}{{/if}}">
 			<i class="fas fa-angle-right" style="color:#1a4f72;"></i>
 		</a>
 	</li>
 
 	<li class="page-item each-res-pagination-element">
-		<a class="page-link href="{{realEndPage}}">
+		<a class="page-link" href="{{realEndPage}}">
 			<i class="fas fa-angle-double-right" style="color:#1a4f72;"></i>
 		</a>
 	</li>
@@ -53,11 +54,21 @@
 <script>
 Handlebars.registerHelper({
 "prettifyDate" : function(timeValue){
-	var dateObj = new Date(timeValue);
-	var year = dateObj.getFullYear();
-	var month = dateObj.getMonth() + 1;
-	var date = dateObj.getDate();
-	return year + "-" + month + "-" + date;
+	if(timeValue){
+		var dateObj = new Date(timeValue);
+		var year = dateObj.getFullYear();
+		var month = dateObj.getMonth() + 1;
+		month += '';
+		if(month.length < 2){
+			month = '0' + month;
+		}
+		var date = dateObj.getDate();
+		date += '';
+		if(date.length < 2){
+			date = '0' + date;
+		}
+		return year + "-" + month + "-" + date;
+	}
 },
 "signActive" : function(pageNum){
 	if(pageNum == page){
@@ -75,25 +86,41 @@ Handlebars.registerHelper({
 	if(gender == "M"){
 		return "남";
 	}
-	return "여";
+	if(gender =="F"){
+		return "여";
+	}
 },
-"fnBadgetPstvYn" : function(chkdYn, pstvYn){
-	if(chkdYn == "Y"){
-		if(pstvYn == "Y"){
-			return "info";
-		}
-		return "success";
+"fnBadgetPstvYn" : function(pstvYn){
+	if(pstvYn == "Y"){
+		return "danger";
+	}
+	if(pstvYn == "N"){
+		return "primary";
 	}
 	return "secondary";
 },
-"fnPstvYn" : function(chkdYn, pstvYn){
-	if(chkdYn == "Y"){
-		if(pstvYn == "Y"){
-			return "양성";
-		}
+"fnPstvYn" : function(pstvYn){
+	if(pstvYn == "Y"){
+		return "양성";
+	}
+	if(pstvYn == "N"){	
 		return "음성";
 	}
-	return "검사중"
+	return "대기"
+},
+"fnsmplResCode" : function(smplResCode){
+	if(smplResCode == "K101"){
+		return "검사중";
+	}
+	if(smplResCode == "K102"){
+		return "양성";
+	}
+	if(smplResCode == "K103"){
+		return "음성";
+	}
+},
+"checkDisabled" : function(flag){
+  if(!flag) return 'disabled';
 }
 });
 </script>
@@ -122,7 +149,7 @@ function make_form(pageParam){
 	jobForm.find("[name='page']").val(page);
 	jobForm.find("[name='perPageNum']").val($('select[name="perPageNum"]').val());
 	jobForm.find("[name='searchType']").val($('select[name="searchType"]').val());
-	jobForm.find("[name='keyword']").val($('div.input-group>input[name="keywrod"]').val());
+	jobForm.find("[name='keyword']").val($('#keyword').val());
 	
 	return jobForm;
 }
@@ -138,8 +165,23 @@ function getPage(handlebarsProcessingURL, form){
 		dataType : 'json',
 		data : form.serialize(),
 		success : function(dataMap){
-			printData(dataMap.chckdList, $('#res-table-tbody'), $('#res-template'), '.each-res-element');
-			printPagination(dataMap.pageMaker, $('#res-pagination-ul'), $('#res-pagination-template'), '.each-res-pagination-element');
+			$('#res-table-tbody').html("");
+			if(dataMap.resList.length == 0){
+				$('#res-table-tbody').html('<tr class="each-res-element"><td colspan="7">데이터가 없습니다.</td></tr>');
+				dataMap.pageMaker.endPage = 1;
+				dataMap.pageMaker.realEndPage = 1;
+				printPagination(dataMap.pageMaker, $('#res-pagination-ul'), $('#res-pagination-template'), '.each-res-pagination-element');
+				printData('', $('#res-detail-module'), $('#res-detail-template'), '.res-detail-element')
+				$('#enableReadRrn').attr('disabled', true);
+			}else{
+				printData(dataMap.resList, $('#res-table-tbody'), $('#res-template'), '.each-res-element');
+				printPagination(dataMap.pageMaker, $('#res-pagination-ul'), $('#res-pagination-template'), '.each-res-pagination-element');
+				$('#enableReadRrn').data('rrn', dataMap.basicDetail.rrn);
+				$('#enableReadRrn').data('manageNo', dataMap.basicDetail.manageNo);
+		      	dataMap.basicDetail.rrn = (dataMap.basicDetail.rrn.substring(0,8) + '******');
+				printData(dataMap.basicDetail, $('#res-detail-module'), $('#res-detail-template'), '.res-detail-element')
+				$('#enableReadRrn').attr('disabled', false);
+			}
 		},
 		error : function(error){
 			alert('error' + error.status);
@@ -180,18 +222,19 @@ function printPagination(pageMaker, target, templateObject, removeClass){
 								style="text-align: center;">
 								<thead>
 									<tr role="row">
-										<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">성명</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="">나이</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="">성별</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">검사일자</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="">재검결과</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="">누적음성수</th>
+										<th style="width:20%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">성명</th>
+										<th style="width:10%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="">나이</th>
+										<th style="width:10%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="">성별</th>
+										<th style="width:20%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">검사일자</th>
+										<th style="width:20%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">결과일자</th>
+										<th style="width:5%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="">누적음성수</th>
+										<th style="width:15%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="">재검결과</th>
 											
 									</tr>
 								</thead>
-								<tbody id="res-taable-tbody">
+								<tbody id="res-table-tbody">
 									<tr class="each-res-element">
-										<td colspan="6">페이지 로딩중입니다.</td>
+										<td colspan="7">페이지 로딩중입니다.</td>
 									</tr>
 								</tbody>
 							</table>

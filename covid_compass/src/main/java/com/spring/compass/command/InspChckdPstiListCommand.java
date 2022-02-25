@@ -168,7 +168,6 @@ public class InspChckdPstiListCommand implements Serializable {
 	public void setHtscYmd(Date htscYmd) {
 		this.htscYmd = htscYmd;
 	}
-	
 	public int getMaxBrssr() {
 		return maxBrssr;
 	}

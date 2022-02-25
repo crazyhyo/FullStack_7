@@ -64,6 +64,86 @@
             ,#{mberAdres}
             )
 </update>
+<update id="updateInfo" parameterType="com.spring.compass.vo.MberVO">
+UPDATE MBER
+   SET MBER_TELNO = #{mberTelno},
+       MBER_ADRES = #{mberAdres},
+       MBER_EMAIL = #{mberEmail}
+ WHERE MBER_NO = #{mberNo}
+</update>
+<select id="selectDetailByMberNo" parameterType="java.lang.String" resultType="com.spring.compass.vo.MberVO">
+SELECT B.INST_NM,
+       A.MBER_NO,
+       A.MBER_TELNO,
+       A.MBER_EMAIL,
+       A.MBER_BIR,
+       A.MBER_ADRES,
+       A.MBER_NM,
+       A.INST_NO
+  FROM MBER A, INST B
+ WHERE A.INST_NO = B.INST_NO
+   AND MBER_NO = #{mberNo}
+</select>
 
+<select id="selectMberManageList" parameterType="com.spring.compass.command.MberManageCommand" resultType="com.spring.compass.vo.MberVO">
+SELECT RNUM, MBER_NO, MBER_ID, MBER_CODE, MBER_NM, MBER_BIR, MBER_TELNO, MBER_EMAIL, MBER_ADRES
+  FROM ( SELECT ROWNUM AS RNUM, mber_code, MBER_NO, MBER_ID, MBER_NM, MBER_BIR, MBER_TELNO, MBER_EMAIL, MBER_ADRES
+  		   FROM (SELECT mber_no,
+		   		   	    mber_id,
+		   		   	    mber_code,
+		  			    mber_nm,
+		 			    mber_bir,
+				 	    mber_telno,
+					    mber_email,
+		   			    mber_adres
+				   FROM
+	    			    mber
+				  where use_yn = 'Y' and INST_NO=#{instNo}
+				  order by case when mber_code like '%'||'B12'||'%' then mber_code end asc)
+		)
+ WHERE RNUM BETWEEN #{startRowNum} AND #{endRowNum}
+</select>
+
+<select id="selectMberManageCount" parameterType="com.spring.compass.command.MberManageCommand" resultType="java.lang.Integer">
+SELECT COUNT(INST_NO)
+  FROM mber
+where  use_yn = 'Y' and INST_NO=#{instNo}
+</select>
+
+<update id="insertMber" parameterType="com.spring.compass.vo.MberVO">
+INSERT INTO mber (
+    mber_no,
+    inst_no,
+    mber_code,
+    mber_id,
+    mber_pwd,
+    mber_telno,
+    mber_email,
+    use_yn,
+    mber_regdate,
+    mber_nm,
+    mber_adres,
+    mber_bir
+) VALUES (
+    #{mberNo},
+    #{instNo},
+    #{mberCode},
+    #{mberId},
+    #{mberPwd},
+    #{mberTelno},
+    #{mberEmail},
+    'Y',
+    sysdate,
+    #{mberNm},
+    #{mberAdres},
+    #{mberBir}
+)
+</update>
+
+<update id="deleteMber" parameterType="java.lang.String">
+UPDATE MBER
+  SET USE_YN = 'N'
+ WHERE MBER_NO = #{mberNo}
+</update>
 
 </mapper>

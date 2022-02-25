@@ -12,67 +12,76 @@
 <body>
 
 	<section class="content">
-		<div class="card" style="margin: 1px; margin-top: 13px;">
-				<div class="card-body" style="height: 70px; padding-bottom: 0px;">
-					<!-- search bar -->
-					<button type="button" class="btn btn-primary"
-							style="background: #1a4f72; border: 0px; width: 90px;"
-						 	onclick="fileDown_go()">다운로드</button>
-					
-				</div>
-
-				<div class="card col-md-12"
-					style="position: relative; left: 0px; top: 0px; margin-bottom: 0px;">
-					<!-- /.card-header -->
-					<div class="card-body" style="padding: 0px;">
-						<div class="table-responsive">
-							<table class="table table-hover text-nowrap" style="text-align: center;">
-								<thead>
-									<tr role="row">
-										<!-- <th style="width: 5%;"><input type="checkbox"
-											id="selectAll" onclick="selectAll()"></th> -->
-										<th tabindex="0" aria-controls="example2" rowspan="1"
-											style="text-align: center;" colspan="1" aria-label="">기관번호</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1"
-											style="text-align: center;" colspan="1" aria-label="">회원번호</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1"
-											style="text-align: center;" colspan="1" aria-label="">회원명</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1"
-											style="text-align: center;" colspan="1" aria-label="">IP</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1"
-											style="text-align: center;" colspan="1" aria-label="">발생일자</th>
-									</tr>
-								</thead>
-								<tbody>
-									<c:if test="${empty loginList}">
-										<td colspan="5"><strong>해당 내용이 없습니다.</strong></td>
-									</c:if>
-									<c:forEach items="${loginList}" var="login">
-									<tr>
-										<!-- <td onclick="event.cancelBubble=true" style="cursor: default;"><input
-											type="checkbox" name="inst" onclick="cancleAll()"></td> -->
-										<td>${login.instNo}</td>
-										<td>${login.mberNo}</td>
-										<td>${login.mberNm }</td>
-										<td>${login.userIp}</td>
-										<td>${login.userLogTime}</td>
-									</tr>
-									</c:forEach>
-								</tbody>
-							</table>
-
+		<div class="row" style="margin: 1px; margin-top: 17px;">
+			<div class="col-md-12 pl-0 pr-0">
+				<div class="card-header p-0 t-1">
+					<div class="row mb-2">
+						<div class="col-md-6">
+							<button type="button" class="btn btn-primary"
+								style="background: #1a4f72; border: 0px; width: 90px;"
+								onclick="fileDown_go()">다운로드</button>
 						</div>
-
 					</div>
-
-					<div class="card-footer clearfix" style="background: white;">
-						<%@ include file="/resources/js/paginationLogin.jsp"%>
-					</div>
-
 				</div>
-		</div>
-		<!-- /.card-body -->
+		   <div class="card-body pl-0 pr-0">		
+			<div class="tab-content" id="custom-tabs-three-tabContent">	
+              <div class="row" style="margin: 1px;">
+				<div class="col-md-12 pl-0 pr-0">
+					<div class="card">
+						<div class="card-body">
+							<div class="table-responsive">
+								<div class="confirm" style="height: 650px;">
+									<table class="table table-hover text-nowrap" style="text-align: center; font-size: 15px; table-layout: fixed;">
+										<thead>
+											<tr role="row">
+												<!-- <th style="width: 5%;"><input type="checkbox"
+											id="selectAll" onclick="selectAll()"></th> -->
+												<th tabindex="0" aria-controls="example2" rowspan="1"
+													style="text-align: center;" colspan="1" aria-label="">기관번호</th>
+												<th tabindex="0" aria-controls="example2" rowspan="1"
+													style="text-align: center;" colspan="1" aria-label="">회원번호</th>
 
+												<th tabindex="0" aria-controls="example2" rowspan="1"
+													style="text-align: center;" colspan="1" aria-label="">회원명</th>
+
+												<th tabindex="0" aria-controls="example2" rowspan="1"
+													style="text-align: center;" colspan="1" aria-label="">IP</th>
+												<th tabindex="0" aria-controls="example2" rowspan="1"
+													style="text-align: center;" colspan="1" aria-label="">발생일자</th>
+											</tr>
+										</thead>
+										<tbody>
+											<c:if test="${empty loginList}">
+												<td colspan="5"><strong>해당 내용이 없습니다.</strong></td>
+											</c:if>
+											<c:forEach items="${loginList}" var="login">
+												<tr>
+													<!-- <td onclick="event.cancelBubble=true" style="cursor: default;"><input
+											type="checkbox" name="inst" onclick="cancleAll()"></td> -->
+													<td style="width: 20%;">${login.instNo}</td>
+													<td style="width: 20%;">${login.mberNo}</td>
+													<td style="text-align: left; width: 20%;">${login.mberNm }</td>
+													<td style="width: 20%;">${login.userIp}</td>
+													<td style="width: 20%;">${login.userLogTime}</td>
+												</tr>
+											</c:forEach>
+										</tbody>
+									</table>
+								</div>
+
+
+								<div class="card-footer clearfix" style="background: white;">
+									<%@ include file="/resources/js/paginationLogin.jsp"%>
+								</div>
+							</div>
+						</div>
+					</div>
+				  </div>
+			    </div>
+			  </div>
+			</div>	
+		  </div>
+		</div>
 	</section>
 	<script>
 		function selectAll(checkBox){

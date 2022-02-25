@@ -57,6 +57,9 @@
 	
 	<beans:bean id="loginFailureHandler"
 				class="com.spring.compass.security.LoginFailureHandler"
+				p:adminService-ref="adminService"
+				p:savePath-ref="loginFailUserFilePath"
+				p:saveFileName-ref="loginFailUserFileName"
 	/>
 	
 	<beans:bean id="sessionRegistry"

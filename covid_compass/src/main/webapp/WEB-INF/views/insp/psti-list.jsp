@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page trimDirectiveWhitespaces="true"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -14,6 +13,17 @@
 <title></title>
 
 <body>
+<script	src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+function submitHtsc(){
+	$('#maxBrssr').val('120');
+	minBrssr = $('#minBrssr').val('80');
+	bdheight = $('#bdheight').val('180');
+	bdweight = $('#bdweight').val('85');
+	bdheat = $('#bdheat').val('36.5');	
+	
+}
+</script>
 	<section class="content">
 		<div class="row" style="margin: 1px; margin-top: 5px;">
 			<div class="col-lg-6 pl-0">
@@ -29,17 +39,13 @@
 						<option value="n"
 							${pageMaker.cri.searchType eq 'n' ? 'selected':''}>성 명</option>
 						<option value="p"
-							${pageMaker.cri.searchType eq 'p' ? 'selected':''}>연락처</option>
+							${pageMaker.cri.searchType eq 't' ? 'selected':''}>연락처</option>
 					</select>
 
 					<!-- keyword -->
-					<input class="form-control" type="text" name="keyword"
-						value="${pageMaker.cri.keyword }"
-						style="width: 18%; display: inline-block;" /> <span
-						class="input-group-append">
-						<button class="btn btn-primary" type="button" id="searchBtn"
-							style="background: #1a4f72; color: #ffffff; border-color: #1a4f72; display: inline-block; margin-bottom: 4px; margin-left: -7px;"
-							data-card-widget="search" onclick="list_go(1, '<%=request.getContextPath()%>/rest-insp/insp-list');">
+					<input class="form-control" type="text" name="keyword" id="keyword" value="${pageMaker.cri.keyword }" style="width: 18%; display: inline-block;" />
+					<span class="input-group-append">
+						<button class="btn btn-primary" type="button" id="searchBtn" style="background: #1a4f72; color: #ffffff; border-color: #1a4f72; display: inline-block; margin-bottom: 4px;" data-card-widget="search" onclick="list_go(1, '<%=request.getContextPath()%>/rest-insp/psti-list');">
 							<i class="fa fa-fw fa-search"></i>
 						</button>
 					</span>
@@ -62,24 +68,26 @@
 			</div>
 			<div class="col-lg-6 pr-0">
 				<section class="content">
-					<div class="card"
-						style="margin: 1px; height: 763px; margin-top: 13px;">
-						<div class="card-header d-flex p-0">
-							<ul class="nav nav-pills ml-auto p-2" role="tablist">
-								<li class="nav-item"><a class="nav-link active"
-									id="psti-detail-tab" data-toggle="pill"
-									href="#custom-psti-detail" role="tab"
-									aria-controls="custom-tabs-three-home" aria-selected="true" style="background: #1a4f72; cursor: default;">피검자
-										상세</a></li>
-							</ul>
-						</div>
+					<div class="card" style="margin: 1px; height: 763px; margin-top: 13px;">
 						<div class="card-body">
-							<div class="tab-content" id="custom-tabs-three-tabContent">
-								<div class="tab-pane fade show active" id="custom-psti-detail"
-									role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+						<table class="table table-bordered" style="border-left-color: white; border-right-color: white;">
+							<thead>
+							<tr>
+								<th style="font-size: 17px;">
+								
+									<div class="row m-0" style="justify-content: space-between;">
+			                    		<label style="font-size: 17px; margin: 0px;">피검자 상세정보</label>
+			                    		<button type="button" class="btn btn-success btn-sm" onclick="submitHtsc();">데이터입력</button>
+			                    		<button type="button" class="btn btn-sm btn-primary" id="enableReadRrn" onclick="enableReadRrn(this);" data-enable="N" data-rrn="" data-manageNo="">개인정보 열람</button>
+			                    	</div>
+								
+								</th>
+							</tr>
+						
+						</thead>
+							<tr class="ddoing" style="height: 12px; border : 1px solid white;"></tr>
+					</table>
 									<%@ include file="./psti-detail-module-work.jsp"%>
-								</div>
-							</div>
 						</div>
 						<!-- /.card -->
 					</div>

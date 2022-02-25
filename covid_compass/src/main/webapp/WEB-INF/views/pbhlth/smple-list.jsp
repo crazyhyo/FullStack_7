@@ -17,20 +17,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
 <script type="text/x-handlebars-template"  id="smpl-list-template" >
 {{#each .}}
-          <tr
-			data-inst-no="{{instNo}}" data-manage-no="{{manageNo}}"
-            onclick="showDetail('{{smplNo}}')"
+          <tr style="cursor: pointer;"
+			data-inst-no="{{instNo}}" data-manage-no="{{manageNo}}" data-smpl-no="{{smplNo}}"
+            onclick="showDetail('{{smplNo}}', '{{manageNo}}')"
             class="each-smpl-element">
             <td>
 			  <div class="form-group">
 				  <div class="form-check">
-					  <input type="checkbox" class="form-check-input"
-						  name="psti_req_check">
+					  <input type="checkbox" class="form-check-input" value="{{smplNo}}" data-manage-no="{{manageNo}}"
+						  name="psti_req_check" onclick="cancleAll(this);">
 				  </div>
 			  </div>
 			 </td>
             <td class="smplNo" nno="{{smplNo}}">{{smplNo}}</td>
-            <td>{{instNm}}</td>
+            <td style="text-align: left;">{{instNm}}</td>
             <td>{{prettifyDate reqYmd}}</td>
             <td>{{chkdYn}}</td>
           </tr>
@@ -59,11 +59,22 @@
 
 Handlebars.registerHelper({
 "prettifyDate" : function(timeValue){
-  var dateObj = new Date(timeValue);
-  var year = dateObj.getFullYear();
-  var month = dateObj.getMonth() + 1;
-  var date = dateObj.getDate();
-  return year + "-" + month + "-" + date;
+	if(timeValue){
+		var dateObj = new Date(timeValue);
+		var year = dateObj.getFullYear();
+		var month = dateObj.getMonth() + 1;
+		month += '';
+		if(month.length < 2){
+			month = '0' + month;
+		}
+		var date = dateObj.getDate();
+		date += '';
+		if(date.length < 2){
+			date = '0' + date;
+		}
+		return year + "-" + month + "-" + date;
+	}
+	return "없음";
 },
 "signActive" : function(pageNum){
   if(pageNum == page) return 'active';
@@ -77,10 +88,11 @@ Handlebars.registerHelper({
 var page = 1;
 
 window.onload = function(){
- 	generateQR();
+ 	//generateQR();
+ 	
   var url = '<%=request.getContextPath() %>/rest-pbht/smpl-list';
   
-  list_go(page, url);
+  list_go(url,page );
 	$('ul.pagination').on('click','li a',function(event){
 		if($(this).attr("href")) {
 			page=$(this).attr("href");
@@ -90,7 +102,7 @@ window.onload = function(){
 		return false;
 	});
 }
-function make_form(pageParam){
+function make_form(pageParam, search){
   var jobForm=$('#jobForm');
   
   if(!pageParam) page = 1;
@@ -100,20 +112,20 @@ function make_form(pageParam){
   jobForm.find("[name='page']").val(page);
   jobForm.find("[name='perPageNum']").val($('select[name="perPageNum"]').val());
 //  jobForm.find("[name='perPageNum']").val(2);
-  jobForm.find("[name='searchType']").val($('select[name="searchType"]').val());
-  jobForm.find("[name='keyword']").val($('div.input-group>input[name="keyword"]').val());
+  if(search){
+	  jobForm.find("[name='searchType']").val($('select[name="searchType"]').val());
+	  jobForm.find("[name='keyword']").val($('#keywordId').val());
+  }
   
   return jobForm;
 }
 
-function list_go(pageParam, url){
+function list_go(url, pageParam, search){
 	
-  getPage(url, make_form(pageParam));
+  getPage(url, make_form(pageParam, search));
 }
 
 function getPage(handelbarsProcessingURL, form){
-
-	
 	
 	$.ajax({
     url : handelbarsProcessingURL,
@@ -121,8 +133,24 @@ function getPage(handelbarsProcessingURL, form){
     dataType : 'json',
     data : form.serialize(),
     success : function(dataMap){
-      printData(dataMap.smplList, $('#smpl-list-table-tbody'), $('#smpl-list-template'), '.each-smpl-element');
-      printPagination(dataMap.pageMaker, $('#inptnt-list-pagination-ul'), $('#inptnt-pagination-template'), '.each-inptnt-pagination-element');
+    	$('#smpl-list-table-tbody').html("");
+    	
+     	if(dataMap.smplList.length == 0){
+     		
+     		$('#smpl-list-table-tbody').html('<tr class="each-smpl-element" ><td colspan="5" id="noSemlpeData">데이터 로딩중 입니다.</td></tr>');
+    		$('#noSemlpeData').html('데이터가 없습니다.');
+    		$('#option_b1').attr("disabled", true);
+ 	      	$('#option_b2').attr("disabled", true);
+ 	      	searchfalse();
+    		dataMap.pageMaker.endPage = 1;
+      		printPagination(dataMap.pageMaker, $('#inptnt-list-pagination-ul'), $('#inptnt-pagination-template'), '.each-inptnt-pagination-element');
+    	}else{
+    		$('#option_b1').attr("disabled", false);
+ 	      	$('#option_b2').attr("disabled", false);
+    		printData(dataMap.smplList, $('#smpl-list-table-tbody'), $('#smpl-list-template'), '.each-smpl-element');
+      		printPagination(dataMap.pageMaker, $('#inptnt-list-pagination-ul'), $('#inptnt-pagination-template'), '.each-inptnt-pagination-element');
+      		showDetail(dataMap.smplList[0].smplNo);
+    	}
     },
     error : function(error){
       alert('error' + error.status);
@@ -177,12 +205,18 @@ function printPagination(pageMaker, target, templateObject, removeClass){
 
 var data = "";
 
-function generateQR() {
+function generateQR(pstiNo, smplNo){
+	
+	console.log(pstiNo);
+	
+	$("#qrBox").empty();
+	
 	var qrcode = new QRCode(document.getElementById("qrBox"));
-	data = "PSTI04220220105000001";
-	//"${pstiInnb }"
-	qrcode.makeCode(data);
-
+	var url = 'http://192.168.143.14<%=request.getContextPath()%>/common/qrInfo?pstiNo=' + pstiNo + '&smplNo=' + smplNo;
+	
+	if(!pstiNo) url = "";
+	
+	qrcode.makeCode(url);
 }
 function decode() {
 	//alert(data);
@@ -204,10 +238,16 @@ function decode() {
 	}
 
 
-function showDetail(smplNo){
+function showDetail(smplNo, manageNo, checkAll){
 	
-	
-	
+	  var trs = $('tr.each-smpl-element');
+	  
+	  trs.removeClass('on');
+	  
+	  var target = $('tr[data-smpl-no="'+smplNo+'"]');
+	  
+	  target.addClass('on');
+	  
 	$.ajax({
 	    url : '<%=request.getContextPath() %>/rest-pbht/smpl-detail',
 	    type : 'get',
@@ -215,27 +255,91 @@ function showDetail(smplNo){
 	    data : {'smplNo':smplNo},
 	    success : function(dataMap){
 	 		console.log(dataMap);
-	    	$('#req_ymd').html(dataMap.reYmd);
+	    	$('#req_ymd').html(prettifyDate(dataMap.reqYmd));
 			$('#inst_nm').html(dataMap.instNm);
 			$('#psti_nm').html(dataMap.pstiNm);
-			$('#rrn').html(dataMap.rrn);
+			$('#bir').html(dataMap.bir);
 			$('#psti_telno').html(dataMap.pstiTelno);
 			$('#rechkd_yn').html(dataMap.rechkdYn);
 			$('#psti_adres').html(dataMap.pstiAdres);
 			$('#req_inst_nm').html(dataMap.reqInstNm);
 			$('#inst_telno').html(dataMap.instTelno);
 	 		$('#inst_adres').html(dataMap.instAdres); 
+	 		// 확정버튼 세팅
+	 		$('#data-smpl-no').val(dataMap.smplNo);
+	 		$('#data-manage-no').val(dataMap.manageNo);
+	 		
+	 		console.log($('#pstiNoInput')[0]);
+	 		
+	 		$('#pstiNoInput').val(dataMap.pstiNo);
+	 		
+	 		
+	 		generateQR(dataMap.pstiNo, smplNo)
+	 		
 	    },
 	    error : function(error){
 	      alert('error' + error.status);
 	    }
 	  })
 	
-}	
-	
-	
-	
+}
 
+function prettifyDate(timeValue){
+	if(timeValue){
+		var dateObj = new Date(timeValue);
+		var year = dateObj.getFullYear();
+		var month = dateObj.getMonth() + 1;
+		month += '';
+		if(month.length < 2){
+			month = '0' + month;
+		}
+		var date = dateObj.getDate();
+		date += '';
+		if(date.length < 2){
+			date = '0' + date;
+		}
+		return year + "-" + month + "-" + date;
+	}
+	return "없음";
+
+}
+function searchfalse(){
+	$('#req_ymd').html("");
+	$('#inst_nm').html("");
+	$('#psti_nm').html("");
+	$('#bir').html("");
+	$('#psti_telno').html("");
+	$('#rechkd_yn').html("");
+	$('#psti_adres').html("");
+	$('#req_inst_nm').html("");
+	$('#inst_telno').html("");
+	$('#inst_adres').html(""); 
+	// 확정버튼 세팅
+	$('#data-smpl-no').val("");
+	$('#data-manage-no').val("");
+	
+	$('#pstiNoInput').val("");
+	
+	$("#qrBox").empty();
+}
+
+
+function psti_check_all(checkAll){
+	// alert("왔음 ?");
+	// var checktest = document.querySelectorAll('input[type="checkbox"]');
+	if($(checkAll).prop("checked")){
+        $("input[type=checkbox]").prop("checked",true);
+    }else{
+        $("input[type=checkbox]").prop("checked",false);
+    }
+}
+
+function cancleAll(check){
+	 if(!$(check).prop("checked")) $("input[name=psti_check_all]").prop("checked",false);
+	 //psti_req_check
+	 
+	 if(($("input[type=checkbox]").length-1) == $("input[name=psti_req_check]:checked").length) $("input[name=psti_check_all]").prop("checked",true);
+}
 </script>
 <section class="content">
 
@@ -245,12 +349,12 @@ function showDetail(smplNo){
 						<!-- sort num -->
 						
 						<div class="card-header d-flex p-0">
-						<select name="result" style="width: 55px; height: 30px;margin-top: 8px;margin-left: 17px;margin-right: 4px;">
+						<select name="checkResult" style="width: 55px; height: 30px;margin-top: 8px;margin-left: 17px;margin-right: 4px;">
                       	<option value="" selected="selected">미정</option>
-                      	<option value="양성">양성</option>
-                      	<option value="음성">음성</option>
+                      	<option value="A102">양성</option>
+                      	<option value="A103">음성</option>
                       </select>
-						<button class="btn btn-success" name="options" id="option_b1" style="margin-top: 8px;height: 30px;width: 67px;background: #1a4f72; border: #1a4f72;">확정</button>
+						<button onclick="smplsConfirmed_go();" class="btn btn-success" name="options" id="option_b1" style="margin-top: 8px;height: 30px;width: 67px;background: #1a4f72; border: #1a4f72;">확정</button>
 							<ul class="nav nav-pills ml-auto p-2" role="tablist">
 								<li class="nav-item">
 								<div class="input-group float-right" style="max-width: 600px; width:300px;">
@@ -259,20 +363,20 @@ function showDetail(smplNo){
                     	
 						<select class="form-control " name="searchType" id="searchType" >
 							<option value="" ${pageMaker.cri.searchType eq '' ? 'selected':''}>검색구분</option>
-							<option value="n"
-								${pageMaker.cri.searchType eq 'n' ? 'selected':''}>시료번호</option>
-							<option value="p"
-								${pageMaker.cri.searchType eq 'p' ? 'selected':''}>요청기관</option>
+							<option value="smpl"
+								${pageMaker.cri.searchType eq 'smpl' ? 'selected':''}>시료번호</option>
+							<option value="inst"
+								${pageMaker.cri.searchType eq 'inst' ? 'selected':''}>요청기관</option>
 						</select>
 
 						<!-- keyword -->
-						<input class="form-control" type="text" name="keyword"
+						<input id="keywordId" class="form-control" type="text" name="keyword"
 							value="${pageMaker.cri.keyword }"
 							style="width: 18%; display: inline-block;" />
 						<span class="input-group-append">
 							<button class="btn btn-primary" type="button" id="searchBtn"
 								style="background: #1a4f72; color: #ffffff; border-color: #1a4f72; display: inline-block; margin-bottom: 4px; margin-left: -7px;"
-								data-card-widget="search" onclick="">
+								data-card-widget="search" onclick="list_go('<%=request.getContextPath() %>/rest-pbht/smpl-list', 1, true);">
 								<i class="fa fa-fw fa-search"></i>
 							</button>
 						</span>
@@ -280,19 +384,17 @@ function showDetail(smplNo){
 							</ul>
 							</div>
 						<!-- end : search bar -->
-						<div class="card-body">
+						<div class="card-body pb-0">
 						<div class="table-responsive">
-						<div class="ddoing" style="height: 633px;">
-							<table class="table table-hover text-nowrap"
-								style="text-align: center;">
+						<div class="ddoing" style="height: 650px;">
+							<table class="table table-hover text-nowrap"style="text-align: center;">
 								<thead>
 									<tr>
-			                      <th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
-									  aria-label="Browser: activate to sort column ascending">
-									  <div class="form-group">
-										  <div class="form-check">
-											  <input type="checkbox" class="form-check-input"
-												  name="psti_check_all">
+			                      <th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">
+									  <div class="form-group m-0">
+										  <div class="form-check p-0">
+											  <input type="checkbox" class="form-check-input-all"
+												 name="psti_check_all" onclick="psti_check_all(this);">
 										  </div>
 									  </div>
 								  </th>
@@ -303,8 +405,8 @@ function showDetail(smplNo){
 			                    </tr>
 								</thead>
 								<tbody id="smpl-list-table-tbody">
-									<tr class="each-smpl-element">
-				                      <td colspan="5">데이터 로딩중 입니다.</td>
+									<tr class="each-smpl-element" >
+				                      <td colspan="5" id="noSemlpeData">데이터 로딩중 입니다.</td>
 				                    </tr>
 								</tbody>
 							</table>
@@ -338,8 +440,8 @@ function showDetail(smplNo){
 					<i class="fas fa-qrcode fa-2x"></i>
 				</div>
 				<div class="col-md-6">
-					<input type="text" class="form-control" name="pstiInnb"
-						value="PSTI04220220105000001" readonly style="text-align: center;">
+					<input type="text" class="form-control" name="pstiNoInput" id="pstiNoInput"
+						value="" readonly style="text-align: center;">
 				</div>
 			</div>
                 <table class="table table-bordered">
@@ -350,32 +452,48 @@ function showDetail(smplNo){
                   </thead>
                   <tbody>
                     <tr>
-                      <td class="col-md-2"style="background-color: #f5f6f7; border-top: 2px solid black;" ><strong>요청일자</strong></td>
-                      <td class="col-md-4"style="border-top: 2px solid black;" id="req_ymd" >2020/07/09 11:01:21</td>
-                      <td class="col-md-2"style="background-color: #f5f6f7;"><strong>확정일자</strong></td>
+                      <th class="col-md-2"><strong>요청일자</strong></th>
+                      <td class="col-md-4" id="req_ymd" ></td>
+                      <th class="col-md-2"><strong>확정일자</strong></th>
                       <td class="col-md-4"></td>
                     </tr>
                     
                     <tr>
-                      <td style="background-color: #f5f6f7;"><strong>검사결과</strong></td>
+                      <th><strong>검사결과</strong></th>
                       <td>
 	                      <select name="result">
 	                      	<option value="" selected="selected">미정</option>
-	                      	<option value="양성">양성</option>
-	                      	<option value="음성">음성</option>
+	                      	<option value="A102">양성</option>
+	                      	<option value="A103">음성</option>
 	                      </select>
                       </td>
-                      <td style="background-color: #f5f6f7;"><strong>검사기관</strong></td>
-                      <td id="inst_nm">대덕보건소</td>
+                      <th><strong>검사기관</strong></th>
+                      <td id="inst_nm"></td>
                     </tr>
                   </tbody>
                 </table>
 			</div>
 			<div style="margin: 0 auto;" class="col-2">
-				<button type="button" class="btn btn-block btn-default" style="background-color: #1a4f72; border: #1a4f72;"><span style="color: white;">확정</span></button>
+				<button  
+				type="button" id="option_b2" class="btn btn-block btn-default" onclick="smplConfirmed_go();" style="background-color: #1a4f72; border: #1a4f72;">
+				<span style="color: white;">확정</span></button>
+				
 			</div>
 			</form>
-		
+			<form id="smplConfirmed" action="<%=request.getContextPath() %>/pbhlth/smpl-confirmed" method="post">
+				<input id="data-smpl-no" type="hidden" name="smplNo" value=""/>
+				<input id="data-manage-no" type="hidden" name="manageNo" value=""/>
+				<input id="data-result-code" type="hidden" name="sttusCode" value="" />
+			</form>
+			
+			<form id="smplsConfirmed" action="<%=request.getContextPath() %>/pbhlth/smpls-confirmed" method="post">
+				<input id="data-smpls-no" type="hidden" name="smplNo" value=""/>
+				<input id="data-manages-no" type="hidden" name="manageNo" value=""/>
+				<input id="data-results-code" type="hidden" name="sttusCode" value="" />
+			</form>
+			
+			  
+			
 			<div class="card-body">
                 <table class="table table-bordered">
                   <thead>
@@ -385,24 +503,24 @@ function showDetail(smplNo){
                   </thead>
                   <tbody>
                     <tr>
-                      <td class="col-md-2" style="background-color: #f5f6f7; border-top: 2px solid black;" ><strong>성명</strong></td>
-                      <td class="col-md-4" style="border-top: 2px solid black;" id="psti_nm" >아무개</td>
+                      <th class="col-md-2"><strong>성명</strong></th>
+                      <td class="col-md-4" style="border-top: 2px solid black;" id="psti_nm" ></td>
                       
-                      <td class="col-md-2" style="background-color: #f5f6f7; border-top: 2px solid black;" ><strong>생년월일</strong></td>
-                      <td class="col-md-4" style="border-top: 2px solid black;" id="rrn">1996/06/25</td>
+                      <th class="col-md-2"><strong>생년월일</strong></th>
+                      <td class="col-md-4" style="border-top: 2px solid black;" id="bir"></td>
                       
                     </tr>
                     
                     <tr>
-                      <td style="background-color: #f5f6f7;"><strong>연락처</strong></td>
-                      <td id="psti_telno">010-7777-7777</td>
-                      <td style="background-color: #f5f6f7;"><strong>재검여부</strong></td>
-                      <td id="rechkd_yn">Y</td>
+                      <th><strong>연락처</strong></th>
+                      <td id="psti_telno"></td>
+                      <th><strong>재검여부</strong></th>
+                      <td id="rechkd_yn"></td>
                     </tr>
                     
                      <tr>
-                      <td style="background-color: #f5f6f7;"><strong>주소</strong></td>
-                      <td colspan="3" id="psti_adres">대전광역시 유성구 상대동 487 트리플시티 902동 2102호</td>
+                      <th><strong>주소</strong></th>
+                      <td colspan="3" id="psti_adres"></td>
                     </tr>
                   </tbody>
                 </table>
@@ -417,15 +535,15 @@ function showDetail(smplNo){
                   </thead>
                   <tbody>
                     <tr>
-                      <td class="col-md-2"style="background-color: #f5f6f7; border-top: 2px solid black;" ><strong>요청기관</strong></td>
-                      <td class="col-md-4"style="border-top: 2px solid black;" id="req_inst_nm" >을지대학병원</td>
-                      <td class="col-md-2"style="background-color: #f5f6f7;"><strong>연락처</strong></td>
-                      <td class="col-md-4" id="inst_telno">010-7777-7777</td>
+                      <th class="col-md-2"><strong>요청기관</strong></th>
+                      <td class="col-md-4" id="req_inst_nm" ></td>
+                      <th class="col-md-2"><strong>연락처</strong></th>
+                      <td class="col-md-4" id="inst_telno"></td>
                     </tr>
                     
                     <tr>
-                      <td style="background-color: #f5f6f7;" ><strong>주소</strong></td>
-                      <td  colspan="5" id="inst_adres">대전광역시 서구 도안동 132 광효병원</td>
+                      <th><strong>주소</strong></th>
+                      <td colspan="5" id="inst_adres"></td>
                     </tr>
                      
                   </tbody>
@@ -436,6 +554,57 @@ function showDetail(smplNo){
 		  </div>
 		</div>
 	</div>
-
 </section>
+<script>
+
+function smplConfirmed_go(){
+	
+	if(!$('select[name="result"]').val()){
+		alert("검사결과를 선택해 주세요.")	  
+		return; 
+	}
+	
+	var check = confirm("결과를 등록하시겠습니까?");
+	
+	if(check){
+		var result = $('select[name="result"]').val();
+		$('#data-result-code').val(result);
+		$('#smplConfirmed').submit();
+	}else{
+		return;
+	}
+}
+function smplsConfirmed_go(){
+	var smplNo = "";  
+	var manageNo = "";
+	
+	if(!$('select[name="checkResult"]').val()){
+		alert("검사결과를 선택해 주세요.")	  
+		return; 
+	}
+	if($('input[class="form-check-input"]:checked').length == 0){
+		alert("시료를 선택해 주세요.");
+		return;
+	}
+	
+	var check = confirm("결과를 등록하시겠습니까?");
+	
+	if(check){
+		$('input[class="form-check-input"]:checked').each(function(){
+		    smplNo += $(this).val()+ ",";
+		    manageNo += $(this).attr('data-manage-no') + ",";
+		});
+	  	var result = $('select[name="checkResult"]').val();
+	    $('#data-smpls-no').val(smplNo);
+	    $('#data-manages-no').val(manageNo);
+	    $('#data-results-code').val(result);
+	    $('#smplsConfirmed').submit(); 
+	}else{
+		return;
+	}
+}
+
+
+</script>
+
 </body>

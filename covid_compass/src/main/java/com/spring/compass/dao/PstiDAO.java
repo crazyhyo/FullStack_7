@@ -3,11 +3,13 @@ package com.spring.compass.dao;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.spring.compass.command.ConfirmationVO;
 import com.spring.compass.command.SearchCriteria;
 import com.spring.compass.command.VPstiCommand;
 import com.spring.compass.vo.CnfmVO;
 import com.spring.compass.vo.DgnssResultVO;
 import com.spring.compass.vo.InptntVO;
+import com.spring.compass.vo.InspPstiVO;
 import com.spring.compass.vo.InspVO;
 import com.spring.compass.vo.IsoptntVO;
 import com.spring.compass.vo.ManageVO;
@@ -74,5 +76,16 @@ public interface PstiDAO {
 	public ManageVO selectManageByManageNo(String manageNo) throws SQLException;
 	public CnfmVO selectCnfmByCnfmNo(String cnfmNo) throws SQLException;
 	public CnfmVO selectCnfmByManageNo(String manageNo) throws SQLException;
+	
+	public ConfirmationVO selectConfirmation(PstiVO psti) throws SQLException;
+	
+	public int selectConfirmationCheck(PstiVO psti)throws SQLException;
+	
+	public int selectQuestCheck(PstiVO psti)throws SQLException;
+	
+	public int registPstiCheck(PstiVO psti)throws SQLException;
+	
+	public int registPstiUpdate(PstiVO psti)throws SQLException;
+	
 	
 }

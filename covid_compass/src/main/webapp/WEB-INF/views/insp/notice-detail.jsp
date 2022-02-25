@@ -1,73 +1,85 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+   pageEncoding="UTF-8"%>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <head></head>
 
 <title></title>
 
 <body class="hold-transition sidebar-mini">
-	<div class="wrapper" style="background: #ffffff;">
-		<div class="card card-success">
-			<div class="card-header" style="background-color: #5b6f90;">
-				<h3 class="card-title">공지사항 게시판</h3>
-			</div>
-			<!-- Main content -->
-
-			<div class="row">
-				<div class="col-md-12">
-					<div class="card card-outline card-info">
-						<div class="card-header">
-							<h3 class="card-title">게시글 조회</h3>
-						</div>
-						<!-- /.card-header -->
-
-
-						<div class="col-md-12">
-
-
-							<div class="card-body">
-								<div class="form-group">
-									<label for="inputName">제목</label> <input type="text"
-										id="inputName" class="form-control" readonly value="테스트 공지">
-									</div>
-
-									<div class="form-group">
-										<label for="inputStatus">상태</label> <input type="text"
-											id="inputStatus" class="form-control" readonly value="일반">
-										</div>
-
-								<div class="form-group">
-									<label for="inputDescription">내용</label>
-									<textarea class="form-control" rows="3" placeholder="내용" disabled="">테스트 입니다.</textarea>
-								</div>
-
-								<div class="form-group" style="border: none;">
-									<label for="inputClientCompany">첨부된 파일</label> <input
-										type="text" id="inputFile"
-										style="border: none; display: block;" value="첨부된 파일 없음">
-								</div>
-
-								<div class="form-group" style="border: none; text-align: right;">
-									<button class="btn btn-info">수정</button>
-									<button class="btn btn-danger" style="margin-left: 1%;">삭제</button>
-									<button class="btn btn-secondary" style="margin-left: 1%;">목록</button>
-								</div>
-
-							</div>
+	<section class="content">
+		<div class="row" style="margin: 1px;">
+			<div class="col-md-12 pl-0 pr-0">
+				<div class="card" style="margin-top: 15px;">
+					
+					<div class="card-body">
+						<div class="table-responsive">
+							<div class="fomDdoing" style="height: 730px;">
+							<table class="table table-bordered" style="">
+								<tr style="text-align: left;">
+									<td style="font-weight: bold; background-color: #f5fafc; width: 140px">제목</td>
+									<td colspan="3">${notice.title}</td>
+								</tr>
+								<tr style="text-align: left;">
+									<td style="font-weight: bold; background-color: #f5fafc;">작성자</td>
+									<td>${notice.writer}</td>
+									<td style="font-weight: bold; background-color: #f5fafc; width: 140px;">작성일자</td>
+									<fmt:formatDate value="${notice.wrtYmd }" pattern="yyyy-MM-dd" var="wrtYmd" />
+									<td>${wrtYmd}</td>
+								</tr>
+								<tr style="text-align: left; font-weight: bold;">
+									<td style="font-weight: bold; background-color: #f5fafc;">첨부파일</td>
+									<td colspan="3">
+										<a href="getFile?fileName=${fileName}">
+											<span style="font-weight: bold;">${originalFileName}</span>
+										</a>
+									</td>
+								</tr>
+								<tr style="text-align: left;">
+									<td colspan="4">
+										<div style="height: 540px;;">${notice.content}</div>
+									</td>
+								</tr>
+							</table>
 							<!-- /.card-body -->
+							<!-- /.card -->
+
+							<div class="card-footer" style="height: auto; background-color: white; padding: 0;">
+
+								<div class="form-group" style="border: none; text-align: left;">
+									<button class="btn btn-success" style="width:10%; border-color: #1A4F72; background: #1A4F72;" onclick="go_list();">목록</button>
+							</div>
+								</div>
+							</div>
 						</div>
-						<!-- /.card -->
 					</div>
-
 				</div>
-
 			</div>
 		</div>
 		<!-- /.col-->
-	</div>
-
-	<!-- /.content-wrapper -->
-
-
-
-
+	</section>
+	<script>
+		function remove_go(noticeNo){
+			//alert(noticeNo);
+			location.href='<%=request.getContextPath()%>/insp/notice-remove?noticeNo='+noticeNo;
+		}
+	
+		function go_list(){
+			
+			if(typeof(history.pushState) == 'function'){
+				var renewURL = parent.location.href;
+				renewURL = renewURL.substring(0, renewURL.indexOf('?'));
+				
+				renewURL += "?mCode=M020600";
+				
+				parent.history.pushState('', null, renewURL);
+				
+			}else{
+				location.hash = "#";
+			}
+			location.href='<%=request.getContextPath()%>/insp/notice-list';
+		}
+	</script>
+	
 </body>

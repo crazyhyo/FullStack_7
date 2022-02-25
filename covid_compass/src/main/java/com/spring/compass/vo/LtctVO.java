@@ -19,9 +19,6 @@ public class LtctVO implements Serializable{
 	private String cityNo;
 	private String areaNo;
 	
-	
-	
-	
 	public String getAreaNo() {
 		return areaNo;
 	}

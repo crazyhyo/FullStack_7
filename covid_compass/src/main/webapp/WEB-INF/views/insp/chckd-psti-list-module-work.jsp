@@ -6,13 +6,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
 <script type="text/x-handlebars-template" id="chckd-template">
 {{#each .}}
-	<tr onclick="showDetail('{{pstiNo}}')" class="each-chckd-element" data-psti-no="{{pstiNo}}">
-		<td onclick="event.cancelBubble=true" ><input type="checkbox" class="form-check-input" onclick="cancleAll();" style="margin-left: -8px; vertical-align:middle;" name="pstiNo" value="{{pstiNo}}"></td>
-		<td>{{pstiNm}}</td>
-		<td>{{prettifyDate htscYmd}}</td>
-		<td>{{age}}</td>
-		<td>{{bir}}</td>
-		<td>{{pstiTelno}}</td>
+	<tr style="cursor:pointer;" onclick="showDetail('{{pstiNo}}')" class="each-chckd-element" data-psti-no="{{pstiNo}}">
+		<td onclick="event.cancelBubble=true">
+			<input type="checkbox" class="form-check-input" onclick="cancleAll();" style="margin-left: -4px; vertical-align:middle; cursor:pointer;" name="pstiNo" value="{{pstiNo}}">
+		</td>
+		<td style="text-align:left;">{{pstiNm}}</td>
+		<td style="text-align:center;">{{age}}</td>
+		<td style="text-align:center;">{{pstiTelno}}</td>
+		<td style="text-align:center;">{{prettifyDate htscYmd}}</td>
+		<td style="text-align:center">{{prettifyDate resYmd}}</td>
+		<td style="text-align:center"><span class="badge badge-{{fnBadgePstvYn pstvYn}}">{{fnPstvYn pstvYn}}</span></td>
 	</tr>
 {{/each}}
 </script>
@@ -24,7 +27,7 @@
 	</li>
 
 	<li class="page-item each-chckd-psti-pagination-element">
-		<a class="page-link" href="{{#if prev}}{{prevPageNum}}{{/if}}">
+		<a class="page-link {{checkDisabled prev}}" href="{{#if prev}}{{prevPageNum}}{{/if}}">
 			<i class="fas fa-angle-left" style="color:#1a4f72;"></i>
 		</a>
 	</li>
@@ -38,13 +41,13 @@
 	{{/each}}
 	
 	<li class="page-item each-chckd-psti-pagination-element">
-		<a class="page-link" href="{{#if next}}{{nextPageNum}}{{/if}}">
+		<a class="page-link {{checkDisabled next}}" href="{{#if next}}{{nextPageNum}}{{/if}}">
 			<i class="fas fa-angle-right" style="color:#1a4f72;"></i>
 		</a>
 	</li>
 
 	<li class="page-item each-chckd-psti-pagination-element">
-		<a class="page-link href="{{realEndPage}}">
+		<a class="page-link" href="{{realEndPage}}">
 			<i class="fas fa-angle-double-right" style="color:#1a4f72;"></i>
 		</a>
 	</li>
@@ -56,7 +59,33 @@ Handlebars.registerHelper({
 		var dateObj = new Date(timeValue);
 		var year = dateObj.getFullYear();
 		var month = dateObj.getMonth() + 1;
+		month += '';
+		if(month.length < 2){
+			month = '0' + month;
+		}
 		var date = dateObj.getDate();
+		date += '';
+		if(date.length < 2){
+			date = '0' + date;
+		}
+		return year + "-" + month + "-" + date;
+	}
+		return "없음";
+},
+"prettifyDateDetail" : function(timeValue){
+	if(timeValue){
+		var dateObj = new Date(timeValue);
+		var year = dateObj.getFullYear();
+		var month = dateObj.getMonth() + 1;
+		month += '';
+		if(month.length < 2){
+			month = '0' + month;
+		}
+		var date = dateObj.getDate();
+		date += '';
+		if(date.length < 2){
+			date = '0' + date;
+		}
 		return year + "-" + month + "-" + date;
 	}
 },
@@ -75,9 +104,30 @@ Handlebars.registerHelper({
 "fnGender" : function(gender){
 	if(gender == "M"){
 		return "남자";
-	}if(gender == "W"){
+	}if(gender == "F"){
 		return "여자";
 	}
+},
+"fnBadgePstvYn" : function(pstvYn){
+	if(pstvYn == "Y"){
+		return "danger";
+	}
+	if(pstvYn == "N"){
+		return "primary";
+	}
+	return "secondary"
+},
+"fnPstvYn" : function(pstvYn){
+	if(pstvYn == "Y"){
+		return "양성";
+	}
+	if(pstvYn == "N"){
+		return "음성";
+	}
+	return "없음"
+},
+"checkDisabled" : function(flag){
+  if(!flag) return 'disabled';
 }
 });
 </script>
@@ -85,7 +135,7 @@ Handlebars.registerHelper({
 var page = 1;
 
 window.onload = function(){
-	var url = '<%=request.getContextPath()%>/rest-insp/insp-chckd-psti-list';
+	var url = '<%=request.getContextPath()%>/rest-insp/chckd-list';
 	list_go(page, url);
 	$('ul.pagination').on('click', 'li a', function(event){
 		if($(this).attr("href")){
@@ -107,8 +157,7 @@ function make_form(pageParam){
 	jobForm.find("[name='page']").val(page);
 	jobForm.find("[name='perPageNum']").val($('select[name="perPageNum"]').val());
 	jobForm.find("[name='searchType']").val($('select[name="searchType"]').val());
-	jobForm.find("[name='keyword']").val($('div.input-group>input[name="keywrod"]').val());
-	
+	jobForm.find("[name='keyword']").val($('input[id="keyword"]').val());
 	return jobForm;
 }
 
@@ -123,9 +172,26 @@ function getPage(handlebarsProcessingURL, form){
 		dataType : 'json',
 		data : form.serialize(),
 		success : function(dataMap){
-			printData(dataMap.chckdList, $('#chckd-table-tbody'), $('#chckd-template'), '.each-chckd-element');
-			printPagination(dataMap.pageMaker, $('#chckd-psti-pagination-ul'), $('#chckd-psti-pagination-template'), '.each-chckd-psti-pagination-element');
-			printData(dataMap.chckd, $('#chckd-detail-module'), $('#chckd-detail-template'), '.chckd-detail-element');
+			$('#chckd-table-tbody').html("");
+			if(dataMap.chckdList.length == 0){
+				$('#chckd-table-tbody').html('<tr class="each-chckd-element"><td colspan="7">데이터가 없습니다.</td></tr>');
+				dataMap.pageMaker.endPage = 1;
+				dataMap.pageMaker.realEndPage = 1;
+				printPagination(dataMap.pageMaker, $('#chckd-psti-pagination-ul'), $('#chckd-psti-pagination-template'), '.each-chckd-psti-pagination-element');
+				printData('', $('#chckd-detail-module'), $('#chckd-detail-template'), '.chckd-detail-element')
+				$('#enableReadRrn').attr('disabled', true);
+			}else{
+				printData(dataMap.chckdList, $('#chckd-table-tbody'), $('#chckd-template'), '.each-chckd-element');
+				printPagination(dataMap.pageMaker, $('#chckd-psti-pagination-ul'), $('#chckd-psti-pagination-template'), '.each-chckd-psti-pagination-element');
+				
+				$('#enableReadRrn').data('rrn', dataMap.chckd.rrn);
+				$('#enableReadRrn').data('manageNo', dataMap.chckd.pstiNo);
+		      	dataMap.chckd.rrn = (dataMap.chckd.rrn.substring(0,8) + '******');
+				
+				printData(dataMap.chckd, $('#chckd-detail-module'), $('#chckd-detail-template'), '.chckd-detail-element');
+				$('#enableReadRrn').attr('disabled', false);
+			}
+			
 		},
 		error : function(error){
 			alert('error' + error.status);
@@ -177,14 +243,32 @@ function cancleAll(){
 	}
 }
 function registRequestSmpl(){
-	var pstiNoValues=[];
+	var pstiNo ='';
+	var pstiCount = 0;
 	$('input[class="form-check-input"]:checked').each(function(){
-		var test = $(this).val();
-		alert(test);
-		console.log(test);
-		pstiNoValues.push(test);
+		pstiNo += $(this).val() + ",";
+		pstiCount += 1;
 	});
-	location.href='<%=request.getContextPath()%>/insp/regist-Request-Smpl?pstiNo='+pstiNoValues;
+	
+	if(pstiCount == 0){
+		alert("선택된 시료가 없습니다.");
+		return;
+	}
+	
+	$.ajax({
+		url : '<%=request.getContextPath()%>/rest-insp/regist-Request-Smpl',
+		type: 'post',
+		data : {"pstiNo" : pstiNo},
+		success : function(result){
+			alert(pstiCount+"명의 시료를 성공적으로 보건소에 전달하였습니다.");
+			location.reload();
+		},
+		error : function(error){
+			alert('error' + error.status);
+		}
+		
+	})
+	
 }
 </script>
 <section class="content">
@@ -195,25 +279,24 @@ function registRequestSmpl(){
 						style="text-align: center;">
 						<thead>
 							<tr role="row">
-								<th tabindex="0" aria-controls="example2" rowspan="1"
-									colspan="1"
-									aria-label="Browser: activate to sort column ascending">
+								<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending" style="width:10%;">
 									<div class="form-group">
 										<div class="form-check">
-											<input type="checkbox" style="float : left;" class="form-check-input" name="psti_check_all" id="selectAll" onclick="selectAll();">
+											<input type="checkbox" style="cursor:pointer; float : left;" name="psti_check_all" id="selectAll" onclick="selectAll();">
 										</div>
 									</div>
 								</th>
-								<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="" >성명</th>
-								<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">검사일</th>
-								<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="">나이</th>
-								<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">생년월일</th>
-								<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">전화번호</th>
+								<th style="text-align:center; width:15%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="" >성명</th>
+								<th style="text-align:center; width:10%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">나이</th>
+								<th style="text-align:center; width:15%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">연락처</th>
+								<th style="text-align:center; width:15%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">검사일</th>
+								<th tabindex="0" aria-controls="example2" rowspan="1" style="text-align: center; width:15%;" colspan="1" aria-label="">결과일</th>
+								<th tabindex="0" aria-controls="example2" rowspan="1" style="text-align: center; width:20%;" colspan="1" aria-label="">검사결과</th>
 							</tr>
 						</thead>
 						<tbody id="chckd-table-tbody">
 							<tr class="each-chckd-element">
-								<td colspan="6">페이지 로딩중 입니다.</td>
+								<td colspan="7">페이지 로딩중 입니다.</td>
 							</tr>
 						</tbody>
 					</table>

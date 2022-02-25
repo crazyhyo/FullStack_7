@@ -26,6 +26,16 @@ public class ReqInptntListCommand implements Serializable{
 	private Date acceptYmd;
 	private String requestCode;
 	
+	private String client;
+
+	public String getClient() {
+		return client;
+	}
+
+	public void setClient(String client) {
+		this.client = client;
+	}
+
 	public Date getAcceptYmd() {
 		return acceptYmd;
 	}

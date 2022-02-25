@@ -18,6 +18,16 @@ public class InptntDetailCommand extends DgnssDetailCommand implements Serializa
 	private String critCode;
 	private String ngtvCnt;
 	
+	private String disabled;
+	
+	public String getDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(String disabled) {
+		this.disabled = disabled;
+	}
+
 	public String getCritCode() {
 		return critCode;
 	}
@@ -35,11 +45,6 @@ public class InptntDetailCommand extends DgnssDetailCommand implements Serializa
 	}
 
 	public InptntDetailCommand() {}
-	/*public InptntDetailCommand(VPstiCommand psti, DgnssResultVO dgnssResult, InptntVO inptnt) {
-		if(psti!=null) setData(psti);
-		if(dgnssResult!=null) setData(dgnssResult);
-		if(inptnt!=null) setData(inptnt);
-	}*/
 	
 	@Override
 	public void setData(VPstiCommand psti) {

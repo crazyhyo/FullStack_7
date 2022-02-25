@@ -4,24 +4,17 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <c:set var="mainLogList" value="${dataMap.mainLogList }"/>
-<c:set var="inspList" value="${instMap.inspList }"/>
-<c:set var="pbhtList" value="${instMap.pbhtList }"/>
-<c:set var="hsptList" value="${instMap.hsptList }"/>
-<c:set var="ltctList" value="${instMap.ltctList }"/>
+<c:set var="mainFailLogList" value="${dataMap.mainFailLogList }"/>
+
 <head>
 <style>
-	.nav-link:active{
-		background-color: #1A4F72;
-	}
+	.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    color: #fff;
+    background-color: #1a4f72;
+}
 </style>
 </head>
-<script>
-	window.onload = function(){
-		$('.nav-link').on('click',function(){
-			$(this).css('background-color', '#1A4F72');
-		})
-	}
-</script>
+
 <body>
 <!-- 메인 에러로그 div 시작 -->
 
@@ -29,19 +22,13 @@
 		<div class="col-6" style="margin-top: 10px;">
 			<!-- Custom Tabs -->
 			<div class="card">
-				<div class="card-header d-flex p-0">
-					<h3 class="card-title p-3">에러로그 관리</h3>
-					<ul class="nav nav-pills ml-auto p-2">
-						<li class="nav-item"><a class="nav-link active" style="background: #1A4F72" href="#tab_1"
-							data-toggle="tab">검사소</a></li>
-						<li class="nav-item"><a class="nav-link" href="#tab_2"
-							data-toggle="tab">보건소</a></li>
-						<li class="nav-item"><a class="nav-link" href="#tab_3"
-							data-toggle="tab">병원</a></li>
-						<li class="nav-item"><a class="nav-link" href="#tab_4"
-							data-toggle="tab">생활치료센터</a></li>
-
-					</ul>
+				<div class="card-header ui-sortable-handle">
+					<span class="card-title" style="font-weight: bold;">접속실패 로그</span>
+					<div class="card-tools">
+						<button type="button" class="btn btn-primary"
+								style="background: #1a4f72; border: 0px; width: 80px; height: 30px;"
+							 	onclick="failFileDown_go()">다운로드</button>
+				    </div>
 				</div>
 				<!-- /.card-header -->
 
@@ -50,89 +37,43 @@
 						<div class="card col-md-12"
 							style="position: relative; left: 0px; top: 0px; margin-bottom: 0px;">
 							<div class="card-header ui-sortable-handle" style="cursor: move;">
-								<div class="input-group float-left" style="width: 180px;">
-									<input type="text" name="table_search" class="form-control"
-										placeholder="Search" style="width: 35px; height: 30px;">
-
-									<div class="input-group-append"
-										style="width: 35px; height: 30px;">
-										<button type="submit" class="btn btn-default">
-
-											<i class="fas fa-search fa-sm"></i>
-										</button>
-									</div>
-								</div>
-								<div class="card-tools">
-									<ul class="pagination pagination-sm">
-										<li class="page-item"><a href="#" class="page-link">«</a></li>
-										<li class="page-item"><a href="#" class="page-link">1</a></li>
-										<li class="page-item"><a href="#" class="page-link">2</a></li>
-										<li class="page-item"><a href="#" class="page-link">3</a></li>
-										<li class="page-item"><a href="#" class="page-link">»</a></li>
-									</ul>
-								</div>
+								
 							</div>
 
 							<!-- /.card-header -->
-							<div class="card-body" style="padding: 0px;">
+							<div class="card-body" style="padding: 0px;  height: 293px;">
 								<div class="table-responsive">
 									<table class="table table-hover text-nowrap"
-										style="text-align: center;">
+										style="text-align: center; ">
 										<thead>
 											<tr role="row">
 												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">레벨</th>
+													style="text-align: center;" colspan="1" aria-label="">기관번호</th>
 												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">구분</th>
+													style="text-align: center;" colspan="1" aria-label="">회원번호</th>
 												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">파일이름</th>
+													style="text-align: center;" colspan="1" aria-label="">회원명</th>
+
 												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">클라이언트
-													IP</th>
+													style="text-align: center;" colspan="1" aria-label="">IP</th>
+												<th tabindex="0" aria-controls="example2" rowspan="1"
+													style="text-align: center;" colspan="1" aria-label="">발생일자</th>
 											</tr>
 										</thead>
 										<tbody>
-
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-primary">emerg</span></td>
-												<td>500</td>
-												<td>abc.csv</td>
-												<td>000.0.0.0</td>
+											<c:set var="failLogList" value="${mainFailLogList}"/>
+											<c:if test="${empty failLogList}">
+												<td colspan="5"><strong>해당 내용이 없습니다.</strong></td>
+											</c:if>
+											<c:forEach items="${failLogList}" var="failLog">
+											<tr style="cursor: default;">
+												<td>${failLog.instNo }</td>
+												<td>${failLog.mberNo }</td>
+												<td>${failLog.mberNm}</td>
+												<td>${failLog.userIp }</td>
+												<td>${failLog.userLogTime }</td>
 											</tr>
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-primary">alert</span></td>
-												<td>404</td>
-												<td>abc.csv</td>
-												<td>111.1.1.1</td>
-											</tr>
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-primary">crit</span></td>
-												<td>400</td>
-												<td>abc.csv</td>
-												<td>111.1.1.2</td>
-											</tr>
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-primary">error</span></td>
-												<td>404</td>
-												<td>abc.csv</td>
-												<td>111.1.1.1</td>
-											</tr>
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-primary">warn</span></td>
-												<td>404</td>
-												<td>abc.csv</td>
-												<td>111.1.1.1</td>
-											</tr>
+											</c:forEach>
 										</tbody>
 									</table>
 
@@ -160,22 +101,13 @@
 		<div class="col-6" style="margin-top: 10px;">
 			<!-- Custom Tabs -->
 			<div class="card">
-				<div class="card-header d-flex p-0">
-					<h3 class="card-title p-3">접속로그 관리</h3>
-					<!-- <ul class="nav nav-pills ml-auto p-2">
-						<li class="nav-item"><a class="nav-link active" style="background: #1A4F72" href="#tab_5"
-							data-toggle="tab">검사소</a></li>
-						<li class="nav-item"><a class="nav-link" href="#tab_6"
-							data-toggle="tab">보건소</a></li>
-						<li class="nav-item"><a class="nav-link" href="#tab_7"
-							data-toggle="tab">병원</a></li>
-						<li class="nav-item"><a class="nav-link" href="#tab_8"
-							data-toggle="tab">생활치료센터</a></li>
-					</ul> -->
-					
-					<button type="button" class="btn btn-primary"
-							style="background: #1a4f72; border: 0px; margin-left:430px; margin-top:6px; width: 80px; height: 30px;"
-						 	onclick="fileDown_go()">다운로드</button>
+				<div class="card-header ui-sortable-handle">
+					<span class="card-title" style="font-weight: bold;">접속성공 로그</span>
+					<div class="card-tools">
+						<button type="button" class="btn btn-primary"
+								style="background: #1a4f72; border: 0px; width: 80px; height: 30px;"
+							 	onclick="fileDown_go()">다운로드</button>
+					</div>
 					
 				</div>
 				<!-- /.card-header -->
@@ -188,7 +120,7 @@
 								
 							</div>
 							<!-- /.card-header -->
-							<div class="card-body" style="padding: 0px;">
+							<div class="card-body" style="padding: 0px;  height: 293px;">
 								<div class="table-responsive">
 									<table class="table table-hover text-nowrap"
 										style="text-align: center;">
@@ -209,8 +141,11 @@
 										</thead>
 										<tbody>
 											<c:set var="logList" value="${mainLogList}"/>
+											<c:if test="${empty logList }">
+											 	<td colspan="5"><strong>해당 내용이 없습니다.</strong></td>
+											</c:if>
 											<c:forEach items="${logList}" var="log">
-											<tr style="cursor: pointer;">
+											<tr style="cursor: default;">
 												<td>${log.instNo }</td>
 												<td>${log.mberNo }</td>
 												<td>${log.mberNm}</td>
@@ -239,34 +174,41 @@
 			</div>
 		</div>
 		<!-- /.col -->
+	</div>
+
 
 <!-- 메인 에러로그 div 끝 -->
 <!-- 메인 기관관리 div 시작 -->
+	<div class="row" style="box-sizing: content-box; padding: 1px;">
 		<div class="col-9">
 			<!-- Custom Tabs -->
 			<div class="card">
-				<div class="card-header d-flex p-0">
-					<h3 class="card-title p-3">기관 관리</h3>
-					<ul class="nav nav-pills ml-auto p-2">
-						<li class="nav-item"><a class="nav-link active" style="background: #1A4F72" href="#tab_9"
-							data-toggle="tab">검사소</a></li>
-						<li class="nav-item"><a class="nav-link" href="#tab_10"
-							data-toggle="tab">보건소</a></li>
-						<li class="nav-item"><a class="nav-link" href="#tab_11"
-							data-toggle="tab">병원</a></li>
-						<li class="nav-item"><a class="nav-link" href="#tab_12"
-							data-toggle="tab">생활치료센터</a></li>
-						<li class="nav-item dropdown"><a
-							class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
-								관리메뉴 <span class="caret"></span>
-						</a>
-							<div class="dropdown-menu">
-								<a class="dropdown-item" tabindex="-1" href="#"
-									onclick="OpenWindow('./inst-registForm','','600','600');">등록</a>
-								<a class="dropdown-item" tabindex="-1" href="#">삭제</a>
-
-							</div></li>
-					</ul>
+				<div class="card-header ui-sortable-handle">
+					<span class="card-title" style="font-weight: bold; margin-left: 10px; margin-top: 10px; ">기관 관리</span>
+					<div class="card-tools">
+						<ul class="nav nav-pills ml-auto p-2">
+							<li class="nav-item">
+								<a class="nav-link active"  href="#tab_9" data-toggle="pill" role="tab" aria-controls="custom-tabs-three-home-tab" aria-selected="true">검사소</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="#tab_10" data-toggle="pill" role="tab" aria-controls="custom-tabs-three-profile-tab" aria-selected="false">보건소</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="#tab_11" data-toggle="pill" role="tab" aria-controls="custom-tabs-three-profile-tab" aria-selected="false">병원</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="#tab_12" data-toggle="pill" role="tab" aria-controls="custom-tabs-three-profile-tab" aria-selected="false">생활치료센터</a>
+							</li>
+							<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">관리메뉴 <span class="caret"></span></a>
+								<div class="dropdown-menu">
+									<a class="dropdown-item" tabindex="-1" href="#"
+										onclick="OpenWindow('./inst-registForm','기관등록','600','600');">등록</a>
+									<a  onclick="deleteInst()" class="dropdown-item" tabindex="-1">삭제</a>
+	
+								</div></li>
+						</ul>
+					</div>
 				</div>
 				<!-- /.card-header -->
 
@@ -274,75 +216,31 @@
 					<div class="tab-pane active" id="tab_9">
 						<div class="card col-md-12"
 							style="position: relative; left: 0px; top: 0px; margin-bottom: 0px;">
-							<div class="card-header ui-sortable-handle" style="cursor: move;">
-								<div class="input-group float-left" style="width: 180px;">
-									<input type="text" name="table_search" class="form-control"
-										placeholder="Search" style="width: 35px; height: 30px;">
-
-									<div class="input-group-append"
-										style="width: 35px; height: 30px;">
-										<button type="submit" class="btn btn-default">
-
-											<i class="fas fa-search fa-sm"></i>
-										</button>
-									</div>
-								</div>
-								<div class="card-tools">
-									<ul class="pagination pagination-sm">
-										<li class="page-item"><a href="#" class="page-link">«</a></li>
-										<li class="page-item"><a href="#" class="page-link">1</a></li>
-										<li class="page-item"><a href="#" class="page-link">2</a></li>
-										<li class="page-item"><a href="#" class="page-link">3</a></li>
-										<li class="page-item"><a href="#" class="page-link">»</a></li>
-									</ul>
+							<div class="card-header ui-sortable-handle" style="cursor: move; width: 400px;">
+								<div class="input-group float-left" style="">
+									<select class="form-control " name="searchType2" id="searchType2" style="width: 30px;">
+										<option value="" ${pageMaker.cri.searchType2 eq '' ? 'selected':''}>검색구분</option>
+										<option value="name"
+											${pageMaker.cri.searchType2 eq 'name' ? 'selected':''}>기관명</option>
+										<option value="adres"
+											${pageMaker.cri.searchType2 eq 'adres' ? 'selected':''}>주소</option>
+									</select>
+										<input class="form-control" type="text" name="keyword"
+											value="${pageMaker.cri.keyword }"
+											style="width: 90px; display: inline-block;" />
+										<span class="input-group-append">
+											<button class="btn btn-primary" type="button" id="searchBtn"
+												style=" background: #1a4f72; color: #ffffff; border-color: #1a4f72; display: inline-block; margin-bottom: 4px;"
+												data-card-widget="search"
+												onclick="list_go('1','<%=request.getContextPath()%>/rest-main/insp-list')">
+												<i class="fa fa-fw fa-search"></i>
+											</button>
+										</span>
 								</div>
 							</div>
 							<!-- /.card-header -->
-							<div class="card-body" style="padding: 0px;">
-								<div class="table-responsive">
-									<table class="table table-hover text-nowrap"
-										style="text-align: center; table-layout: fixed;">
-										<thead>
-											<tr role="row">
-												<th style="width: 5%;"><input type="checkbox"
-													id="selectAll" onclick="selectAll()"></th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center; width: 15%;" colspan="1">구분</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center; width: 15%;" colspan="1">기관명</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center; width: 32%;" colspan="1">주소</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center; width: 15%;" colspan="1">연락처</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center; width: 15%;" colspan="1">직원수</th>
-											</tr>
-										</thead>
-										<tbody>
-										<c:if test="${empty inspList }">
-											<td colspan="6"><strong>해당 내용이 없습니다.</strong></td>
-										</c:if>
-										<c:forEach items="${inspList }" var="insp">
-											<tr style="cursor: pointer;">
-												<td onclick="event.cancelBubble=true"
-													style="cursor: default;"><input type="checkbox"
-													name="inst" onclick="cancleAll()"></td>
-												<td><span class="badge badge-primary">검사소</span></td>
-												<td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-												${insp.instNm }</td>
-												<td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-												${insp.instAdres }</td>
-												<td>${insp.instTelno }</td>
-												<td>${insp.empCnt }</td>
-											</tr>
-										</c:forEach>
-											
-										</tbody>
-									</table>
-
-								</div>
-
-							</div>
+							
+							<%@ include file="./main-insp-list.jsp" %>
 							<!-- /.card-body -->
 						</div>
 					</div>
@@ -350,178 +248,63 @@
 					<div class="tab-pane" id="tab_10">
 						<div class="card col-md-12"
 							style="position: relative; left: 0px; top: 0px; margin-bottom: 0px;">
-							<div class="card-header ui-sortable-handle" style="cursor: move;">
-								<div class="input-group float-left" style="width: 180px;">
-									<input type="text" name="table_search" class="form-control"
-										placeholder="Search" style="width: 35px; height: 30px;">
-
-									<div class="input-group-append"
-										style="width: 35px; height: 30px;">
-										<button type="submit" class="btn btn-default">
-
-											<i class="fas fa-search fa-sm"></i>
-										</button>
-									</div>
-								</div>
-								<div class="card-tools">
-									<ul class="pagination pagination-sm">
-										<li class="page-item"><a href="#" class="page-link">«</a></li>
-										<li class="page-item"><a href="#" class="page-link">1</a></li>
-										<li class="page-item"><a href="#" class="page-link">2</a></li>
-										<li class="page-item"><a href="#" class="page-link">3</a></li>
-										<li class="page-item"><a href="#" class="page-link">»</a></li>
-									</ul>
+							<div class="card-header ui-sortable-handle" style="cursor: move; width: 400px;">
+								<div class="input-group float-left" style="">
+									<select class="form-control " name="searchType2pb" id="searchType2pb" style="width: 30px;">
+										<option value="" ${pageMaker.cri.searchType2 eq '' ? 'selected':''}>검색구분</option>
+										<option value="name"
+											${pageMaker.cri.searchType2 eq 'name' ? 'selected':''}>기관명</option>
+										<option value="adres"
+											${pageMaker.cri.searchType2 eq 'adres' ? 'selected':''}>주소</option>
+									</select>
+										<input class="form-control" type="text" name="keywordpb"
+											value="${pageMaker.cri.keyword }"
+											style="width: 90px; display: inline-block;" />
+										<span class="input-group-append">
+											<button class="btn btn-primary" type="button" id="searchBtn"
+												style="background: #1a4f72; color: #ffffff; border-color: #1a4f72; display: inline-block; margin-bottom: 4px;"
+												data-card-widget="search"
+												onclick="pbhtList_go('1','<%=request.getContextPath()%>/rest-main/pbht-list')">
+												<i class="fa fa-fw fa-search"></i>
+											</button>
+										</span>
 								</div>
 							</div>
 							<!-- /.card-header -->
-							<div class="card-body" style="padding: 0px;">
-								<div class="table-responsive">
-									<table class="table table-hover text-nowrap"
-										style="text-align: center;">
-										<thead>
-											<tr role="row">
-												<th style="width: 5%;"><input type="checkbox"
-													id="selectAll" onclick="selectAll()"></th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">구분</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">기관명</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1"
-													aria-sort="ascending" aria-label="">주소</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">연락처</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">직원수</th>
-											</tr>
-										</thead>
-										<tbody>
-										<c:if test="${empty pbhtList}">
-										<td colspan="6"><strong>해당 내용이 없습니다.</strong></td>
-										</c:if>
-										<c:forEach items="${pbhtList }" var="pbht">
-											<tr style="cursor: pointer;">
-												<td onclick="event.cancelBubble=true"
-													style="cursor: default;"><input type="checkbox"
-													name="inst" onclick="cancleAll()"></td>
-												<td><span class="badge badge-success">보건소</span></td>
-												<td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-												${pbht.instNm }</td>
-												<td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-												${pbht.instAdres }</td>
-												<td>${pbht.instTelno }</td>
-												<td>${pbht.empCnt }</td>
-											</tr>
-										</c:forEach>
-										</tbody>
-									</table>
-
-								</div>
-
-							</div>
+							
 							<!-- /.card-body -->
+							<%@ include file="./main-pbht-list.jsp" %>
 						</div>
 					</div>
 					<!-- /.tab-pane -->
 					<div class="tab-pane" id="tab_11">
 						<div class="card col-md-12"
 							style="position: relative; left: 0px; top: 0px; margin-bottom: 0px;">
-							<div class="card-header ui-sortable-handle" style="cursor: move;">
-								<div class="input-group float-left" style="width: 180px;">
-									<input type="text" name="table_search" class="form-control"
-										placeholder="Search" style="width: 35px; height: 30px;">
-
-									<div class="input-group-append"
-										style="width: 35px; height: 30px;">
-										<button type="submit" class="btn btn-default">
-
-											<i class="fas fa-search fa-sm"></i>
-										</button>
-									</div>
-								</div>
-								<div class="card-tools">
-									<ul class="pagination pagination-sm">
-										<li class="page-item"><a href="#" class="page-link">«</a></li>
-										<li class="page-item"><a href="#" class="page-link">1</a></li>
-										<li class="page-item"><a href="#" class="page-link">2</a></li>
-										<li class="page-item"><a href="#" class="page-link">3</a></li>
-										<li class="page-item"><a href="#" class="page-link">»</a></li>
-									</ul>
+							<div class="card-header ui-sortable-handle" style="cursor: move; width: 400px;">
+								<div class="input-group float-left" style="">
+									<select class="form-control " name="searchType2hs" id="searchType2hs" style="width: 30px;">
+										<option value="" ${pageMaker.cri.searchType2 eq '' ? 'selected':''}>검색구분</option>
+										<option value="name"
+											${pageMaker.cri.searchType2 eq 'name' ? 'selected':''}>기관명</option>
+										<option value="adres"
+											${pageMaker.cri.searchType2 eq 'adres' ? 'selected':''}>주소</option>
+									</select>
+										<input class="form-control" type="text" name="keywordhs"
+											value="${pageMaker.cri.keyword }"
+											style="width: 90px; display: inline-block;" />
+										<span class="input-group-append">
+											<button class="btn btn-primary" type="button" id="searchBtn"
+												style="background: #1a4f72; color: #ffffff; border-color: #1a4f72; display: inline-block; margin-bottom: 4px;"
+												data-card-widget="search"
+												onclick="hsptList_go('1','<%=request.getContextPath()%>/rest-main/hspt-list')">
+												<i class="fa fa-fw fa-search"></i>
+											</button>
+										</span>
 								</div>
 							</div>
 							<!-- /.card-header -->
-							<div class="card-body" style="padding: 0px;">
-								<div class="table-responsive">
-									<table class="table table-hover text-nowrap"
-										style="text-align: center;">
-										<thead>
-											<tr role="row">
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">구분</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">기관명</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1"
-													aria-sort="ascending" aria-label="">주소</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">연락처</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">직원수</th>
-											</tr>
-										</thead>
-										<tbody>
-
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-danger">병원</span></td>
-												<td>대전 병원</td>
-												<td>대전시 서구</td>
-												<td>042-123-4567</td>
-												<td>50</td>
-											</tr>
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-danger">병원</span></td>
-												<td>대전 병원</td>
-												<td>대전시 서구</td>
-												<td>042-123-4567</td>
-												<td>50</td>
-											</tr>
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-danger">병원</span></td>
-												<td>대전 병원</td>
-												<td>대전시 서구</td>
-												<td>042-123-4567</td>
-												<td>50</td>
-											</tr>
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-danger">병원</span></td>
-												<td>대전 병원</td>
-												<td>대전시 서구</td>
-												<td>042-123-4567</td>
-												<td>50</td>
-											</tr>
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-danger">병원</span></td>
-												<td>대전 병원</td>
-												<td>대전시 서구</td>
-												<td>042-123-4567</td>
-												<td>50</td>
-											</tr>
-										</tbody>
-									</table>
-
-								</div>
-
-							</div>
+							
+							<%@ include file="./main-hspt-list.jsp" %>
 							<!-- /.card-body -->
 						</div>
 					</div>
@@ -529,103 +312,32 @@
 					<div class="tab-pane" id="tab_12">
 						<div class="card col-md-12"
 							style="position: relative; left: 0px; top: 0px; margin-bottom: 0px;">
-							<div class="card-header ui-sortable-handle" style="cursor: move;">
-								<div class="input-group float-left" style="width: 180px;">
-									<input type="text" name="table_search" class="form-control"
-										placeholder="Search" style="width: 35px; height: 30px;">
-
-									<div class="input-group-append"
-										style="width: 35px; height: 30px;">
-										<button type="submit" class="btn btn-default">
-
-											<i class="fas fa-search fa-sm"></i>
-										</button>
-									</div>
-								</div>
-								<div class="card-tools">
-									<ul class="pagination pagination-sm">
-										<li class="page-item"><a href="#" class="page-link">«</a></li>
-										<li class="page-item"><a href="#" class="page-link">1</a></li>
-										<li class="page-item"><a href="#" class="page-link">2</a></li>
-										<li class="page-item"><a href="#" class="page-link">3</a></li>
-										<li class="page-item"><a href="#" class="page-link">»</a></li>
-									</ul>
+							<div class="card-header ui-sortable-handle" style="cursor: move; width: 400px;">
+								<div class="input-group float-left" style="">
+									<select class="form-control " name="searchType2lt" id="searchType2lt" style="width: 30px;">
+										<option value="" ${pageMaker.cri.searchType2 eq '' ? 'selected':''}>검색구분</option>
+										<option value="name"
+											${pageMaker.cri.searchType2 eq 'name' ? 'selected':''}>기관명</option>
+										<option value="adres"
+											${pageMaker.cri.searchType2 eq 'adres' ? 'selected':''}>주소</option>
+									</select>
+										<input class="form-control" type="text" name="keywordlt"
+											value="${pageMaker.cri.keyword }"
+											style="width: 90px; display: inline-block;" />
+										<span class="input-group-append">
+											<button class="btn btn-primary" type="button" id="searchBtn"
+												style="background: #1a4f72; color: #ffffff; border-color: #1a4f72; display: inline-block; margin-bottom: 4px;"
+												data-card-widget="search"
+												onclick="ltctList_go('1','<%=request.getContextPath()%>/rest-main/ltct-list')">
+												<i class="fa fa-fw fa-search"></i>
+											</button>
+										</span>
 								</div>
 							</div>
 							<!-- /.card-header -->
-							<div class="card-body" style="padding: 0px;">
-								<div class="table-responsive">
-									<table class="table table-hover text-nowrap"
-										style="text-align: center;">
-										<thead>
-											<tr role="row">
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">구분</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">기관명</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1"
-													aria-sort="ascending" aria-label="">주소</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">연락처</th>
-												<th tabindex="0" aria-controls="example2" rowspan="1"
-													style="text-align: center;" colspan="1" aria-label="">직원수</th>
-											</tr>
-										</thead>
-										<tbody>
-
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-warning">생활치료센터</span></td>
-												<td>대전 생활치료센터</td>
-												<td>대전시 서구</td>
-												<td>042-123-4567</td>
-												<td>50</td>
-											</tr>
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-warning">생활치료센터</span></td>
-												<td>대전 생활치료센터</td>
-												<td>대전시 서구</td>
-												<td>042-123-4567</td>
-												<td>50</td>
-											</tr>
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-warning">생활치료센터</span></td>
-												<td>대전 생활치료센터</td>
-												<td>대전시 서구</td>
-												<td>042-123-4567</td>
-												<td>50</td>
-											</tr>
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-warning">생활치료센터</span></td>
-												<td>대전 생활치료센터</td>
-												<td>대전시 서구</td>
-												<td>042-123-4567</td>
-												<td>50</td>
-											</tr>
-											<tr data-psti-no="${pstiNo }"
-												onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-												style="cursor: pointer;">
-												<td><span class="badge badge-warning">생활치료센터</span></td>
-												<td>대전 생활치료센터</td>
-												<td>대전시 서구</td>
-												<td>042-123-4567</td>
-												<td>50</td>
-											</tr>
-										</tbody>
-									</table>
-
-								</div>
-
-							</div>
+							
 							<!-- /.card-body -->
+							<%@ include file="./main-ltct-list.jsp" %>
 						</div>
 					</div>
 					<!-- /.tab-pane -->
@@ -636,31 +348,30 @@
 		<!-- ./card -->
 <!-- 메인 기관관리 div 끝 -->
 <!-- 메인 데이터백업 div 시작 -->
-		<div class="col-md-3">
+		<div class="col-3">
 			<div class="card card-default">
-				<div class="card-header" style="padding-bottom: 23px;">
-					<h3 class="card-title">
-						<i class="far fa-copy"></i> 데이터 백업
-					</h3>
+				<div class="card-header ui-sortable-handle" style="padding-bottom: 23px;">
+					<span class="card-title" style="font-weight: bold;">
+						<i class="far fa-copy"></i> 데이터 백업</span>
 				</div>
 				<!-- /.card-header -->
 				<div class="card-body"
-					style="padding-bottom: 50px; padding-top: 30px;">
+					style="padding-bottom: 50px; padding-top: 30px; height: 362px;">
 					<div>
-						<button type="button" style="margin-left:23px; background:#1a4f72; width: 220px;" class="btn btn-secondary">검사소 데이터 백업</button>
+						<button type="button" onclick="location.href='<%=request.getContextPath()%>/admin/inspDataBackup'" style="margin-left:23px; background:#1a4f72; width: 220px;" class="btn btn-secondary">검사소 데이터 백업</button>
 						<br> <br>
 
-						<button type="button" style="margin-left:23px; background:#1a4f72; width: 220px;" class="btn btn-secondary">보건소 데이터 백업</button>
+						<button type="button" onclick="location.href='<%=request.getContextPath()%>/admin/pbhtDataBackup'" style="margin-left:23px; background:#1a4f72; width: 220px;" class="btn btn-secondary">보건소 데이터 백업</button>
 						<br> <br>
 
-						<button type="button" style="margin-left:23px; background:#1a4f72; width: 220px;" class="btn btn-secondary">병원 데이터 백업</button>
+						<button type="button" onclick="location.href='<%=request.getContextPath()%>/admin/hsptDataBackup'" style="margin-left:23px; background:#1a4f72; width: 220px;" class="btn btn-secondary">병원 데이터 백업</button>
 						<br> <br>
 
-						<button type="button" style="margin-left:23px; background:#1a4f72; width: 220px;" class="btn btn-secondary">생활치료센터 데이터
+						<button type="button" onclick="location.href='<%=request.getContextPath()%>/admin/ltctDataBackup'" style="margin-left:23px; background:#1a4f72; width: 220px;" class="btn btn-secondary">생활치료센터 데이터
 							백업</button>
 						<br> <br>
 
-						<button type="button" style="margin-left:23px; background:#1a4f72; width: 220px;" class="btn btn-secondary">전체 백업</button>
+						<button type="button" onclick="location.href='<%=request.getContextPath()%>/admin/pstiDataBackup'" style="margin-left:23px; background:#1a4f72; width: 220px;" class="btn btn-secondary">피검자 백업</button>
 					</div>
 				</div>
 			</div>
@@ -669,12 +380,8 @@
 	</div>
 <!-- 메인 데이터백업 div 끝 -->
 	<script>
-		window.onload = function(){
-			<%-- var mainListUrl = '<%=request.getContextPath()%>/rest-main/main-loginList';
-			loginList_go(mainListUrl); --%>
-		}
-	
-		function selectAll(checkBox){
+		
+		/* function selectAll(checkBox){
 			var length = document.getElementsByName("inst").length;
 			if(document.getElementById('selectAll').checked==true){
 				for(var i=0; i<length; i++) document.getElementsByName("inst")[i].checked=true;
@@ -691,26 +398,47 @@
 			if(document.getElementById('selectAll').checked==true){
 				document.getElementById('selectAll').checked=false;
 			}
-		}
+		} */
 		function fileDown_go(){
 			//alert("눌림");
 			location.href='<%=request.getContextPath()%>/admin/loginFileDownload';
 		}
 		
-		/* function loginList_go(mainListUrl){
+		function failFileDown_go(){
+			//alert("눌림");
+			location.href='<%=request.getContextPath()%>/admin/loginFailFileDownload';
+		}
+		
+		
+		function deleteInst(){
+			var deleteValues=new Array();
+			$('input[type=checkbox]:checked').each(function(){
+				var data = new Object();
+				var test =$(this).val();
+				data.instNo = test;
+				deleteValues.push(data);
+			});
+			
+			var jsonData = JSON.stringify(deleteValues);
+			
+			
 			$.ajax({
-				url : mainListUrl,
-				type : 'post',
+				url : '<%=request.getContextPath()%>/admin/eachInst-remove',
+				type : 'POST',
+				data : jsonData,
+				contentType: 'application/json',
 				dataType : 'json',
-				success : function(dataMap){
-					var mainLogList = dataMap.mainLogList;
-					console.log(mainLogList);
+				success : function(res){
+					alert(res.msg);
+					location.reload();
 				},
-				error : function(error){
-					alert('error:'+error.status);
+				error : function(xhr){
+					alert(xhr.msg);
 				}
 			})
-		} */
+		}
+		
+		
 		
 </script>
 

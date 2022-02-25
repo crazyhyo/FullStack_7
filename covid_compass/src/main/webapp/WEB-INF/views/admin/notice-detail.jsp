@@ -8,15 +8,10 @@
 <title></title>
 
 <body class="hold-transition sidebar-mini">
-   <div class="wrapper" style="background: #ffffff;">
-      <div class="card card-success">
-
-         <!-- Main content -->
-
-         <div class="row">
-            <div class="col-md-12">
+	<section class="content">
+	    <div class="card" style="margin-top: 15px;">
                <!-- /.card-header -->
-               <div class="card-body">
+               <div class="card-body" style="height: auto;">
                   <div class="form-group">
                      <label for="inputTitle">제목</label> <input type="text"
                         id="inputTitle" class="form-control" readonly value="${notice.title }">
@@ -31,7 +26,7 @@
 						<fmt:formatDate value="${notice.wrtYmd }" pattern="yyyy-MM-dd" var="wrtYmd"/> 
 						<input type="text" readonly="readonly" name="startDate" id="inputWriter" class="form-control" value="${wrtYmd}">
 				  </div>
-				  <c:if test="${notice.popUp eq 'Y' }">
+				 <%--  <c:if test="${notice.popUp eq 'Y' }">
 						<div class="form-group">
 							<label for="inputWriter">팝업설정</label><br>
 							<div class="row">
@@ -47,10 +42,10 @@
 								</div>
 							</div>
 				  		</div>
-				  </c:if>
+				  </c:if> --%>
                   <div class="form-group" style="margin-top: 1%;">
                      <label for="inputDescription">내용</label>
-                    <div class="card" style="border:1px solid #ced4da; background-color:#e9ecef; width: 1247px; height: 225px;">${notice.content}</div>
+                    <div class="card" style="border:1px solid #ced4da; background-color:#e9ecef; width: 1247px; height: 410px;">${notice.content}</div>
                   </div>
 
                   <div class="form-group" style="border: none;">
@@ -74,13 +69,10 @@
                <!-- /.card-body -->
                <!-- /.card -->
 
-            </div>
 
-         </div>
       </div>
       <!-- /.col-->
-   </div>
-	
+	</section>
 	<script>
 		function remove_go(noticeNo){
 			//alert(noticeNo);

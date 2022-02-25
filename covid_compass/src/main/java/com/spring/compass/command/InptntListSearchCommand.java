@@ -9,13 +9,30 @@ public class InptntListSearchCommand
 				extends SearchCriteria 
 				implements Serializable{
 	
+	private String typeCode = "";
+	private String hsptNo = "";
+	private String searchCode = "";
+	
+	
+
 	public InptntListSearchCommand() {}
+	
+	public InptntListSearchCommand(int page, int perPageNum) {
+		super(page, perPageNum);
+	}
+	
 	public InptntListSearchCommand(int page, int perPageNum, String searchType, String keyword) {
 		super(page, perPageNum, searchType, keyword);
 		
 	}
 	
-	private String typeCode = "";
+	public String getSearchCode() {
+		return searchCode;
+	}
+	
+	public void setSearchCode(String searchCode) {
+		this.searchCode = searchCode;
+	}
 	
 	public String getTypeCode() {
 		return typeCode;
@@ -24,7 +41,6 @@ public class InptntListSearchCommand
 		this.typeCode = typeCode;
 	}
 
-	private String hsptNo = "";
 
 	public String getHsptNo() {
 		return hsptNo;

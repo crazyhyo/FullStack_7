@@ -16,4 +16,5 @@ public interface MenuService {
 	
 	public List<MenuVO> getEmpSubMenuList(String menuNo) throws Exception;
 	
+	public List<MenuVO> getAllSubMenuList(String menuNo) throws Exception;
 }

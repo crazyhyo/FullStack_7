@@ -4,7 +4,7 @@
 
 <head></head>
 
-<title></title>
+<title>비밀번호 찾기</title>
 
 <body>
 <div class="card card-info">

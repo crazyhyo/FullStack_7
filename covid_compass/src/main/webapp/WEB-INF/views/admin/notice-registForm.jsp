@@ -2,7 +2,7 @@
 	pageEncoding="UTF-8"%>
 <head></head>
 
-<title></title>
+<title>공지사항 등록</title>
 
 <body class="hold-transition sidebar-mini">
   <div class="content-wrapper">
@@ -26,14 +26,14 @@
 
 								<div class="form-group">
 									<label for="inputWriter">작성자</label> 
-									<input type="text" name="noticeWriter" id="inputWriter" class="form-control">
+									<input type="text" name="noticeWriter" id="inputWriter" class="form-control" value="시스템관리자" readonly="readonly">
 								</div>
-								<div>
+								<!-- <div>
 									<label>팝업 설정</label> 
 									<input type="checkbox" onclick="checkPopUp()" data-toggle="collapse" href="#collapseExample" role="button"
 									aria-expanded="false" id="popUp" name="popUp" value="N" aria-controls="collapseExample">
 
-								</div>
+								</div> -->
 								<div class="collapse" id="collapseExample">
 									<div class="">
 										<div class="form-group">
@@ -57,7 +57,7 @@
 								<div class="form-group" style="border: none; text-align: right;">
 									<button class="btn" style="border-color:#1A4F72; background: #1A4F72; color: white" type="submit">등록</button>
 									<!-- <button type="button" class="btn" onclick="reset()" style="margin-left: 1%; border-color:#1A4F72; background: #1A4F72; color: white">리셋</button> -->
-									<button class="btn" style="margin-left: 1%; border-color:#1A4F72; background: #1A4F72; color: white" onclick="CloseWindow()">취소</button>
+									<button class="btn" style="margin-left: 1%; border-color:#c82333; background: #c82333; color: white" onclick="CloseWind()">취소</button>
 								</div>
 							 </form>
 
@@ -84,6 +84,10 @@
 			$('#summernote').summernote({
 				height : 200
 			})
+		}
+		
+		function CloseWind(){
+			window.close();
 		}
 		
 		function checkPopUp(){

@@ -7,13 +7,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
 <script type="text/x-handlebars-template" id="isoptnt-template">
 {{#each .}}
-	<tr onclick="showDetail('{{manageNo}}')" class="each-isoptnt-element" data-manage-no="{{manageNo}}">
-		<td onclick="event.cancelBubble=true"><input type="checkbox" name="checkSmple" onclick="cancleAll()" value="{{manageNo}}"></td>
-		<td><span class="badge badge-{{fnFeverBadge bdtemp}}">{{bdtemp}}</span></td>
-		<td>{{pstiNm}}</td>
-		<td>{{age}}</td>
+	<tr style="cursor:pointer;" onclick="showDetail('{{manageNo}}')" class="each-isoptnt-element" data-manage-no="{{manageNo}}" data-inst-no="{{ltctNo}}">
+		<td onclick="event.cancelBubble=true"><input {{fnToday today}} type="checkbox" class="form-check-input" onclick="cancleAll();" name="manageNo" style="margin-left:-7px;" value="{{manageNo}}"></td>
+		<td style="text-align:left;"><div class="pstiNm">{{pstiNm}}</div></td>
 		<td>{{fnGender gender}}</td>
-		<td>{{pstiTelno}}</td>
+		<td>{{age}}</td>
+		<td><div class="pstiTelno">{{pstiTelno}}</div></td>
+		<td>{{prettifyDate inYmd}}</td>
+		<td>{{ngtvCnt}}</td>
+		<td><span class="badge badge-{{fnFeverBadge bdtemp}}">{{fnBdtempCheck bdtemp}}</span></td>
 	</tr>
 {{/each}}
 </script>
@@ -25,7 +27,7 @@
 	</li>
 
 	<li class="page-item each-isoptnt-pagination-element">
-		<a class="page-link" href="{{#if prev}}{{prevPageNum}}{{/if}}">
+		<a class="page-link {{checkDisabled prev}}" href="{{#if prev}}{{prevPageNum}}{{/if}}">
 			<i class="fas fa-angle-left" style="color:#1a4f72;"></i>
 		</a>
 	</li>
@@ -39,19 +41,36 @@
 	{{/each}}
 	
 	<li class="page-item each-isoptnt-pagination-element">
-		<a class="page-link" href="{{#if next}}{{nextPageNum}}{{/if}}">
+		<a class="page-link {{checkDisabled next}}" href="{{#if next}}{{nextPageNum}}{{/if}}">
 			<i class="fas fa-angle-right" style="color:#1a4f72;"></i>
 		</a>
 	</li>
 
 	<li class="page-item each-isoptnt-pagination-element">
-		<a class="page-link href="{{realEndPage}}">
+		<a class="page-link" href="{{realEndPage}}">
 			<i class="fas fa-angle-double-right" style="color:#1a4f72;"></i>
 		</a>
 	</li>
 </script>
 <script>
 Handlebars.registerHelper({
+"prettifyDate" : function(timeValue){
+	if(timeValue){
+		var dateObj = new Date(timeValue);
+		var year = dateObj.getFullYear();
+		var month = dateObj.getMonth() + 1;
+		month += '';
+		if(month.length < 2){
+			month = '0' + month;
+		}
+		var date = dateObj.getDate();
+		date += '';
+		if(date.length < 2){
+			date = '0' + date;
+		}
+		return year + "-" + month + "-" + date;
+	}
+},
 "signActive" : function(pageNum){
 	if(pageNum == page){
 		return 'active';
@@ -65,9 +84,9 @@ Handlebars.registerHelper({
 	}
 },
 "fnFeverBadge" : function(bdtemp){
-	if(bdtemp < 37.2){
+	if(bdtemp < 37.5){
 		return "success";
-	}else if(bdtemp < 37.9){
+	}else if(bdtemp < 38.0){
 		return "warning";
 	}
 	return "danger";
@@ -76,16 +95,53 @@ Handlebars.registerHelper({
 	if(gender == "M"){
 		return "남";
 	}
-	return "여";
+	if(gender =="F"){
+		return "여";
+	}
 },
 "fnPstvYn" : function(chkdYn, pstvYn){
 	if(chkdYn == "Y"){
 		if(pstvYn == "Y"){
 			return "양성";
 		}
-		return "음성";
+		if(pstvYn == "N"){
+			return "음성";
+		}
 	}
-	return "검사중"
+	if(chkdYn == "N"){
+		return "검사중"
+	}
+},
+"fnResult" : function(inYmd){
+	if(inYmd){
+		return "양성";
+	}
+},
+"fnDgnssResultCode" : function(dgnssResultCode){
+	if(dgnssResultCode == "D101"){
+		return "중증 및 중등증";
+	}
+	if(dgnssResultCode == "D102"){
+		return "미중증 및 경증";
+	}
+	if(dgnssResultCode == "D103"){
+		return "무증상";
+	}
+},
+"fnBdtempCheck" : function(bdtemp){
+	a = bdtemp + "";
+	if(a.length == 2){
+		return a+".0";
+	}
+	return bdtemp;
+},
+"fnToday" : function(today){
+	if(today == 1){
+		return "disabled";
+	}
+},
+"checkDisabled" : function(flag){
+  if(!flag) return 'disabled';
 }
 });
 </script>
@@ -114,7 +170,7 @@ function make_form(pageParam){
 	jobForm.find("[name='page']").val(page);
 	jobForm.find("[name='perPageNum']").val($('select[name="perPageNum"]').val());
 	jobForm.find("[name='searchType']").val($('select[name="searchType"]').val());
-	jobForm.find("[name='keyword']").val($('div.input-group>input[name="keywrod"]').val());
+	jobForm.find("[name='keyword']").val($('#keyword').val());
 	
 	return jobForm;
 }
@@ -130,8 +186,31 @@ function getPage(handlebarsProcessingURL, form){
 		dataType : 'json',
 		data : form.serialize(),
 		success : function(dataMap){
-			printData(dataMap.chckdList, $('#isoptnt-table-tbody'), $('#isoptnt-template'), '.each-isoptnt-element');
-			printPagination(dataMap.pageMaker, $('#isoptnt-pagination-ul'), $('#isoptnt-pagination-template'), '.each-isoptnt-pagination-element');
+				$('#isoptnt-table-tbody').html("");
+			if(dataMap.isoptntList.length == 0){
+				$('#isoptnt-table-tbody').html('<tr class="each-isoptnt-element"><td colspan="7">데이터가 없습니다.</td></tr>')
+				dataMap.pageMaker.endPage = 1;
+				dataMap.pageMaker.realEndPage = 1;
+				printPagination(dataMap.pageMaker, $('#isoptnt-pagination-ul'), $('#isoptnt-pagination-template'), '.each-isoptnt-pagination-element');
+				printData('', $('#isoptnt-detail-module'), $('#isoptnt-detail-template'), '.isoptnt-detail-element')
+				$('#enableReadRrn').attr('disabled', true);
+				$('#modifybutton').attr('disabled', true);
+				$('#openButton').attr('disabled', true);
+			}else{
+				printData(dataMap.isoptntList, $('#isoptnt-table-tbody'), $('#isoptnt-template'), '.each-isoptnt-element');
+				printPagination(dataMap.pageMaker, $('#isoptnt-pagination-ul'), $('#isoptnt-pagination-template'), '.each-isoptnt-pagination-element');
+				$('#enableReadRrn').data('rrn', dataMap.basicDetail.rrn);
+				$('#enableReadRrn').data('manageNo', dataMap.basicDetail.manageNo);
+		      	dataMap.basicDetail.rrn = (dataMap.basicDetail.rrn.substring(0,8) + '******');
+				$('#enableReadRrn').attr('disabled', false);
+				$('#modifybutton').attr('disabled', false);
+				if(dataMap.basicDetail.today == 0){
+					$('#openButton').attr('disabled', false);
+				}else{
+					$('#openButton').attr('disabled', true);
+				}
+		      	printData(dataMap.basicDetail, $('#isoptnt-detail-module'), $('#isoptnt-detail-template'), '.isoptnt-detail-element')
+			}
 		},
 		error : function(error){
 			alert('error' + error.status);
@@ -163,6 +242,54 @@ function printPagination(pageMaker, target, templateObject, removeClass){
 	var html = template(pageMaker);
 	target.html("").html(html);
 }
+
+function selectAll(checkBox){
+	var length = document.getElementsByName("manageNo").length;
+	if(document.getElementById('selectAll').checked==true){
+		for(var i=0; i<length; i++){
+			if(document.getElementsByName('manageNo')[i].disabled==false){
+				document.getElementsByName("manageNo")[i].checked=true;
+			}
+		}
+	}
+
+	if(document.getElementById('selectAll').checked==false){
+		for(var i=0; i<length; i++) document.getElementsByName("manageNo")[i].checked=false;
+	}
+}
+function cancleAll(){
+	if(document.getElementById('selectAll').checked==true){
+		document.getElementById('selectAll').checked=false;
+	}
+}
+function requestSmpl(){
+	var manageNo = '';
+	var count = 0;
+	var pbhtNm = $('option[class="pbhtNo"]:selected').text();
+	$('input[class="form-check-input"]:checked').each(function(){
+		manageNo += $(this).val()+ ",";
+		count = count + 1;
+	});
+	var pbhtNo = $('option[class="pbhtNo"]:selected').val();
+	
+	if(count == 0){
+		alert("재검신청할 입소자를 선택해주세요.");
+		return;
+	}
+	
+	$.ajax({
+		url: '<%=request.getContextPath()%>/rest-ltct/request-smpl',
+		type: 'post',
+		data : {'manageNo' : manageNo, 'pbhtNo' : pbhtNo},
+		success: function(success){
+			alert(count+"명의 시료를 " + pbhtNm +"에 성공적으로 전달하였습니다.");
+			location.reload();
+		},
+		error : function(error){
+			alert('error' + error.status);
+		}
+	})
+}
 </script>
 <section class="content">
 		<div style="height: 640px;">
@@ -171,19 +298,19 @@ function printPagination(pageMaker, target, templateObject, removeClass){
 								style="text-align: center; margin-top: 10px;">
 								<thead>
 									<tr role="row">
-										<th style="width: 10%;"><input id="all" type="checkbox" onclick="checkAllBox()" name="all"></th>
-										<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">체온</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="">성명</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1"  colspan="1" aria-sort="ascending" aria-label="">나이</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1"  colspan="1" aria-label="">성별</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="">연락처</th>
-										
-											
+										<th style="width: 10%;"><input id="selectAll" type="checkbox" onclick="selectAll();" name="manage_check_all"></th>
+										<th style="width: 15%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">성명</th>
+										<th style="width: 10%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">성별</th>
+										<th style="width: 10%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">나이</th>
+										<th style="width: 15%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">연락처</th>
+										<th style="width: 15%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">입소일자</th>
+										<th style="width: 10%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">누적음성수</th>
+										<th style="width: 15%;" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="">체온</th>
 									</tr>
 								</thead>
 								<tbody id="isoptnt-table-tbody">
 									<tr class="each-isoptnt-element">
-										<td colspan="6">페이지 로딩중 입니다.</td>
+										<td colspan="7">페이지 로딩중 입니다.</td>
 									</tr>
 								</tbody>
 							</table>

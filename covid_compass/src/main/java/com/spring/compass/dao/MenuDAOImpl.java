@@ -47,6 +47,12 @@ public class MenuDAOImpl implements MenuDAO{
 		return menuList;
 	}
 
+	@Override
+	public List<MenuVO> selectAllSubMenuList(String menuNo) throws SQLException {
+		List<MenuVO> menuList = sqlSession.selectList(nameSpace + "selectAllSubMenuList", menuNo);
+		return menuList;
+	}
+
 	
 
 

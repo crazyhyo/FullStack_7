@@ -3,9 +3,9 @@
 <script type="text/x-handlebars-template" id="result-template">
 {{#each .}}
 	<tr class="each-result-element" data-psti-no="{{pstiNo}}">
-		<td><span class="badge badge-{{fnBadgeChk chkdYn pstvYn}}">{{fnChkdPstv chkdYn pstvYn}}</span></td>
-		<td>{{pstiNm}}</td>
-		<td>{{prettifyDate htscYmd}}</td>
+		<td style="text-align:left;">{{pstiNm}}</td>
+		<td style="text-align:center;">{{prettifyDate reqYmd}}</td>
+		<td style="text-align:center;"><span class="badge badge-{{fnSmplBadgeChk smplResCode}}">{{fnResCode smplResCode}}</span></td>
 	</tr>
 {{/each}}
 </script>
@@ -17,7 +17,7 @@
 	</li>
 
 	<li class="page-item each-result-pagination-element">
-		<a class="page-link" href="{{#if prev}}{{prevPageNum}}{{/if}}">
+		<a class="page-link {{checkDisabled prev}}" href="{{#if prev}}{{prevPageNum}}{{/if}}">
 			<i class="fas fa-angle-left" style="color:#1a4f72;"></i>
 		</a>
 	</li>
@@ -31,25 +31,27 @@
 	{{/each}}
 	
 	<li class="page-item each-result-pagination-element">
-		<a class="page-link" href="{{#if next}}{{nextPageNum}}{{/if}}">
+		<a class="page-link {{checkDisabled next}}" href="{{#if next}}{{nextPageNum}}{{/if}}">
 			<i class="fas fa-angle-right" style="color:#1a4f72;"></i>
 		</a>
 	</li>
 
 	<li class="page-item each-result-pagination-element">
-		<a class="page-link href="{{realEndPage}}">
+		<a class="page-link" href="{{realEndPage}}">
 			<i class="fas fa-angle-double-right" style="color:#1a4f72;"></i>
 		</a>
 	</li>
 </script>
-<div class="card"
-				style="width: 394px; height: 277px; margin-top: 11px; margin-left: 16px; margin-bottom: 20px;">
-				<!-- <div class="card col-md-5"
-               style="position: relative; left: 0px; top: 0px;"> -->
+<div class="card pr-0" style="padding-bottom: 10px; top:5px; height: 290px;">
 				<div class="card-header ui-sortable-handle">
-					<h3 class="card-title">
-						<i class="ion ion-clipboard mr-1"></i> 검사결과
+					<h3 class="card-title" style="font-weight: bold; color: #333333; font-size: 16px;">
+						<i class="ion ion-clipboard mr-1"></i> 검사결과 목록
 					</h3>
+					<div class="card-tools ">
+							<button type="button" class="btn btn-tool" onclick="showMore('C');">
+								<i class="fas fa-bars" style="color: black"></i>
+							</button>
+						</div>
 				</div>
 				
 				<!-- /.card-header -->
@@ -58,9 +60,9 @@
 						<table class="table m-0" style="text-align: center;">
 							<thead>
 								<tr>
-									<th style="text-align: center;">검사결과</th>
-									<th style="text-align: center;">성명</th>
-									<th style="text-align: center;">검사일자</th>
+									<th style="width: 30%; text-align: center;">성명</th>
+									<th style="width: 35%; text-align: center;">요청일자</th>
+									<th style="width: 35%; text-align: center;">검사결과</th>
 								</tr>
 							</thead>
 							<tbody id="result-table-tbody">
@@ -71,11 +73,9 @@
 						</table>
 					</div>
 				</div>
-									<div class="card-footer">
-										<div class="card-tools">
-											<ul class="result-pagination pagination pagination-sm" id="result-list-pagination-ul">
+									<div class="card-footer" style="height: 30px; text-align: center; background: white;">
+											<ul class="result-pagination pagination pagination-sm m-0" id="result-list-pagination-ul">
 											</ul>
-										</div>
 										<form id="resultListForm">
 											<input type='hidden' name="page" value="" />
 											<input type='hidden' name="perPageNum" value="" />

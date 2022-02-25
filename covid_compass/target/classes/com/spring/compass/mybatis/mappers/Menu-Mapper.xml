@@ -42,6 +42,24 @@ FROM
 WHERE
 	MENU_ISNAV = 1
 	</select>
+
+	<select id="selectAllSubMenuList" parameterType="java.lang.String"
+			resultType="com.spring.compass.vo.MenuVO">
+SELECT
+    menu_no
+   ,menu_url
+   ,upmenu_no
+   ,menu_isnav
+   ,menu_level
+   ,menu_nm
+   ,menu_type
+FROM
+    menu
+WHERE
+	UPMENU_NO = #{menuNo}
+ORDER BY
+	MENU_NO
+	</select>
 	
 	<select id="selectSubMenuList" parameterType="java.lang.String"
 			resultType="com.spring.compass.vo.MenuVO">

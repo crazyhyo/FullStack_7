@@ -1,37 +1,37 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page trimDirectiveWhitespaces="true"%>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
-<script type="text/x-handlebars-template"  id="cnfrm-dgnss-list-template" >
+<script type="text/x-handlebars-template" id="cnfrm-dgnss-list-template">
 {{#each .}}
-          <tr 
+          <tr style="cursor: pointer;"
 			ondblclick="OpenWindow('cnfrm-detail-dgnss-regist','확진자 진료 신청', 1260, 715)"
-			onclick="showDetail('{{cnfmNo}}')"
-			data-inst-no="{{pbhtNo}}" data-manage-no="{{manageNo}}"
+			onclick="showDetail('{{cnfmNo}}', '{{manageNo}}')"
+			data-inst-no="{{pbhtNo}}" data-manage-no="{{manageNo}}" data-cnfm-no="{{cnfmNo}}"
             class="each-smpl-result-element">
             <td>{{cnfmNo}}</td>
-            <td>{{pstiNm}}</td>
+            <td style="text-align: left;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;" title="{{pstiNm}}">{{pstiNm}}</td>
             <td>{{pstiTelno}}</td>
             <td>{{prettifyDate inYmd}}</td>
           </tr>
 {{/each}}
 </script>
 
-<script type="text/x-handlebars-template"  id="cnfrm-dgnss-req-list-template" >
+<script type="text/x-handlebars-template" id="cnfrm-dgnss-req-list-template">
 {{#each .}}
-          <tr 
-			data-inst-no="{{pbhtNo}}" data-manage-no="{{manageNo}}"
+          <tr style="cursor: pointer;"
+			data-inst-no="{{pbhtNo}}" data-manage-no="{{manageNo}}" data-dgnss-no="{{dgnssNo}}"
+			onclick="showReqDetail('{{dgnssNo}}', '{{manageNo}}')"
             class="each-smpl-result-element">
             <td>{{cnfmNo}}</td>
-            <td>{{pstiNm}}</td>
-            <td>{{instNm}}</td>
+            <td style="text-align: left;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;" title="{{pstiNm}}">{{pstiNm}}</td>
+            <td style="text-align: left;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;" title="{{instNm}}">{{instNm}}</td>
             <td>{{prettifyDate reqYmd}}</td>
           </tr>
 {{/each}}
 </script>
 
-<script type="text/x-handlebars-template"  id="inptnt-pagination-template" >
+<script type="text/x-handlebars-template" id="inptnt-pagination-template">
     <li class="page-item each-inptnt-pagination-element"><a class="page-link" href="1"> <i class="fas fa-angle-double-left" style="color:#1a4f72;"></i>
     </a></li>
     <li class="page-item each-inptnt-pagination-element"><a class="page-link" href="{{#if prev}}{{prevPageNum}}{{/if}}"> <i class="fas fa-angle-left" style="color:#1a4f72;"></i>
@@ -48,16 +48,26 @@
 </script>
 
 
-<script>
-
+<script type="text/javascript">
 
 Handlebars.registerHelper({
 "prettifyDate" : function(timeValue){
-  var dateObj = new Date(timeValue);
-  var year = dateObj.getFullYear();
-  var month = dateObj.getMonth() + 1;
-  var date = dateObj.getDate();
-  return year + "-" + month + "-" + date;
+	if(timeValue){
+		var dateObj = new Date(timeValue);
+		var year = dateObj.getFullYear();
+		var month = dateObj.getMonth() + 1;
+		month += '';
+		if(month.length < 2){
+			month = '0' + month;
+		}
+		var date = dateObj.getDate();
+		date += '';
+		if(date.length < 2){
+			date = '0' + date;
+		}
+		return year + "-" + month + "-" + date;
+	}
+	return "없음";
 },
 "signActive" : function(pageNum){
   if(pageNum == page) return 'active';
@@ -72,7 +82,7 @@ Handlebars.registerHelper({
 
 var page = 1;
 
-var url = '<%=request.getContextPath() %>/rest-pbht/cnfrm-list';
+var url = '<%=request.getContextPath()%>/rest-pbht/cnfrm-list';
 
 var targetId = '';
 
@@ -104,15 +114,9 @@ function make_form(pageParam){
   
   page = pageParam;
   
-  
   jobForm.find("[name='page']").val(page);
   jobForm.find("[name='perPageNum']").val($('select[name="perPageNum"]').val());
 //  jobForm.find("[name='perPageNum']").val(2);
-  jobForm.find("[name='searchType']").val($('select[name="searchType"]').val());
-  jobForm.find("[name='keyword']").val($('div.input-group>input[name="keyword"]').val());
-  
-  
-  
   return jobForm;
 }
 
@@ -135,9 +139,32 @@ function getPage(handelbarsProcessingURL, form, targetId, pagenationId, template
     dataType : 'json',
     data : form.serialize(),
     success : function(dataMap){
-    	console.log(dataMap.pageMaker);
-      printData(dataMap.cfdList, $(targetId), $(templateId), '.each-smpl-result-element');
-      printPagination(dataMap.pageMaker, $(pagenationId), $('#inptnt-pagination-template'), '.each-inptnt-pagination-element');
+    	
+    	$(targetId).html("");
+    	
+     	if(dataMap.cfdList.length == 0){
+     		
+     		$(targetId).html('<tr class="each-smpl-result-element"><td colspan="5" class="dgnssList">데이터 로딩중 입니다.</td></tr>');
+     		
+     		$('.dgnssList').html("데이터가 없습니다.");
+ 	      	$('#openButton').attr("disabled", true);
+ 	      	$('#cancleButton').attr("disabled", true);
+ 	      	$('.enableReadRrn').attr("disabled", true);
+ 	      	searchfalse();
+     		dataMap.pageMaker.endPage = 1;
+	      	printPagination(dataMap.pageMaker, $(pagenationId), $('#inptnt-pagination-template'), '.each-inptnt-pagination-element');
+     	}else{
+      		printData(dataMap.cfdList, $(targetId), $(templateId), '.each-smpl-result-element');
+      		printPagination(dataMap.pageMaker, $(pagenationId), $('#inptnt-pagination-template'), '.each-inptnt-pagination-element');
+      		$('#openButton').attr("disabled", false);
+      		$('#cancleButton').attr("disabled", false);
+      		$('.enableReadRrn').attr("disabled", false);
+	      	if($('#jobForm').find("[name='typeCode']").val() == "A104"){
+		      	showReqDetail(dataMap.cfdList[0].dgnssNo, dataMap.cfdList[0].manageNo)
+	      	}else{
+		      	showDetail(dataMap.cfdList[0].cnfmNo, dataMap.cfdList[0].manageNo)
+	      	}
+     	}
     },
     error : function(error){
       alert('error' + error.status);
@@ -189,9 +216,13 @@ function addEvnetWaitTab(){
 	var dgnssWaitTab = $('#custom-cnfrm-dgnss-regist-tab');
 	dgnssWaitTab.on('click',function(){
 		$('#jobForm').find("[name='typeCode']").val("A102");
+		$('#jobForm').find("[name='keyword']").val("");
 		templateId = "#cnfrm-dgnss-list-template";
 		targetId = "#cnfrm-dgnss-list-table-tbody";
 		pagenationId = "#inptnt-list-pagination-ul";
+		$("select#searchType option[value='inst']").remove();
+		$("#searchType option:eq(0)").prop("selected", true);
+		$('#keywordId').val("");
 		page = 1;
 		list_go(url, page, targetId, pagenationId, templateId);
 	})
@@ -201,24 +232,36 @@ function addEvnetReqTab(){
 	var dgnssReqTab = $('#custom-cnfrm-dgnss-regist-list-tab');
 	dgnssReqTab.on('click',function(){
 		$('#jobForm').find("[name='typeCode']").val("A104");
+		$('#jobForm').find("[name='keyword']").val("");
 		templateId = '#cnfrm-dgnss-req-list-template'
 		targetId = "#cnfrm-dgnss-req-list-table-tbody";
 		pagenationId = "#inptnt-req-list-pagination-ul";
+		$("select#searchType option[value='inst']").remove();
+		$("#searchType option:eq(0)").prop("selected", true);
+		$('#keywordId').val("");
+		$("select#searchType").append("<option value='inst' ${pageMaker.cri.searchType eq 'inst' ? 'selected':''}>진료기관</option>");
 		page = 1;
 		list_go(url, page, targetId, pagenationId, templateId);
 	})
 }
 
-function showDetail(cnfmNo){
+function showDetail(cnfmNo, manageNo){
+	
+	 var trs = $('tr.each-smpl-result-element');
+	  
+	 trs.removeClass('on');
+	  
+	 var target = $('tr[data-cnfm-no="'+cnfmNo+'"]');
+	  
+	 target.addClass('on');
 	
 	$.ajax({
-	    url : '<%=request.getContextPath() %>/rest-pbht/cnfrm-wait-datail',
+	    url : '<%=request.getContextPath()%>/rest-pbht/cnfrm-wait-datail',
 	    type : 'get',
 	    dataType : 'json',
-	    data : {'cnfmNo':cnfmNo},
+	    data : {'cnfmNo':cnfmNo, 'manageNo':manageNo},
 	    success : function(dataMap){
 	 		console.log(dataMap);
-	      
 	 		$('#psti_nm').html(dataMap.pstiNm);
 	 		$('#nlty').html(dataMap.nlty);
 	      	$('#rechkd_yn').html(dataMap.rechkdYn);
@@ -230,20 +273,193 @@ function showDetail(cnfmNo){
 	       	$('#in_ymd').html(prettifyDate(dataMap.inYmd));
 	       	$('#pstv_yn').html(dataMap.pstvYn);
  	      	$('#cnfm_no').html(dataMap.cnfmNo); 
+ 	      	
+ 	      	$('#enableReadRrn').data('rrn', dataMap.rrn);
+ 	      	$('#enableReadRrn').data('manageNo', manageNo);
+ 	      	dataMap.rrn = (dataMap.rrn.substring(0,8) + '******');
+ 	      	
  	      	$('#rrn').html(dataMap.rrn); 
+ 	      	
+ 	      	
  	      	$('#psti_adres').html(dataMap.pstiAdres); 
  	      	$('#psti_telno').html(dataMap.pstiTelno); 
  	      	$('#symptms').html(dataMap.symptms); 
-	 		
+ 	      	$('#sttus_code').html(dataMap.sttusCode); 
+ 	      	$('#openButton').attr('data-manage-no', dataMap.manageNo);
+ 	      	$('#openButton').attr('data-name', dataMap.pstiNm);
+ 	      	
+ 	      	
 	    },
 	    error : function(error){
 	      alert('error' + error.status);
 	    }
 	  })
 }
-	 
-	 
 
+function showReqDetail(dgnssNo, manageNo){
+	
+	var trs = $('tr.each-smpl-result-element');
+	  
+	trs.removeClass('on');
+	  
+	var target = $('tr[data-dgnss-no="'+dgnssNo+'"]');
+	  
+	target.addClass('on');
+	
+	$.ajax({
+	    url : '<%=request.getContextPath()%>/rest-pbht/cnfrm-req-datail',
+	    type : 'get',
+	    dataType : 'json',
+	    data : {'dgnssNo':dgnssNo},
+	    success : function(dataMap){
+	 		console.log(dataMap);
+	 		$('#r_psti_nm').html(dataMap.pstiNm);
+	 		$('#r_nlty').html(dataMap.nlty);
+	      	$('#r_rechkd_yn').html(dataMap.rechkdYn);
+	      	$('#r_vac_code').html(dataMap.vacCode);
+	      	$('#r_gender').html(dataMap.gender);
+	       	$('#r_age').html(dataMap.age);
+	      	$('#r_fever_yn').html(dataMap.feverYn);
+	      	$('#r_pregn_yn').html(dataMap.pregnYn);
+	       	$('#r_in_ymd').html(prettifyDate(dataMap.inYmd));
+	       	$('#r_pstv_yn').html(dataMap.pstvYn);
+ 	      	$('#r_cnfm_no').html(dataMap.cnfmNo); 
+ 	      	
+ 	      	$('#enableReadRrn').data('rrn', dataMap.rrn);
+ 	      	$('#enableReadRrn').data('manageNo', manageNo);
+ 	      	dataMap.rrn = (dataMap.rrn.substring(0,8) + '******');
+ 	      	
+ 	      	$('#r_rrn').html(dataMap.rrn);
+ 	      	
+ 	      	$('#r_psti_adres').html(dataMap.pstiAdres); 
+ 	      	$('#r_psti_telno').html(dataMap.pstiTelno); 
+ 	      	$('#r_symptms').html(dataMap.symptms); 
+ 	      	$('#r_sttus_code').html(dataMap.sttusCode); 
+ 	      	
+ 	      	$('#r_inst_nm').html(dataMap.instNm); 
+ 	      	$('#r_dgnss_code').html(dataMap.dgnssCode); 
+ 	      	$('#r_inst_adres').html(dataMap.instAdres); 
+ 	      	$('#r_inst_telno').html(dataMap.instTelno); 
+ 	      	$('#r_req_ymd').html(prettifyDate(dataMap.reqYmd)); 
+ 	      	
+ 	      	$('#cancleButton').attr('data-dgnss-no', dataMap.dgnssNo);
+ 	      	$('#cancleButton').attr('data-manage-no', manageNo);
+ 	      	$('#cancleButton').attr('data-hspt-no', dataMap.hsptNo);
+ 	      	
+ 	      	if(!dataMap.result){
+ 	      		$('#cancleButton').attr("disabled", true);
+ 	      	}else{
+ 	      		$('#cancleButton').attr("disabled", false);
+ 	      	}
+ 	      	
+	    },
+	    error : function(error){
+	      alert('error' + error.status);
+	    }
+	  })
+	
+}
+
+	 
+function prettifyDate(timeValue){
+	if(timeValue){
+		var dateObj = new Date(timeValue);
+		var year = dateObj.getFullYear();
+		var month = dateObj.getMonth() + 1;
+		month += '';
+		if(month.length < 2){
+			month = '0' + month;
+		}
+		var date = dateObj.getDate();
+		date += '';
+		if(date.length < 2){
+			date = '0' + date;
+		}
+		return year + "-" + month + "-" + date;
+	}
+	return "없음";
+}
+
+function list_go_check(){
+	
+	var jobForm = $('#jobForm');
+	
+	 jobForm.find("[name='searchType']").val($('select[name="searchType"]').val());
+	 jobForm.find("[name='keyword']").val($('div.input-group>input[name="keyword"]').val());
+	
+	if($('#jobForm').find("[name='typeCode']").val() == "A104"){
+		templateId = '#cnfrm-dgnss-req-list-template'
+		targetId = "#cnfrm-dgnss-req-list-table-tbody";
+		pagenationId = "#inptnt-req-list-pagination-ul";
+		page = 1;
+		list_go(url, page, targetId, pagenationId, templateId);
+	}else{
+		templateId = "#cnfrm-dgnss-list-template";
+		targetId = "#cnfrm-dgnss-list-table-tbody";
+		pagenationId = "#inptnt-list-pagination-ul";
+		page = 1;
+		list_go(url, page, targetId, pagenationId, templateId);
+	}
+}
+
+function searchfalse(){
+	$('#psti_nm').html("");
+	$('#nlty').html("");
+  	$('#rechkd_yn').html("");
+  	$('#vac_code').html("");
+  	$('#gender').html("");
+   	$('#age').html("");
+  	$('#fever_yn').html("");
+  	$('#pregn_yn').html("");
+   	$('#in_ymd').html("");
+   	$('#pstv_yn').html("");
+   	$('#cnfm_no').html(""); 
+   	
+   	$('#enableReadRrn').data('rrn', "");
+   	$('#enableReadRrn').data('manageNo', "");
+   	
+   	$('#rrn').html(""); 
+  	
+  	$('#psti_adres').html(""); 
+   	$('#psti_telno').html(""); 
+   	$('#symptms').html(""); 
+   	$('#sttus_code').html(""); 
+   	$('#openButton').attr('data-manage-no', "");
+   	$('#openButton').attr('data-name', "");
+   	
+   	$('#r_psti_nm').html("");
+	$('#r_nlty').html("");
+  	$('#r_rechkd_yn').html("");
+  	$('#r_vac_code').html("");
+  	$('#r_gender').html("");
+   	$('#r_age').html("");
+  	$('#r_fever_yn').html("");
+  	$('#r_pregn_yn').html("");
+   	$('#r_in_ymd').html("");
+   	$('#r_pstv_yn').html("");
+   	$('#r_cnfm_no').html(""); 
+   	
+   	$('#enableReadRrn').data('rrn', "");
+   	$('#enableReadRrn').data('manageNo', "");
+   	
+   	$('#r_rrn').html("");
+   	
+   	$('#r_psti_adres').html(""); 
+   	$('#r_psti_telno').html(""); 
+   	$('#r_symptms').html(""); 
+   	$('#r_sttus_code').html(""); 
+   	
+   	$('#r_inst_nm').html(""); 
+   	$('#r_dgnss_code').html(""); 
+   	$('#r_inst_adres').html(""); 
+   	$('#r_inst_telno').html(""); 
+   	$('#r_req_ymd').html(""); 
+   	
+   	$('#cancleButton').attr('data-dgnss-no', "");
+   	$('#cancleButton').attr('data-manage-no', "");
+   	$('#cancleButton').attr('data-hspt-no', "");
+	
+}
 
 
 </script>
@@ -251,141 +467,150 @@ function showDetail(cnfmNo){
 
 <!-- 진료 요청 대기환자 목록 -->
 <div class="row" style="margin: 1px;">
-<div class="col-md-6 pl-0">
-  <div class="card">
+	<div class="col-md-6 pl-0">
+		<div class="card">
 			<!-- search bar -->
 			<div class="card-body">
-		<div class="table-responsive">
-			<table class="table table-hover text-nowrap"
-				style="text-align: center;">
-				<thead>
-					<tr role="row">
-						<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
-							aria-label="Browser: activate to sort column ascending">확진자코드</th>
-						<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
-							aria-label="Browser: activate to sort column ascending">성명</th>
-						<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
-							aria-sort="ascending"
-							aria-label="Rendering engine: activate to sort column descending">연락처</th>
-						<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1"
-							aria-label="Platform(s): activate to sort column ascending">확정일자</th>
-					</tr>
-				</thead>
-				<tbody id="cnfrm-dgnss-list-table-tbody">
-					<tr class="each-smpl-result-element">
-                     <td colspan="5">데이터 로딩중 입니다.</td>
-					 </tr>
-				</tbody>
-			</table>
-				<div class="card-footer clearfix pb-0 pt-0" style="background-color: white;">
-			   	 	<ul class="pagination justify-content-center m-0" id="inptnt-list-pagination-ul">
-			   	 	</ul>
-			 	</div>
-			<form id="jobForm"> 
-			  <input type='hidden' name="page" value="" />
-			  <input type='hidden' name="perPageNum" value=""/>
-			  <input type='hidden' name="searchType" value="" />
-			  <input type='hidden' name="keyword" value="" />
-			  <input type='hidden' name="typeCode" value="" />
-			</form>
-		</div>
-		<!-- /.table-responsive -->
-	 </div>	
-  </div>
-</div>
-<div class="col-md-6 pr-0">
-	<!-- /.card-body -->
-				<div class="card">
-				<div class="card-body">
-				<table class="table table-bordered" style="border-left-color: white; border-right-color: white;" >
-                  <thead>
-                  	<tr>
-                  		<th colspan="4" style="font-size: 17px;">확진자 진료 요청 정보</th>
-                  	</tr>
-                  </thead>
-                  <tbody>
-                  <tr class="ddoing" style="height: 12px;"></tr>
-                    <tr >
-                      <th>성명</th>
-                      <td id="psti_nm">홍길동</td>
-                      <th>국적</th>
-                      <td id="nlty">KOREA</td>
-                    </tr>
-                    <tr class="shittr" >
-                      <th>검사경위</th>
-                      <td id="rechkd_yn">본인판단</td>
-                      <th>백신접종</th>
-                      <td id="vac_code">3차 이상</td>
-                    </tr>
-                    <tr class="shittr" >
-                      <th>성별</th>
-                      <td id="gender">남</td>
-                      <th>나이</th>
-                      <td id="age">27</td>
-                    </tr>
-                    <tr class="shittr" >
-                      <th>발열여부</th>
-                      <td id="fever_yn">Y</td>
-                      <th>임신여부</th>
-                      <td id="pregn_yn">N</td>
-                    </tr>
-                    <tr class="shittr" >
-                      <th>확정일자</th>
-                      <td id="in_ymd">2022-01-01</td>
-                      <th>결과</th>
-                      <td id="pstv_yn">양성</td>
-                    </tr>
-                    <tr class="shittr" >
-                      <th>확진자 코드</th>
-                      <td id="cnfm_no">CNFM202201061000005</td>
-                      <th>상태</th>
-                      <td>진료병원지정대기</td>
-                    </tr>
-                    <tr class="shittr">
-                      <th>주민/외국인등록번호</th>
-                      <td colspan="3" id="rrn">960101-1111111</td>
-                    </tr>
-                    <tr class="shittr">
-                      <th>주소</th>
-                      <td colspan="3" id="psti_adres">대전광역시 서구 둔산동 1032 708호</td>
-                    </tr>
-                    <tr class="shittr">
-                      <th>연락처</th>
-                      <td colspan="3" id="psti_telno">010-5678-1234</td>
-                    </tr>
-                    <tr class="shittr">
-                      <th>증상</th>
-                      <td colspan="3" id="symptms">기침, 두통, 복통, 어지러움</td>
-                    </tr>
-                    <tr class="shittr">
-                      <th>진료기관</th>
-                      <td colspan=></td>
-                      <th>요청 상태</th>
-                      <td colspan=>	</td>
-                    </tr>
-                    <tr class="shittr">
-                      <th>진료 기관주소</th>
-                      <td colspan="3"></td>
-                    </tr>
-                    <tr class="shittr">
-                      <th>연락처</th>
-                      <td></td>
-                      <th>요청 시간</th>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </table>
-                    <div style="text-align: center; margin-bottom: 24px; margin-top: 10px;">
-						 <button onclick="OpenWindow('cnfrm-detail-dgnss-regist', '진료 신청 정보', 1260, 715)" class="btn btn-success btn-sm" style="width: 50%; height: 35px; background: #1a4f72; border: #1a4f72;">진료요청</button>
-                    </div>
-                    <div style="margin-bottom: 78px;"></div>
-              </div>
-              
-              </div>
-                
+				<div class="table-responsive">
+					<div class="ddoing" style="height: 650px;">
+						<table class="table table-hover text-nowrap" style="text-align: center;font-size: 15px;table-layout: fixed;">
+							<thead>
+								<tr role="row">
+									<th style="width: 25%">확진자코드</th>
+									<th style="width: 25%">성명</th>
+									<th style="width: 25%">연락처</th>
+									<th style="width: 25%">확정일자</th>
+								</tr>
+							</thead>
+							<tbody id="cnfrm-dgnss-list-table-tbody">
+								<tr class="each-smpl-result-element">
+									<td colspan="5" class="dgnssList">데이터 로딩중 입니다.</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="card-footer clearfix pb-0 pt-0" style="background-color: white;">
+						<ul class="pagination justify-content-center m-0" id="inptnt-list-pagination-ul">
+						</ul>
+					</div>
+					<form id="jobForm">
+						<input type='hidden' name="page" value="" /> 
+						<input type='hidden' name="perPageNum" value="" /> 
+						<input type='hidden' name="searchType" value="" /> 
+						<input type='hidden' name="keyword" value="" /> 
+						<input type='hidden' name="typeCode" value="" />
+					</form>
+				</div>
+				<!-- /.table-responsive -->
 			</div>
+		</div>
+	</div>
+	<div class="col-md-6 pr-0">
+		<!-- /.card-body -->
+		<div class="card">
+			<div class="card-body">
+				<table class="table table-bordered" style="border-left-color: white; border-right-color: white;">
+					<thead>
+						<tr>
+							<th colspan="4" style="font-size: 17px;">
+								<div class="row m-0" style="justify-content: space-between;">
+									<label style="font-size: 17px; margin: 0px;">확진자 진료신청 정보</label>
+									<button type="button" class="btn btn-sm btn-primary enableReadRrn" onclick="enableReadRrn(this);" data-enable="N" data-rrn="" data-manageNo="">개인정보 열람</button>
+								</div>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="ddoing" style="height: 12px;"></tr>
+						<tr>
+							<th class="col-md-3">성명</th>
+							<td class="col-md-4" id="psti_nm"></td>
+							<th class="col-md-2">국적</th>
+							<td class="col-md-5" id="nlty"></td>
+						</tr>
+						<tr class="shittr">
+							<th>검사경위</th>
+							<td id="rechkd_yn"></td>
+							<th>백신접종</th>
+							<td id="vac_code"></td>
+						</tr>
+						<tr class="shittr">
+							<th>성별</th>
+							<td id="gender"></td>
+							<th>나이</th>
+							<td id="age"></td>
+						</tr>
+						<tr class="shittr">
+							<th>발열여부</th>
+							<td id="fever_yn"></td>
+							<th>임신여부</th>
+							<td id="pregn_yn"></td>
+						</tr>
+						<tr class="shittr">
+							<th>확정일자</th>
+							<td id="in_ymd"></td>
+							<th>결과</th>
+							<td id="pstv_yn"></td>
+						</tr>
+						<tr class="shittr">
+							<th class="col-md-3">확진자 코드</th>
+							<td id="cnfm_no"></td>
+							<th>상태</th>
+							<td id="sttus_code"></td>
+						</tr>
+						<tr class="shittr">
+							<th>주민/외국인등록번호</th>
+							<td colspan="3" id="rrn"></td>
+						</tr>
+						<tr class="shittr">
+							<th>주소</th>
+							<td colspan="3" id="psti_adres"></td>
+						</tr>
+						<tr class="shittr">
+							<th>연락처</th>
+							<td colspan="3" id="psti_telno"></td>
+						</tr>
+						<tr class="shittr">
+							<th>증상</th>
+							<td colspan="3" id="symptms"></td>
+						</tr>
+						<tr class="shittr">
+							<th>진료기관</th>
+							<td colspan=></td>
+							<th>요청 상태</th>
+							<td colspan=></td>
+						</tr>
+						<tr class="shittr">
+							<th>진료기관 주소</th>
+							<td colspan="3"></td>
+						</tr>
+						<tr class="shittr">
+							<th>연락처</th>
+							<td></td>
+							<th>요청 시간</th>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+				<div style="text-align: center; margin-bottom: 24px; margin-top: 10px;">
+					<button id="openButton" data-manage-no="" data-name="" onclick="proc(this);" class="btn btn-success btn-sm" style="width: 50%; height: 35px; background: #1a4f72; border: #1a4f72;">진료신청</button>
+				</div>
+				<div style="margin-bottom: 56px;"></div>
+			</div>
+
+		</div>
+
+	</div>
 </div>
-	                      
-	                      
-	                      
-	                      
+
+<script>
+function proc(ele){
+	var manageNo = $('#openButton').attr('data-manage-no');
+	var name = $('#openButton').attr('data-name');
+  	window.open("cnfrm-detail-dgnss-regist?manageNo="+manageNo+"&pstiNm="+name+"", "진료 신청 정보", "width=1260, height=715" );  
+
+
+}
+</script>
+
+

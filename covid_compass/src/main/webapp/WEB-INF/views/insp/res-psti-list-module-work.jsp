@@ -7,13 +7,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
 <script type="text/x-handlebars-template" id="result-template">
 {{#each .}}
-	<tr onclick="showDetail('{{pstiNo}}')" class="each-result-element" data-psti-no="{{pstiNo}}">
-		<td>{{pstiNm}}</td>
-		<td>{{prettifyDate htscYmd}}</td>
-		<td>{{age}}</td>
-		<td>{{vac}}</td>
-		<td>{{fnRechkdYn rechkdYn}}</td>
-		<td><span class="badge badge-{{fnBadgeChk chkdYn pstvYn}}">{{fnChkdPstv chkdYn pstvYn}}</span></td>
+	<tr style="cursor:pointer;" onclick="showDetail('{{smplNo}}')" class="each-result-element" data-psti-no="{{smplNo}}">
+		<td style="text-align: center;">{{fnChkSmplCnt smplCnt}}</td>
+		<td style="text-align: left;">{{pstiNm}}</td>
+		<td style="text-align: center;">{{age}}</td>
+		<td style="text-align: left;">{{fnVac vacCode}}</td>
+		<td style="text-align: center;">{{prettifyDate reqYmd}}</td>
+		<td style="text-align: center;">{{prettifyDate resYmd}}</td>
+		<td style="text-align: center;"><span class="badge badge-{{fnBadgeChk smplResCode}}">{{fnResCode smplResCode}}</span></td>
 	</tr>
 {{/each}}
 </script>
@@ -25,7 +26,7 @@
 	</li>
 
 	<li class="page-item each-psti-result-pagination-element">
-		<a class="page-link" href="{{#if prev}}{{prevPageNum}}{{/if}}">
+		<a class="page-link {{checkDisabled prev}}" href="{{#if prev}}{{prevPageNum}}{{/if}}">
 			<i class="fas fa-angle-left" style="color:#1a4f72;"></i>
 		</a>
 	</li>
@@ -39,13 +40,13 @@
 	{{/each}}
 	
 	<li class="page-item each-psti-result-pagination-element">
-		<a class="page-link" href="{{#if next}}{{nextPageNum}}{{/if}}">
+		<a class="page-link {{checkDisabled next}}" href="{{#if next}}{{nextPageNum}}{{/if}}">
 			<i class="fas fa-angle-right" style="color:#1a4f72;"></i>
 		</a>
 	</li>
 
 	<li class="page-item each-psti-result-pagination-element">
-		<a class="page-link href="{{realEndPage}}">
+		<a class="page-link" href="{{realEndPage}}">
 			<i class="fas fa-angle-double-right" style="color:#1a4f72;"></i>
 		</a>
 	</li>
@@ -57,26 +58,23 @@ Handlebars.registerHelper({
 		var dateObj = new Date(timeValue);
 		var year = dateObj.getFullYear();
 		var month = dateObj.getMonth() + 1;
+		month += '';
+		if(month.length < 2){
+			month = '0' + month;
+		}
 		var date = dateObj.getDate();
+		date += '';
+		if(date.length < 2){
+			date = '0' + date;
+		}
 		return year + "-" + month + "-" + date;
 	}
 },
-"fnRechkdYn" : function(rechkdYn){
-	if(rechkdYn == "Y"){
+"fnChkSmplCnt" : function(smplCnt){
+	if(1 < smplCnt){
 		return "재검";
-	}
-	if(rechkdYn =="N"){
-		return "신규";
-	}
-},
-"fnChkdPstv" : function(chkdYn, pstvYn){
-	if(chkdYn == "Y"){
-		if(pstvYn == "Y"){
-			return "양성"
-		}
-		return "음성";
 	}else{
-		return "검사중";
+		return "신규";
 	}
 },
 "signActive" : function(pageNum){
@@ -91,31 +89,52 @@ Handlebars.registerHelper({
 		return 'color:#1a4f72';
 	}
 },
-"fnBadgeChk" : function(chkdYn, pstvYn){
-	if(chkdYn == "Y"){
-		if(pstvYn == "Y"){
-			return "danger";
-		}
-		return "primary";
-	}else{
+"fnBadgeChk" : function(smplResCode){
+	if(smplResCode == "K101"){
 		return "secondary";
+	}
+	if(smplResCode == "K102"){
+		return "danger";
+	}
+	if(smplResCode == "K103"){
+		return "primary";
 	}
 },
 "fnGender" : function(gender){
 	if(gender == "M"){
 		return "남자";
 	}
-	if(gender =="W"){
+	if(gender =="F"){
 		return "여자";
 	}
 },
-"fnPstvYn" : function(pstvYn){
-	if(pstvYn == "Y"){
+"fnResCode" : function(smplResCode){
+	if(smplResCode == "K101"){
+		return "대기";
+	}
+	if(smplResCode == "K102"){
 		return "양성";
 	}
-	if(pstvYn == "N"){
+	if(smplResCode == "K103"){
 		return "음성";
 	}
+},
+"fnVac" : function(vacCode){
+	if(vacCode == "J101"){
+		return "미접종";
+	}
+	if(vacCode == "J102"){
+		return "1차 접종";
+	}
+	if(vacCode == "J103"){
+		return "2차 접종";
+	}
+	if(vacCode == "J104"){
+		return "3차 이상";
+	}
+},
+"checkDisabled" : function(flag){
+  if(!flag) return 'disabled';
 }
 });
 </script>
@@ -123,7 +142,7 @@ Handlebars.registerHelper({
 var page = 1;
 
 window.onload = function(){
-	var url = '<%=request.getContextPath()%>/rest-insp/insp-psti-result-list';
+	var url = '<%=request.getContextPath()%>/rest-insp/result-list';
 	
 	list_go(page, url);
 	$('ul.pagination').on('click', 'li a', function(event){
@@ -145,7 +164,7 @@ function make_form(pageParam){
 	jobForm.find("[name='page']").val(page);
 	jobForm.find("[name='perPageNum']").val($('select[name="perPageNum"]').val());
 	jobForm.find("[name='searchType']").val($('select[name="searchType"]').val());
-	jobForm.find("[name='keyword']").val($('div.input-group>input[name="keyword"]').val());
+	jobForm.find("[name='keyword']").val($('input[id="keyword"]').val());
 	
 	return jobForm;
 }
@@ -161,9 +180,23 @@ function getPage(handlebarsProcessingURL, form){
 		dataType : 'json',
 		data : form.serialize(),
 		success : function(dataMap){
-			printData(dataMap.resultList, $('#result-table-tbody'), $('#result-template'), '.each-result-element');
-			printPagination(dataMap.pageMaker, $('#psti-result-pagination-ul'), $('#psti-result-pagination-template'), '.each-psti-result-pagination-element');
-			printData(dataMap.result, $('#result-detail-module'), $('#result-detail-template'), '.result-detail-element');
+			$('#result-table-tbody').html("");
+			if(dataMap.resultList.length == 0){
+				$('#result-table-tbody').html('<tr class="each-result-element"><td colspan="7">데이터가 없습니다.</td></tr>');
+				dataMap.pageMaker.endPage = 1;
+				dataMap.pageMaker.realEndPage = 1;
+				printPagination(dataMap.pageMaker, $('#psti-result-pagination-ul'), $('#psti-result-pagination-template'), '.each-psti-result-pagination-element');
+				printData('', $('#result-detail-module'), $('#result-detail-template'), '.result-detail-element');
+				$('#enableReadRrn').attr('disabled', true);
+			}else{
+				printData(dataMap.resultList, $('#result-table-tbody'), $('#result-template'), '.each-result-element');
+				printPagination(dataMap.pageMaker, $('#psti-result-pagination-ul'), $('#psti-result-pagination-template'), '.each-psti-result-pagination-element');
+				$('#enableReadRrn').data('rrn', dataMap.result.rrn);
+				$('#enableReadRrn').data('manageNo', dataMap.result.smplNo);
+		      	dataMap.result.rrn = (dataMap.result.rrn.substring(0,8) + '******');
+				printData(dataMap.result, $('#result-detail-module'), $('#result-detail-template'), '.result-detail-element');
+				$('#enableReadRrn').attr('disabled', false);
+			}
 		},
 		error : function(error){
 			alert('error' + error.status);
@@ -204,23 +237,18 @@ function printPagination(pageMaker, target, templateObject, removeClass){
 						style="text-align: center;">
 						<thead>
 							<tr role="row">
-								<th tabindex="0" aria-controls="example2" rowspan="1"
-									colspan="1" aria-label="">성명</th>
-								<th tabindex="0" aria-controls="example2" rowspan="1"
-									colspan="1" aria-label="">검사일자</th>
-								<th tabindex="0" aria-controls="example2" rowspan="1"
-									colspan="1" aria-sort="ascending" aria-label="">나이</th>
-								<th tabindex="0" aria-controls="example2" rowspan="1"
-									colspan="1" aria-label="">백신접종</th>
-								<th tabindex="0" aria-controls="example2" rowspan="1"
-									colspan="1" aria-label="">재검여부</th>
-								<th tabindex="0" aria-controls="example2" rowspan="1"
-									colspan="1" aria-label="">검사결과</th>
+								<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="" style="text-align: center; width:15%;">재검여부</th>
+								<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="" style="text-align: center; width:15%;">성명</th>
+								<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="" style="text-align: center; width:10%;">나이</th>
+								<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="" style="width:15%;">백신접종</th>
+								<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="" style="text-align: center; width:15%;">검사요청일자</th>
+								<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="" style="text-align: center; width:15%;">결과일자</th>
+								<th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="" style="text-align: center; width:15%;">검사결과</th>
 							</tr>
 						</thead>
 						<tbody id="result-table-tbody">
 							<tr class="each-result-element">
-								<td colspan="6">페이지 로딩중 입니다.</td>
+								<td colspan="7">페이지 로딩중 입니다.</td>
 							</tr>
 						</tbody>
 					</table>

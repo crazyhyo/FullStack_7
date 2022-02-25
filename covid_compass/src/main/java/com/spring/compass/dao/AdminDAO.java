@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.spring.compass.command.SearchCriteria;
+import com.spring.compass.command.SearchCriteriaGeon;
 import com.spring.compass.vo.AttachVO;
 import com.spring.compass.vo.HsptVO;
 import com.spring.compass.vo.InspVO;
@@ -12,22 +13,28 @@ import com.spring.compass.vo.LtctVO;
 import com.spring.compass.vo.MberVO;
 import com.spring.compass.vo.NoticeVO;
 import com.spring.compass.vo.PbhtVO;
+import com.spring.compass.vo.PstiVO;
 
 public interface AdminDAO {
 	
-	public List<InspVO> selectAllInsp() throws SQLException;
+	public MberVO selectMeberDetailByMberId(String mberId) throws SQLException;
 	
-	public List<PbhtVO> selectAllPbht() throws SQLException;
+	public List<InspVO> selectAllInsp(SearchCriteriaGeon cri) throws SQLException;
 	
-	public List<HsptVO> selectAllHspt() throws SQLException;
+	public List<PbhtVO> selectAllPbht(SearchCriteriaGeon cri) throws SQLException;
 	
-	public List<LtctVO> selectAllLtct() throws SQLException;
+	public List<HsptVO> selectAllHspt(SearchCriteriaGeon cri) throws SQLException;
 	
-	public int selectInspTotalCount() throws SQLException;
+	public List<LtctVO> selectAllLtct(SearchCriteriaGeon cri) throws SQLException;
 	
-	public int selectAllInstCount(SearchCriteria cri) throws SQLException;
+	public int selectInspTotalCount(SearchCriteriaGeon cri) throws SQLException;
+	public int selectPbhtTotalCount(SearchCriteriaGeon cri) throws SQLException;
+	public int selectHsptTotalCount(SearchCriteriaGeon cri) throws SQLException;
+	public int selectLtctTotalCount(SearchCriteriaGeon cri) throws SQLException;
 	
-	public List<InstVO> selectAllInst(SearchCriteria cri) throws SQLException;
+	public int selectAllInstCount(SearchCriteriaGeon cri) throws SQLException;
+	
+	public List<InstVO> selectAllInst(SearchCriteriaGeon cri) throws SQLException;
 	
 	public void insertInst(InstVO inst) throws SQLException;
 	
@@ -87,4 +94,63 @@ public interface AdminDAO {
 	
 	public MberVO detailMberByMberNo(String mberNo) throws SQLException;
 
+	public void deleteInspStatsByInspNo(String inspNo) throws SQLException;
+	
+	public void deletePbhtStatsByPbhtNo(String pbhtNo) throws SQLException;
+	
+	public void deleteHsptStatsByHsptNo(String hsptNo) throws SQLException;
+	
+	public void deleteLtctStatsByLtctNo(String ltctNo) throws SQLException;
+	
+	public List<String> selectInspNoByPbhtNo(String pbhtNo) throws SQLException;
+	
+	public String selectInstNoByInspNo(String inspNo) throws SQLException;
+	
+	public String selectPstiNoByInspNo(String inspNo) throws SQLException;
+	
+	public void deleteHtscByPstiNo(String pstiNo) throws SQLException;
+	
+	public void deletePstiByInspNo(String inspNo) throws SQLException;
+	
+	public void deleteInspEmpByInspNo(String inspNo) throws SQLException;
+	
+	public void deleteSmplByPbhtNo(String pbhtNo) throws SQLException;
+	
+	public void deleteCnfmByPbhtNo(String pbhtNo) throws SQLException;
+	
+	public void deleteSlfptntByPbhtNo(String pbhtNo) throws SQLException;
+	
+	public void deletePbhtEmp(String pbhtNo) throws SQLException;
+	
+	public void deleteHsptEmpByHsptNo(String hsptNo) throws SQLException;
+	
+	public void deleteInptntByHsptNo(String hsptNo) throws SQLException;
+	
+	public void deleteDgnssByHsptNo(String hsptNo) throws SQLException;
+	
+	public void deleteIsoptntByLtctNo(String ltctNo) throws SQLException;
+	
+	public void deleteLtctEmpByLtctNo(String ltctNo) throws SQLException;
+	
+	public List<PstiVO> selectPstiBackupList() throws SQLException;
+	
+	public List<NoticeVO> selectAllNoticeByInstNo(SearchCriteria cri) throws SQLException;
+	
+	public int selectSearchNoticeListByInstNoCount(SearchCriteria cri) throws SQLException;
+	
+	public void noticeModifyByInst(NoticeVO notice) throws SQLException;
+	
+	public void registNoticeAdmin(NoticeVO notice) throws SQLException;
+	
+	public List<NoticeVO> selectPopupNotice() throws SQLException;
+	
+	public String selectPbhtNoByInstNm(String instNm) throws SQLException;
+	
+	public void deleteAttachByMberNo(String mberNo) throws SQLException;
+	
+	public AttachVO selectAttachByMberNo(String mberNo) throws SQLException;
 }
+
+
+
+

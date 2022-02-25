@@ -16,6 +16,8 @@ public class DgnssVO implements Serializable{
 	private String dgnssNo;
 	private String dgnssCode;
 	private String type;
+	
+	
 	public String getHsptNo() {
 		return hsptNo;
 	}

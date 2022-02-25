@@ -79,34 +79,74 @@ FROM
 
 <select id="selectTestResultCheck" parameterType="com.spring.compass.vo.TestResultCheckVO" resultType="com.spring.compass.vo.TestResultCheckVO">
 SELECT
-    A.RRN  
-    ,A.PSTI_NM
-    ,A.GENDER 
-    ,B.HTSC_YMD 
-    ,C.PSTV_YN 
-    ,C.RES_YMD 
-    ,D.INST_NM 
-    ,E.SMPL_RES_CODE
+     fn_get_bir_by_psti_no(c.psti_no) as bir  
+    ,c.PSTI_NM
+    ,c.GENDER 
+    ,d.HTSC_YMD 
+    ,b.PSTV_YN 
+    ,b.RES_YMD 
+    ,e.INST_NM
+    ,a.SMPL_RES_CODE
+    ,a.smpl_no
+    ,c.psti_no
+    ,e.inst_no
+    ,f.INST_NM as pbht_Nm
+    ,a.manage_no
 FROM
-   (select a.*
-     from psti a,
-    (
-     select rrn, max(wrt_ymd) as wrt_ymd
-       from psti
-      group by rrn
-    ) b
-where a.rrn = b.rrn
-      and a.wrt_ymd = b.wrt_ymd) A, HTSC B, SMPL E, SMPL_RESULT C, INSP D
-    where A.PSTI_NO = B.PSTI_NO
-      and A.MANAGE_NO = E.MANAGE_NO
-      and E.SMPL_NO = C.SMPL_NO
-      and A.INSP_NO = D.INSP_NO
-      and A.PSTI_NM = #{pstiNm}
-      and A.RRN = #{rrn}
+   (
+	 select a.*
+	   from smpl a,
+	  	     (
+	  		  select manage_no, max(REQ_YMD) as REQ_YMD
+	      		from smpl
+	     	   group by manage_no
+	   		 ) b
+	   where a.manage_no = b.manage_no
+	      	 and a.REQ_YMD = b.REQ_YMD
+    ) a, smpl_result b, psti c, htsc d, inst e, pbht f
+where a.smpl_no = b.smpl_no
+  and a.manage_no = c.manage_no
+  and c.psti_no = d.psti_no
+  and a.inst_no = e.inst_no
+  and a.pbht_no = f.pbht_no
+  and c.PSTI_NM = #{pstiNm}
+  and c.RRN = #{rrn}
+    
 </select>
 
+<select id="registPstiCheck" parameterType="com.spring.compass.vo.PstiVO" resultType="java.lang.Integer">
+SELECT
+   count(*)
+FROM
+    psti
+where psti_nm = #{pstiNm} 
+  and rrn = #{rrn}
+</select>
 
-
+<update id="registPstiUpdate" parameterType="com.spring.compass.vo.PstiVO">
+UPDATE psti
+    SET
+     insp_no = #{inspNo}   
+    ,psti_nm = #{pstiNm}  
+    ,rrn = #{rrn}  
+    ,gender = #{gender}  
+    ,pregn_yn = #{pregnYn}  
+    ,nlty = #{nlty} 
+    ,psti_telno = #{pstiTelno} 
+    ,psti_adres = #{pstiAdres}
+    ,job_code = #{jobCode}  
+    ,fever_yn = #{feverYn}
+    ,symptms = #{symptms}
+    ,vac_code = #{vacCode}
+    ,wrt_ymd = sysdate
+    ,del_ymd = sysdate + (INTERVAL '1' DAY)
+    ,rechkd_yn = #{rechkdYn}
+    ,chkd_yn = #{chkdYn}
+    ,area_no = #{areaNo}
+    ,req_yn = 'N'
+WHERE psti_nm = #{pstiNm}
+  and rrn = #{rrn}
+</update>
 
 
 <update id="registPsti" parameterType="com.spring.compass.vo.PstiVO">
@@ -151,8 +191,6 @@ INSERT INTO psti (
    ,null
    ,#{areaNo}
 )
-
-
 </update>
 
 
@@ -193,8 +231,8 @@ SELECT
 	   ,vac_code	   ,wrt_ymd	   ,del_ymd
 	   ,rechkd_yn	   ,chkd_yn	   ,manage_no
 	   ,area_no
-       ,fn_get_bir_by_psti_no(a.psti_no) as bir
-       ,fn_get_age_by_psti_no(a.psti_no) as age
+       ,fn_get_bir_by_psti_no(psti_no) as bir
+       ,fn_get_age_by_psti_no(psti_no) as age
 FROM
         psti
 WHERE
@@ -272,6 +310,7 @@ SELECT
 	    smpl_no   ,pbht_no   ,inst_no
 	   ,manage_no   ,chkd_yn   ,req_ymd
 	   ,pstv_yn   ,res_ymd   ,smpl_res_code
+	   ,inst_code
   FROM V_SMPL_RESULT
 WHERE
     smpl_no = #{smplNo}
@@ -374,6 +413,56 @@ ORDER BY
 	wrt_ymd desc
 </select>
 
+<select id="selectConfirmation" parameterType="com.spring.compass.vo.PstiVO" resultType="com.spring.compass.command.ConfirmationVO">
+SELECT
+    c.PSTI_NM,
+    fn_get_bir_by_psti_no(c.psti_no) as bir,
+    c.GENDER, 
+    b.PSTV_YN, 
+    b.RES_YMD, 
+    a.SMPL_RES_CODE,
+    c.manage_no,
+    a.smpl_no,
+    c.psti_no
+from
+    (
+	 select a.*
+	   from smpl a,
+	  	     (
+	  		  select manage_no, max(REQ_YMD) as REQ_YMD
+	      		from smpl
+	     	   group by manage_no
+	   		 ) b
+	   where a.manage_no = b.manage_no
+	      	 and a.REQ_YMD = b.REQ_YMD
+	) a, smpl_result b, psti c
+where c.manage_no = a.manage_no
+  and a.smpl_no = b.smpl_no
+  and c.psti_nm = #{pstiNm}
+  and c.rrn = #{rrn}
+</select>
+
+<select id="selectConfirmationCheck" parameterType="com.spring.compass.vo.PstiVO" resultType="java.lang.Integer">
+SELECT
+  count(*)
+from
+    (
+	 select a.*
+	   from smpl a,
+	  	     (
+	  		  select manage_no, max(REQ_YMD) as REQ_YMD
+	      		from smpl
+	     	   group by manage_no
+	   		 ) b
+	   where a.manage_no = b.manage_no
+	      	 and a.REQ_YMD = b.REQ_YMD
+	) a, smpl_result b, psti c
+where c.manage_no = a.manage_no
+  and a.smpl_no = b.smpl_no
+  and b.PSTV_YN = 'N'
+  and c.psti_nm = #{pstiNm}
+  and c.rrn = #{rrn}
+</select>
 
 <select id="selectSckbdreqBySckbdreqNo" parameterType="java.lang.String"
 		resultType="com.spring.compass.vo.SckbdreqVO">
@@ -392,6 +481,17 @@ FROM
     sckbdreq
 WHERE
 	sckbdreq_no = #{sckbdreqNo}
+</select>
+
+<select id="selectQuestCheck" parameterType="com.spring.compass.vo.PstiVO" resultType="java.lang.Integer">
+SELECT
+    count(*)
+FROM
+    psti a, htsc b
+where a.psti_no = b.psti_no
+  and a.psti_nm = #{pstiNm}
+  and a.rrn = #{rrn}
+  and (htsc_ymd + 7) &gt; sysdate
 </select>
 
 <select id="selectSckbdreqByManageNo" parameterType="java.lang.String"

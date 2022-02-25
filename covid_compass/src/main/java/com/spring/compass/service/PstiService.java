@@ -3,6 +3,7 @@ package com.spring.compass.service;
 import java.util.List;
 import java.util.Map;
 
+import com.spring.compass.command.ConfirmationVO;
 import com.spring.compass.command.SearchCriteria;
 import com.spring.compass.vo.PstiVO;
 import com.spring.compass.vo.TestResultCheckVO;
@@ -24,5 +25,15 @@ public interface PstiService {
 	public Map<String, Object> getinspList(SearchCriteria cri)throws Exception;
 	
 	public TestResultCheckVO getTestResultCheck(TestResultCheckVO testResultCheckVO)throws Exception;
+	
+	public ConfirmationVO getConfirmation(PstiVO psti)throws Exception;
+	
+	public int getConfirmationCheck(PstiVO psti)throws Exception;
+	
+	public int getQuestCheck(PstiVO psti)throws Exception;
+	
+	public int getregistPstiCheck(PstiVO psti)throws Exception;
+	
+	public int registPstiUpdate(PstiVO psti)throws Exception;
 	
 }

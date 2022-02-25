@@ -12,18 +12,19 @@
 	<div class="wrapper" style="max-width: 1280px; margin: 0 auto;">
 		<br>
 		<br>
-		<h2>국내 발생 현황</h2>
+			<div class="row">
+				<h2 style="font-weight: bold;" class="col-md-10">상세 현황</h2>
+				<button type="button" onclick="history.go(-1);" class="btn btn-block btn-primary col-md-2" style="background: #1a4f72; border-color: #1a4f72; float: right;">뒤로가기</button>
+			</div>
 		<hr>
 		
-		<span style="font-weight: bold; margin-left: 17px;">국내 발생현황</span>
+		<span style="font-weight: bold; margin-left: 17px;">발생현황</span>
 		
 		<div class="card-body">
                 <table class="table table-bordered">
                   <thead>
                     <tr style="text-align: center; font-weight: bold; background-color:#f5fafc ">
                       <th colspan="2" style="width: 120px">사망</th>
-                      <th colspan="2" style="width: 120px">재원 위중증</th>
-                      <th colspan="2" style="width: 120px">신규입원</th>
                       <th colspan="2" style="width: 120px">확진</th>
                     </tr>
                   </thead>
@@ -34,26 +35,14 @@
                       
                       <td>일일</td>
                       <td>인구 10만명당</td>
-                      
-                      <td >일일</td>
-                      <td>인구 10만명당</td>
-                      
-                      <td>일일</td>
-                      <td>인구 10만명당</td>
                     </tr>
                     
-                    <tr style="text-align: center">
-                      <td>36</td>
-                      <td>0.07</td>
+                    <tr style="text-align: center; font-weight: bold;">
+                      <td style="color: red;">${dailyCovidMap.sevenDay.death}</td>
+                      <td>${wholeCovidVO.millionDeathPrsStr}</td>
                       
-                      <td>1,015</td>
-                      <td>1.96</td>
-                      
-                      <td>347</td>
-                      <td>0.67</td>
-                      
-                      <td>3,129</td>
-                      <td>6.04</td>
+                      <td style="color: red;">${commaDailyCovidMap.commaSevendayConfirm}</td>
+                      <td>${wholeCovidVO.millionConfirmPrsStr}</td>
                     </tr>
                    
                   </tbody>
@@ -67,39 +56,39 @@
                   <thead>
                     <tr style="text-align: center; font-weight: bold; background-color:#f5fafc;">
                       <th style="width: 90px">구분</th>
-                      <th style="width: 40px">12.28</th>
-                      <th style="width: 40px">12.29</th>
-                      <th style="width: 40px">12.30</th>
-                      <th style="width: 40px">12.31</th>
-                      <th style="width: 40px">01.01</th>
-                      <th style="width: 40px">01.02</th>
-                      <th style="width: 40px">01.02</th>
-                      <th style="width: 70px">주간일평균</th>
+                      <th style="width: 40px">${dailyCovidMap.oneDay.month}-${dailyCovidMap.oneDay.day}일</th>
+                      <th style="width: 40px">${dailyCovidMap.twoDay.month}-${dailyCovidMap.twoDay.day}일</th>
+                      <th style="width: 40px">${dailyCovidMap.threeDay.month}-${dailyCovidMap.threeDay.day}일</th>
+                      <th style="width: 40px">${dailyCovidMap.fourDay.month}-${dailyCovidMap.fourDay.day}일</th>
+                      <th style="width: 40px">${dailyCovidMap.fiveDay.month}-${dailyCovidMap.fiveDay.day}일</th>
+                      <th style="width: 40px">${dailyCovidMap.sixDay.month}-${dailyCovidMap.sixDay.day}일</th>
+                      <th style="width: 40px">${dailyCovidMap.sevenDay.month}-${dailyCovidMap.sevenDay.day}일</th>
+                      <th style="width: 70px"><strong>7일 평균</strong></th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr style="text-align: center;">
+                    <tr style="text-align: center; font-weight: bold;">
                       <td style="font-weight: bold">일일</td>
-                      <td>46</td>
-                      <td>46</td>
-                      <td>46</td>
-                      <td>46</td>
-                      <td>46</td>
-                      <td>46</td>
-                      <td>46</td>
-                      <td>46</td>
+                      <td>${dailyCovidMap.oneDay.death}</td>
+                      <td>${dailyCovidMap.twoDay.death}</td>
+                      <td>${dailyCovidMap.threeDay.death}</td>
+                      <td>${dailyCovidMap.fourDay.death}</td>
+                      <td>${dailyCovidMap.fiveDay.death}</td>
+                      <td>${dailyCovidMap.sixDay.death}</td>
+                      <td>${dailyCovidMap.sevenDay.death}</td>
+                      <td><strong style="color: red;">${dailyCovidMap.oneDay.avgDeath}</strong></td>
                     </tr>
                     
-                    <tr style="text-align: center;">
+                    <tr style="text-align: center; font-weight: bold;">
                       <td style="font-weight: bold">인구 10만명 당</td>
-                      <td>0.09</td>
-                      <td>0.07</td>
-                      <td>0.14</td>
-                      <td>0.21</td>
-                      <td>0.12</td>
-                      <td>0.13</td>
-                      <td>0.07</td>
-                      <td>0.12</td>
+                      <td>${dailyCovidMap.oneDay.millionDeathStr}</td>
+                      <td>${dailyCovidMap.twoDay.millionDeathStr}</td>
+                      <td>${dailyCovidMap.threeDay.millionDeathStr}</td>
+                      <td>${dailyCovidMap.fourDay.millionDeathStr}</td>
+                      <td>${dailyCovidMap.fiveDay.millionDeathStr}</td>
+                      <td>${dailyCovidMap.sixDay.millionDeathStr}</td>
+                      <td>${dailyCovidMap.sevenDay.millionDeathStr}</td>
+                      <td><strong style="color: red;">${dailyCovidMap.oneDay.avgMillionDeath}</strong></td>
                     </tr>
                    
                   </tbody> 
@@ -113,39 +102,39 @@
                   <thead>
                     <tr style="text-align: center; font-weight: bold; background-color:#f5fafc;">
                       <th style="width: 90px">구분</th>
-                      <th style="width: 40px">12.28</th>
-                      <th style="width: 40px">12.29</th>
-                      <th style="width: 40px">12.30</th>
-                      <th style="width: 40px">12.31</th>
-                      <th style="width: 40px">01.01</th>
-                      <th style="width: 40px">01.02</th>
-                      <th style="width: 40px">01.02</th>
-                      <th style="width: 70px">주간일평균</th>
+                      <th style="width: 40px">${dailyCovidMap.oneDay.month}-${dailyCovidMap.oneDay.day}일</th>
+                      <th style="width: 40px">${dailyCovidMap.twoDay.month}-${dailyCovidMap.twoDay.day}일</th>
+                      <th style="width: 40px">${dailyCovidMap.threeDay.month}-${dailyCovidMap.threeDay.day}일</th>
+                      <th style="width: 40px">${dailyCovidMap.fourDay.month}-${dailyCovidMap.fourDay.day}일</th>
+                      <th style="width: 40px">${dailyCovidMap.fiveDay.month}-${dailyCovidMap.fiveDay.day}일</th>
+                      <th style="width: 40px">${dailyCovidMap.sixDay.month}-${dailyCovidMap.sixDay.day}일</th>
+                      <th style="width: 40px">${dailyCovidMap.sevenDay.month}-${dailyCovidMap.sevenDay.day}일</th>
+                      <th style="width: 70px">7일 평균</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr style="text-align: center;">
+                    <tr style="text-align: center; font-weight: bold;">
                       <td style="font-weight: bold">일일</td>
-                      <td>3,864</td>
-                      <td>5,406</td>
-                      <td>5,035</td>
-                      <td>4,874</td>
-                      <td>4,415</td>
-                      <td>3,832</td>
-                      <td>3,129</td>
-                      <td>4,365</td>
+                      <td>${commaDailyCovidMap.commaOnedayConfirm}</td>
+                      <td>${commaDailyCovidMap.commaTwodayConfirm}</td>
+                      <td>${commaDailyCovidMap.commaThreedayConfirm}</td>
+                      <td>${commaDailyCovidMap.commaFourdayConfirm}</td>
+                      <td>${commaDailyCovidMap.commaFivedayConfirm}</td>
+                      <td>${commaDailyCovidMap.commaSixdayConfirm}</td>
+                      <td>${commaDailyCovidMap.commaSevendayConfirm}</td>
+                      <td><strong style="color: red;">${commaDailyCovidMap.commaAvgConfirm}</strong></td>
                     </tr>
                     
-                    <tr style="text-align: center;">
+                    <tr style="text-align: center; font-weight: bold;">
                       <td style="font-weight: bold">인구 10만명 당</td>
-                      <td>7.49</td>
-                      <td>10.43</td>
-                      <td>9.71</td>
-                      <td>9.41</td>
-                      <td>8.52</td>
-                      <td>7.39</td>
-                      <td>6.07</td>
-                      <td>8.42</td>
+                      <td>${dailyCovidMap.oneDay.millionConfirmStr}</td>
+                      <td>${dailyCovidMap.twoDay.millionConfirmStr}</td>
+                      <td>${dailyCovidMap.threeDay.millionConfirmStr}</td>
+                      <td>${dailyCovidMap.fourDay.millionConfirmStr}</td>
+                      <td>${dailyCovidMap.fiveDay.millionConfirmStr}</td>
+                      <td>${dailyCovidMap.sixDay.millionConfirmStr}</td>
+                      <td>${dailyCovidMap.sevenDay.millionConfirmStr}</td>
+                      <td><strong style="color: red;">${dailyCovidMap.oneDay.avgMillionConfirm}</strong></td>
                     </tr>
                    
                   </tbody> 
@@ -180,14 +169,26 @@
 	<script type="text/javascript">
             var context = document.getElementById('myChart').getContext('2d');
             
-
+            var wholeConfirm =parseInt(${wholeCovidVO.confirm});
+			var twodayConfirm =parseInt(${dailyCovidMap.twoDay.confirm});	
+			var threedayConfirm =parseInt(${dailyCovidMap.threeDay.confirm});	
+			var fourdayConfirm =parseInt(${dailyCovidMap.fourDay.confirm});	
+			var fivedayConfirm =parseInt(${dailyCovidMap.fiveDay.confirm});	
+			var sixdayConfirm =parseInt(${dailyCovidMap.sixDay.confirm});	
+			var sevendayConfirm =parseInt(${dailyCovidMap.sevenDay.confirm});	
             
             var myChart = new Chart(context, 
             {
                 type: 'line', // 차트의 형태
                 data: { // 차트에 들어갈 데이터
                 	//x축
-                    labels: ['12.28','12.29','12.30','12.31','01.01','01.02','01.03'],
+                    labels: ['${dailyCovidMap.oneDay.month}.${dailyCovidMap.oneDay.day}일'
+                    		,'${dailyCovidMap.twoDay.month}.${dailyCovidMap.twoDay.day}일'
+                    		,'${dailyCovidMap.threeDay.month}.${dailyCovidMap.threeDay.day}일'
+                    		,'${dailyCovidMap.fourDay.month}.${dailyCovidMap.fourDay.day}일'
+                    		,'${dailyCovidMap.fiveDay.month}.${dailyCovidMap.fiveDay.day}일'
+                    		,'${dailyCovidMap.sixDay.month}.${dailyCovidMap.sixDay.day}일'
+                    		,'${dailyCovidMap.sevenDay.month}.${dailyCovidMap.sevenDay.day}일'],
                     //데이터
                     //'rgb(247,12,12)'
                     datasets: [
@@ -197,7 +198,13 @@
 				                            backgroundColor:'rgb(247,12,12)',
 				                            borderColor:'rgba(255, 99, 132, 1)',
 				                            yAxisID: 'y_left',
-				                            data: [3864,5406,5035,4874,4415,3832,3129] //x축 label에 대응되는 데이터 값
+				                            data: [${dailyCovidMap.oneDay.confirm},
+				                            	   ${dailyCovidMap.twoDay.confirm},
+				                            	   ${dailyCovidMap.threeDay.confirm},
+				                            	   ${dailyCovidMap.fourDay.confirm},
+				                            	   ${dailyCovidMap.fiveDay.confirm},
+				                            	   ${dailyCovidMap.sixDay.confirm},
+				                            	   ${dailyCovidMap.sevenDay.confirm}] //x축 label에 대응되는 데이터 값
 				                    },
 				                    
 				                    {
@@ -206,8 +213,15 @@
 				                        type : 'bar', // 'bar' type, 전체 타입과 같다면 생략가능
 				                        backgroundColor: 'rgb(111, 121, 255)',
 				                        borderColor: 'rgb(255, 204, 102)',
+				                        barPercentage: 0.5,
 				                        yAxisID: 'y_right',
-				                        data: [615515, 620922, 625957, 630831, 635246, 639078, 642207],
+				                        data: [wholeConfirm-(sevendayConfirm+sixdayConfirm+fivedayConfirm+fourdayConfirm+threedayConfirm+twodayConfirm),
+				                        	   wholeConfirm-(sevendayConfirm+sixdayConfirm+fivedayConfirm+fourdayConfirm+threedayConfirm),
+				                        	   wholeConfirm-(sevendayConfirm+sixdayConfirm+fivedayConfirm+fourdayConfirm),
+				                        	   wholeConfirm-(sevendayConfirm+sixdayConfirm+fivedayConfirm),
+				                        	   wholeConfirm-(sevendayConfirm+sixdayConfirm),
+				                        	   wholeConfirm-sevendayConfirm,
+				                        	   wholeConfirm],
 				                    	
 				                    }
                 			  ]
@@ -220,8 +234,8 @@
 	        					ticks: {
 	        						
 	        						suggestedMin: 0,
-	        						suggestedMax: 10000,
-	        						stepSize : 1000
+	        						suggestedMax: 150000,
+	        						stepSize : 2000
 	        					},
 	        					beginAtZero:true,
 	        					position : 'left'
@@ -254,9 +268,9 @@
            
             var dataset = { 
             		//라벨별 컬러설정 
-            		backgroundColor: ['#f74336', '#36302f'],
+            		backgroundColor: ['#0740fa', '#ff8af3'],
             		borderColor: '#22252B',
-            		data: [50, 45] 
+            		data: [${genderMap.male}, ${genderMap.female}] 
             }
             var labels=['남성','여성'];
             var datasets={ datasets:[dataset], labels:labels}
@@ -309,7 +323,11 @@
                             label: '확진자 수', //차트 제목
                             fill: false, // line 형태일 때, 선 안쪽을 채우는지 안채우는지
                             data: [
-                                50834,64376,95818,93403,93897,93010,91227,38886,20756 //x축 label에 대응되는 데이터 값
+                                ${covidStatsAgeVO.teenagerYounger},${covidStatsAgeVO.teenager}
+                                ,${covidStatsAgeVO.twenty},${covidStatsAgeVO.thirty}
+                                ,${covidStatsAgeVO.forty},${covidStatsAgeVO.fifty}
+                                ,${covidStatsAgeVO.sixty},${covidStatsAgeVO.seventy}
+                                ,${covidStatsAgeVO.eighty} //x축 label에 대응되는 데이터 값
                             ],
                             backgroundColor: [
                                 //색상

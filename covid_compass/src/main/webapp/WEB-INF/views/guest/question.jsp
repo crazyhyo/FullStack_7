@@ -27,16 +27,38 @@
 	text-align: left;
 	vertical-align: middle;
 }
+.btn.btn-outline-primary:hover{
+	background:#1a4f72!important;
+	border-color:#1a4f72!important;
+}
+.btn.btn-outline-primary.active{
+	background:#1a4f72!important;
+	border-color:#1a4f72!important;
+}
+.active .bs-stepper-circle{
+	background:#1a4f72!important;
+}
+
 </style>
 </head>
 <title></title>
 <body>
 	<div class="wrapper" style="max-width: 1280px; margin: 0 auto;">
-		<div class="row">
-			<div class="col-md-12" style="margin-top: 10px;">
+		<div class="row col-12">
+			<div class="col-12" style="margin-top: 10px;">
 				<div class="card card-default">
 					<div class="card-header">
-						<h3 class="card-title">문진표 작성</h3>
+					<div class="row" style="justify-content: space-between;">
+						<div class="col-2 pt-2">
+							<h3 class="card-title">문진표 작성</h3>
+						</div>
+						<div class="col-2">
+							<button type="button" style="width: 90%;" onclick="fillQuestion();" class="btn btn-info">데이터입력</button>
+						</div>
+						<div class="col-2">
+							<button type="button" onclick="questionCancle();" class="btn btn-block btn-primary" style="width: 90%;background: #1a4f72; border-color: #1a4f72;">뒤로가기</button>
+						</div>
+					</div>
 					</div>
 					<div class="card-body p-0">
 						<div class="bs-stepper linear">
@@ -61,8 +83,13 @@
 									<div class="form-group">
 										<label for="chck_reason_code">검사경위<span class="fontred">*</span></label><br>
 										<div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%">
-											<label class="btn btn-outline-primary active" id="code_my"> <input type="radio" name="chck_reason_code" id="chck_reason_code_my" autocomplete="off" value="N" checked="">본인판단
-											</label> <label class="btn btn-outline-primary" id="code_sick"> <input type="radio" name="chck_reason_code" id="chck_reason_code_sick" autocomplete="off" value="Y">자가격리
+										
+											<label class="btn btn-outline-primary active" id="code_my"> 
+												<input type="radio" name="chck_reason_code" id="chck_reason_code_my" autocomplete="off" value="N" checked="">본인판단
+											</label> 
+											<div style="width: 1%"></div>
+											<label class="btn btn-outline-primary" id="code_sick"> 
+												<input type="radio" name="chck_reason_code" id="chck_reason_code_sick" autocomplete="off" value="Y">자가격리
 											</label>
 										</div>
 									</div>
@@ -82,8 +109,12 @@
 									<div class="form-group">
 										<label for="psti_sexdstn">성별<span class="fontred">*</span></label><br>
 										<div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%">
-											<label class="btn btn-outline-primary active" id="psti_sex_m"> <input type="radio" name="psti_sexdstn" id="psti_sexdstn_m" autocomplete="off" value="M" checked>남
-											</label> <label class="btn btn-outline-primary" id="psti_sex_w"> <input type="radio" name="psti_sexdstn" id="psti_sexdstn_w" autocomplete="off" value="F">여
+											<label class="btn btn-outline-primary active" id="psti_sex_m"> 
+											<input type="radio" name="psti_sexdstn" id="psti_sexdstn_m" autocomplete="off" value="M" checked>남
+											</label> 
+											<div style="width: 1%"></div>
+											<label class="btn btn-outline-primary" id="psti_sex_w">
+											 <input type="radio" name="psti_sexdstn" id="psti_sexdstn_w" autocomplete="off" value="F">여
 											</label>
 										</div>
 									</div>
@@ -91,8 +122,12 @@
 									<div class="form-group" id="pregnan" style="display: none;">
 										<label for="psti_pregnan_yn">임신여부</label><br>
 										<div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%">
-											<label class="btn btn-outline-primary active"> <input type="radio" name="psti_pregnan_yn" id="psti_pregnan_y" autocomplete="off" value="Y">예
-											</label> <label class="btn btn-outline-primary"> <input type="radio" name="psti_pregnan_yn" id="psti_pregnan_n" autocomplete="off" value="N" checked="">아니오
+											<label class="btn btn-outline-primary active"> 
+											<input type="radio" name="psti_pregnan_yn" id="psti_pregnan_y" autocomplete="off" value="Y">예
+											</label> 
+											<div style="width: 1%"></div>
+											<label class="btn btn-outline-primary" style="width: 3.5%;"> 
+											<input type="radio"  name="psti_pregnan_yn" id="psti_pregnan_n" autocomplete="off" value="N" checked="">아니오
 											</label>
 										</div>
 									</div>
@@ -100,8 +135,12 @@
 									<div class="form-group">
 										<label for="psti_nlty">국적<span class="fontred">*</span></label><br>
 										<div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%">
-											<label class="btn btn-outline-primary active" id="nlty_korea"> <input type="radio" name="psti_nlty" id="psti_nlty_korean" autocomplete="off" value="KOR" checked="">내국인
-											</label> <label class="btn btn-outline-primary" id="nlty_foreigner"> <input type="radio" name="psti_nlty_f" id="psti_nlty_foreigner_check" value="Foreigner" autocomplete="off">Foreigner
+											<label class="btn btn-outline-primary active" id="nlty_korea"> 
+											<input type="radio" name="psti_nlty" id="psti_nlty_korean" autocomplete="off" value="KOR" checked="">내국인
+											</label> 
+											<div style="width: 1%"></div>
+											<label class="btn btn-outline-primary" style="width: 6%;" id="nlty_foreigner"> 
+											<input type="radio" name="psti_nlty_f" id="psti_nlty_foreigner_check" value="Foreigner" autocomplete="off">Foreigner
 											</label>
 										</div>
 									</div>
@@ -115,7 +154,7 @@
 										<label for="psti_adres">실거주지주소<span class="fontred">*</span></label><br>
 										<div class="row">
 											<input type="text" class="form-control" id="psti_adresnum" readonly style="width: 20%">
-											<button type="button" onclick="address_go();" class="btn btn-primary">주소검색</button>
+											<button type="button" onclick="address_go();" style="background:#1a4f72;border-color:#1a4f72;" class="btn btn-primary">주소검색</button>
 											<input type="text" class="form-control" id="psti_adres1" name="psti_adres" readonly> <input type="text" class="form-control" id="psti_adres2" name="psti_adres" placeholder="상세주소를 입력하세요.">
 										</div>
 									</div>
@@ -123,24 +162,24 @@
 									<div class="form-group">
 										<label for="job_code">직업<span class="fontred">*</span></label><br>
 										<select id="job_select" name="job_code">
-											<option value="의회의원,고위임직원 및 관리자">의회의원,고위임직원 및 관리자</option>
-											<option value="전문가">전문가</option>
-											<option value="기술공 및 준전문가">기술공 및 준전문가</option>
-											<option value="사무종사자">사무종사자</option>
-											<option value="서비스종사자">서비스종사자</option>
-											<option value="판매종사자">판매종사자</option>
-											<option value="농업 및 어업숙련 종사자">농업 및 어업숙련 종사자</option>
-											<option value="기능원 및 기능관련 종사자">기능원 및 기능관련 종사자</option>
-											<option value="장치,기계조작 및 조립종사자">장치,기계조작 및 조립종사자</option>
-											<option value="단순노무 종사자">단순노무 종사자</option>
-											<option value="군인">군인</option>
-											<option value="(전업) 주부">(전업) 주부</option>
-											<option value="학생">학생</option>
-											<option value="무직">무직</option>
-											<option value="기타">기타</option>
+											<option value="I101">의회의원,고위임직원 및 관리자</option>
+											<option value="I102">전문가</option>
+											<option value="I103">기술공 및 준전문가</option>
+											<option value="I104">사무종사자</option>
+											<option value="I114">서비스종사자</option>
+											<option value="I105">판매종사자</option>
+											<option value="I106">농업 및 어업숙련 종사자</option>
+											<option value="I107">기능원 및 기능관련 종사자</option>
+											<option value="I108">장치,기계조작 및 조립종사자</option>
+											<option value="I109">단순노무 종사자</option>
+											<option value="I110">군인</option>
+											<option value="I111">(전업) 주부</option>
+											<option value="I115">학생</option>
+											<option value="I112">무직</option>
+											<option value="I113">기타</option>
 										</select>
 									</div>
-									<button class="btn btn-primary" onclick="ready();" style="width: 100%; margin: 0 auto;" id="nextview">다음</button>
+									<button class="btn btn-primary" onclick="ready();" style="width: 100%; margin: 0 auto;background:#1a4f72;border-color:#1a4f72;" id="nextview">다음</button>
 								</div>
 								<!-- 							</div> -->
 
@@ -148,8 +187,12 @@
 								<div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
 									<label for="psti_pyrexia_yn">발열이 있으신가요?</label><br>
 									<div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%;">
-										<label class="btn btn-outline-primary active" id="pyrexia_y"> <input type="radio" name="psti_pyrexia_yn" id="psti_pyrexia_y" autocomplete="off" value="Y">예
-										</label> <label class="btn btn-outline-primary" id="pyrexia_n"> <input type="radio" name="psti_pyrexia_yn" id="psti_pyrexia_n" autocomplete="off" value="N">아니오
+										<label class="btn btn-outline-primary active" id="pyrexia_y"> 
+										<input type="radio" name="psti_pyrexia_yn" id="psti_pyrexia_y" autocomplete="off" value="Y">예
+										</label>
+										<div style="width: 1%"></div> 
+										<label class="btn btn-outline-primary" id="pyrexia_n" style="width: 3.4%;"> 
+										<input type="radio" name="psti_pyrexia_yn" id="psti_pyrexia_n" autocomplete="off" value="N">아니오
 										</label>
 									</div>
 
@@ -227,10 +270,10 @@
 									<div class="form-group">
 										<label>백신 접종 상태</label>
 										<select id="inocl_code">
-											<option value="미접종">미접종</option>
-											<option value="1차 접종">1차 접종</option>
-											<option value="2차 접종">2차 접종</option>
-											<option value="3차 접종이상">3차 접종이상</option>
+											<option value="J101">미접종</option>
+											<option value="J102">1차 접종</option>
+											<option value="J103">2차 접종</option>
+											<option value="J104">3차 접종이상</option>
 										</select>
 									</div>
 
@@ -240,15 +283,24 @@
 										</span>
 										</label>
 									</div>
+									<div class="row">
+										<div class="col-md-3 pr-0">
+											<input type="text" id="inspCheck" class="form-control" style="width: 100%;" value="" readonly/>
+										</div>
+										<div class="col-md-2 pl-0">
+											<button type="button" class="btn btn-primary" style="background:#1a4f72;border-color:#1a4f72;" id="inspSearch" onclick="inspSearch_go();">검사소검색</button>
+										</div>
+									</div>
 									<br> <br>
 									<div class="row">
 										<div class="col-md-6">
-											<button class="btn btn-primary" onclick="previous();" style="width: 98%; float: left;">이전</button>
+											<button class="btn btn-danger" onclick="previous();" style="width: 100%; float: left;">이전</button>
 										</div>
 										<div class="col-md-6">
-											<button type="submit" id="psti_submit" onclick="dquestionRegist_go();" class="btn btn-primary" style="width: 98%; float: right;">제출하기</button>
+											<button type="submit" id="psti_submit" onclick="questionCheck();" class="btn btn-primary" style="width: 100%; float: right;background:#1a4f72;border-color:#1a4f72;">제출하기</button>
 										</div>
 									</div>
+								
 								</div>
 
 							</div>
@@ -297,6 +349,8 @@
 			</div>
 		</div>
 	</div>
+	
+	
 
 
 <form id="questionForm" role="questionForm" action="gogo" method="post">
@@ -312,15 +366,89 @@
 	<input id="feverYn" type="hidden" name="feverYn" value="" />
 	<input id="symptms" type="hidden" name="symptms" value="" />
 	<input id="vacCode" type="hidden" name="vacCode" value="" />
-	<input id="inspNo" type="hidden" name="inspNo" value="${inspNo}" />
+	<input id="inspNo" type="hidden" name="inspNo" value="" />
 </form>
 
 	<!-- //Stepper js -->
 	<script src="https://cdn.jsdelivr.net/npm/bs-stepper/dist/js/bs-stepper.min.js"></script>
 	<!-- 주소API js -->
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-	<script>
-function dquestionRegist_go(){
+<script>
+
+function inspSearch_go(){
+	
+	window.open("insp-list?backPage=question", "진료 신청 정보", "width=1280, height=900" ); 
+	
+}
+	
+function questionCancle(){
+	
+	var check = confirm("문진표 작성을 취소하시겠습니까?");
+	
+	if(check){
+		history.go(-1);
+	}
+	else{
+		return;
+	}
+	
+}
+
+function questionCheck(){
+	
+	var check = confirm("문진표를 등록하시겠습니까?");
+	
+	if(!check){
+		return;
+	}
+	
+	
+	var pstiNm = $("input[id=psti_nm]").val();
+	var rrn = $("input[id=psti_rrn]").val();
+	
+	var inspNm = $('#inspCheck').val();
+	var symptomCheck = false;
+	var arr_symptom = document.getElementsByClassName('symptom-list__checkbox'); 
+	
+    for(var i=0;i<arr_symptom.length;i++){
+        if(arr_symptom[i].checked == true) {
+        	symptomCheck = true;
+            break;
+        }
+    }
+	
+    if(!symptomCheck){
+ 		alert("현재 증상을 한개이상 선택해 주세요.");
+ 		return false;
+    }
+    
+    if(inspNm.length < 1){
+    	alert("검사소를 선택해 주세요.");
+    	return false;
+    }
+    
+    $.ajax({
+	    url : '<%=request.getContextPath()%>/guest/questionCheck',
+	    type : 'post',
+	    dataType : 'json',
+	    data : {'pstiNm':pstiNm, 'rrn':rrn},
+	    success : function(result){
+	    	if(result > 0){
+	    		alert("7일 이내에 검사받은 이력이 있어 문진표 등록이 불가능 합니다.");
+	    		location.href='<%=request.getContextPath()%>/guest/guest-main';
+	    	}else{
+	    		questionRegist_go();
+	    	}
+	    
+	    },
+	    error : function(error){
+	      alert('error' + error.status);
+	    }
+	  })
+}
+
+	
+function questionRegist_go(){
 	// 검사경위
 	var rechkdYn = $("input[type=radio][name=chck_reason_code]:checked").val();
 	$("input[id=rechkdYn]").val(rechkdYn);
@@ -524,6 +652,7 @@ $('#nextview').on('click', function(){
 	var tel = $('#psti_telno').val();
 	var adres = $('#psti_adres1').val();
 	var adress = $('#psti_adres2').val();
+	
 
 	var rrn_length = $('#psti_rrn').val().length;
 	if(rrn_length < 14){
@@ -641,6 +770,250 @@ function address_go() {
     }).open();
 }
 
+</script>
+
+<!-- 데이터 입력버튼 스크립트 -->
+<script>
+function fillQuestion(){
+	
+	var names = [
+		
+		'오형우'
+		 /* ,'배다정','추수진','임서은','조태우'
+		,'손미선','손태훈','추서진','김세정','홍지하'
+		,'남상혁','윤광수','조홍기','윤예성','서희태'
+		,'손도영','성태호','허석훈','조재웅','전선아'
+		,'이버들','김다운','오샘','홍한길','장샘'
+		,'손나길','추다운','박달','홍한길','탁한결'
+		,'정다운','남궁믿음','배나길','예믿음','성우람'
+		,'고믿음','정믿음','신미르','풍달','설다운'
+		,'이광준','설시혁','남궁윤정','손혜경','고상현'
+		,'추주혁','서경아','노선옥','제갈지웅','유민성'
+		,'김민준','이민준','박민준','김서연','이서연','박서연',
+		'김서준','이서준','박서준','김서윤','이서윤','박서연',
+		'김예준','이예준','박예준','김지우','이지우','박지우',
+		'김도윤','이도윤','박도윤','김서현','이서현','박서현',
+		'김시우','이시우','박시우','김민서','이민서','박민서',
+		'김주원','이주원','박주원','김하은','이하은','박하은',
+		'김하준','이하준','박하준','김하윤','이하윤','박하윤',
+		'김지호','이지호','박지호','김윤서','이윤서','박윤서',
+		'김지후','이지후','박지후','김지유','이지유','박지유',
+		'김준서','이준서','박준서','김지민','이지민','박지민',
+		'김준우','이준우','박준우','김채원','이채원','박채원',
+		'김현우','이현우','박현우','김지윤','이지윤','박지윤',
+		'김도현','이도현','박도현','김은서','이은서','박은서',
+		'김지훈','이지훈','박지훈','김수아','이수아','박수아',
+		'김건우','이건우','박건우','김다은','이다은','박다은',
+		'김우진','이우진','박우진','김예은','이예은','박예은',
+		'김선우','이선우','박선우','김지아','이지아','박지아',
+		'김서진','이서진','박서진','김수빈','이수빈','박수빈',
+		'김민재','이민재','박민재','김소율','이소율','박소율',
+		'김현준','이현준','박현준','김예린','이예린','박예린',
+		'김연우','이연우','박연우','김예원','이예원','박예원',
+		'김유준','이유준','박유준','김지원','이지원','박지원',
+		'김정우','이정우','박정우','김소윤','이소윤','박소윤'
+		,'김승우','이승우','박승우','김민주','이민주','박민주',
+		'김승현','이승현','박승현','김지은','이지은','박지은',
+		'김시윤','이시윤','박시윤','김나은','이나은','박나은',
+		'김준혁','이준혁','박준혁','김소은','이소은','박소은',
+		'김은우','이은우','박은우','김다현','이다현','박다현',
+		'김지환','이지환','박지환','김나윤','이나윤','박나윤',
+		'김승민','이승민','박승민','김지율','이지율','박지율',
+		'김유찬','이유찬','박유찬','김유빈','이유빈','박유빈',
+		'김윤우','이윤우','박윤우','김채윤','이채윤','박채윤',
+		'김민성','이민성','박민성','김유주','이유주','박유주',
+		'김준영','이준영','박준영','김아린','이아린','박아린',
+		'김시후','이시후','박시후','김시아','이시아','박시아',
+		'김진우','이진우','박진우','김서영','이서영','박서영',
+		'김수현','이수현','박수현','김민지','이민지','박민지',
+		'김재윤','이재윤','박재윤','김예진','이예진','박예진',
+		'김동현','이동현','박동현','김서아','이서아','박서아',
+		'김수호','이수호','박수호','김예나','이예나','박예나',
+		'김태윤','이태윤','박태윤','김예서','이예서','박예서',
+		'김민규','이민규','박민규','김주아','이주아','박주아',
+		'김재원','이재원','박재원','김시연','이시연','박시연',
+		'김한결','이한결','박한결','김연서','이연서','박연서',
+		'김재민','이재민','박재민','김하율','이하율','박하율',
+		'김은찬','이은찬','박은찬','김다인','이다인','박다인'
+		,'한상현','오성철','신희호','권규환','황보미희'
+		,'심창식','하승옥','손지혁','임민영','안종하'
+		,'강한길','남궁힘찬','성나라우람','조우람','조다운'
+		,'임다운','박한길','설한길','권미르','이빛가람'
+		,'서샘','복한길','전미르','손달','정한결'
+		,'윤한결','조한길','백힘찬','남궁나라우람','이나길'
+		,'허구름','한한별','탁하늘','복꽃','전햇살'
+		,'손산다라','하여름','남궁별','복샛별','이겨울'
+		,'류구름','임겨울','추새론','안마리','복은샘'
+		,'정그루','강라온','손슬기','탁온','사공샘나' */
+		
+	];
+	
+	var addrs = [
+		
+/* 		 '서울 강남구 테헤란로22길 66','서울 송파구 동남로 99','서울 은평구 갈현로 181','서울 종로구 북촌로 31-4','서울 동대문구 서울시립대로 5'
+		,'서울 강남구 테헤란로22길 66','서울 송파구 동남로 99','서울 은평구 갈현로 181','서울 종로구 북촌로 31-4','서울 동대문구 서울시립대로 5'
+		,'서울 강남구 테헤란로22길 66','서울 송파구 동남로 99','서울 은평구 갈현로 181','서울 종로구 북촌로 31-4','서울 동대문구 서울시립대로 5'
+		,'서울 강남구 테헤란로22길 66','서울 송파구 동남로 99','서울 은평구 갈현로 181','서울 종로구 북촌로 31-4','서울 동대문구 서울시립대로 5'
+		,'서울 강남구 테헤란로22길 66','서울 송파구 동남로 99','서울 은평구 갈현로 181','서울 종로구 북촌로 31-4','서울 동대문구 서울시립대로 5'
+		,'서울 강남구 테헤란로22길 66','서울 송파구 동남로 99','서울 은평구 갈현로 181','서울 종로구 북촌로 31-4','서울 동대문구 서울시립대로 5'
+		,'부산 사상구 가야대로 1','부산 강서구 가덕해안로 3','부산 남구 무민사로 5','부산 사하구 감내1로 7','부산 강서구 경전철로 10'
+		,'대구 수성구 고모로 31','대구 북구 문주길 2','대구 남구 경상길 1','대구 동구 경안로 790-11','대구 달서구 감삼길 15'
+		,'인천 남동구 간석로 1','인천 부평구 갈산로 2','인천 계양구 갈미길 18-3','인천 강화군 강화읍 갑룡길 3','인천 강화군 강화읍 강화대로 96'
+		,'광주 동구 경양로 211','광주 광산구 가마길 2-21','광주 남구 구성로 116','광주 북구 각화대로 2','광주 서구 구성로 1' */
+		
+		'대전 중구 대흥로 7'
+		/* 
+		'대전 서구 가수원로 5','대전 동구 대전로 387','대전 유성구 동서대로 195','대전 대덕구 계족로 535','대전 유성구 노은동로 8'
+		,'대전 서구 가수원로 5','대전 동구 대전로 387','대전 유성구 동서대로 195','대전 대덕구 계족로 535','대전 유성구 노은동로 8'
+		,'대전 서구 가수원로 5','대전 동구 대전로 387','대전 유성구 동서대로 195','대전 대덕구 계족로 535','대전 유성구 노은동로 8'
+		,'대전 서구 가수원로 5','대전 동구 대전로 387','대전 유성구 동서대로 195','대전 대덕구 계족로 535','대전 유성구 노은동로 8'
+		,'대전 서구 가수원로 5','대전 동구 대전로 387','대전 유성구 동서대로 195','대전 대덕구 계족로 535','대전 유성구 노은동로 8'
+		,'대전 서구 가수원로 5','대전 동구 대전로 387','대전 유성구 동서대로 195','대전 대덕구 계족로 535','대전 유성구 노은동로 8' */
+/* 		,'울산 남구 갈밭로 3','울산 북구 가대서길 25','울산 동구 고늘로 6','울산 중구 강정3길 57','울산 북구 구유길 2'
+		,'경기 가평군 가평읍 가랫골길 1','경기 안성시 가사길 7-5','경기 여주시 가업길 12','경기 의정부시 고산로 43-21','경기 파주시 교하로 573'
+		,'경기 가평군 가평읍 가랫골길 1','경기 안성시 가사길 7-5','경기 여주시 가업길 12','경기 의정부시 고산로 43-21','경기 파주시 교하로 573'
+		,'경기 가평군 가평읍 가랫골길 1','경기 안성시 가사길 7-5','경기 여주시 가업길 12','경기 의정부시 고산로 43-21','경기 파주시 교하로 573'
+		,'경기 가평군 가평읍 가랫골길 1','경기 안성시 가사길 7-5','경기 여주시 가업길 12','경기 의정부시 고산로 43-21','경기 파주시 교하로 573'
+		,'경기 가평군 가평읍 가랫골길 1','경기 안성시 가사길 7-5','경기 여주시 가업길 12','경기 의정부시 고산로 43-21','경기 파주시 교하로 573'
+		,'경기 가평군 가평읍 가랫골길 1','경기 안성시 가사길 7-5','경기 여주시 가업길 12','경기 의정부시 고산로 43-21','경기 파주시 교하로 573'
+		,'강원 동해시 강원남부로 4589','강원 삼척시 강원남부로 4330','강원 원주시 가치래미길 1','강원 화천군 간동면 가래울길 20','강원 삼척시 동해대로 4273-1'
+		,'전남 순천시 가곡길 2','전남 구례군 간전면 간문대평1길 1','전남 나주시 금남길 47-2','전남 화순군 사평면 개정지길 4','전남 목포시 만호로 29' */
+
+	];
+	
+	var addrcode = [
+		
+		 /* '6245','5831','3325','3055','2592'
+		,'6245','5831','3325','3055','2592'
+		,'6245','5831','3325','3055','2592'
+		,'6245','5831','3325','3055','2592'
+		,'6245','5831','3325','3055','2592'
+		,'6245','5831','3325','3055','2592'
+		,'46990','46769','48557','49376','46719'
+		,'42260','41491','42463','41073','42642'
+		,'21510','21316','21002','23036','23026'
+		,'61421','62404','61636','61165','61924' */
+		
+		'34944'
+		
+		/* 
+		'35389','34694','34208','34395','34147'
+		,'35389','34694','34208','34395','34147'
+		,'35389','34694','34208','34395','34147'
+		,'35389','34694','34208','34395','34147'
+		,'35389','34694','34208','34395','34147'
+		,'35389','34694','34208','34395','34147'
+		
+		 */
+		/* ,'44715','44211','44056','44468','44233'
+		,'12427','17585','12645','11801','10882'
+		,'12427','17585','12645','11801','10882'
+		,'12427','17585','12645','11801','10882'
+		,'12427','17585','12645','11801','10882'
+		,'12427','17585','12645','11801','10882'
+		,'12427','17585','12645','11801','10882'
+		,'25820','25906','26314','24134','25908'
+		,'57923','57628','58248','58144','58753' */
+
+	];
+	
+	var random = Math.floor(Math.random() * names.length);
+	
+	var addrRandom = Math.floor(Math.random() * addrs.length);
+	
+	// 주민번호 앞자리의 첫번째 자리
+	var random1 = 10 - Math.floor(Math.random() * 5) - 1;
+	
+	// 주민번호 앞자리의 두번째 자리
+	var random5 = 9 - Math.floor(Math.random() * 5) - 1;
+	var random2 = 9 - Math.floor(Math.random() * 5) - 1;
+	var random3 = 9 - Math.floor(Math.random() * 5) - 1;
+	var random4 = 9 - Math.floor(Math.random() * 5) - 1;
+	
+	// 주민번호 뒷자리의 첫번째 자리, 1, 2
+	var random11 = Math.floor(Math.random() * 2) + 1;
+	
+	// 주민번호 뒷자리의 나머지 자리
+	var random12 = 9 - Math.floor(Math.random() * 10);
+	var random13 = 9 - Math.floor(Math.random() * 10);
+	var random14 = 9 - Math.floor(Math.random() * 10);
+	var random15 = 9 - Math.floor(Math.random() * 10);
+	var random16 = 9 - Math.floor(Math.random() * 10);
+	var random17 = 9 - Math.floor(Math.random() * 10);
+	
+	console.log(random1, random5, '0', random2, '0', random4, '-', random11, random12, random13, random14, random15, random16, random17);
+	
+	var rrn = '' + random1 + random5 + '0' + random2 + '0' + random4 
+			+ '-'
+			+ '1' + random12 + random13 + random14 + random15 + random16 + random17;
+	
+	document.getElementById('psti_rrn').value = rrn;
+	
+	var sex = rrn.substring(7,8);
+	var response_sexw = sex % 2 == 0;
+	var response_sexm = sex % 2 == 1;
+	if(response_sexw){
+		$('#psti_sexdstn_w').trigger('click');
+		$('#psti_pregnan_n').trigger('click');
+	}
+	if(response_sexm){
+		$('#psti_sexdstn_m').trigger('click');
+		$('#psti_pregnan_n').trigger('click');
+	}
+	
+	document.getElementById('psti_nm').value = names[random];
+	document.getElementById('birth').value = '19'+ random1 + random5 + '0' + random2 + '0' + random4;
+	document.getElementById('psti_telno').value = '010-3941-7733';
+	document.getElementById('psti_adresnum').value = addrcode[addrRandom];
+	document.getElementById('psti_adres1').value = addrs[addrRandom];
+	document.getElementById('psti_adres2').value = '상세주소';
+	$('#psti_pyrexia_n').attr('checked', 'checked');
+	$('#pyrexia_n').addClass('active');
+	$('#smptm_999').prop('checked', true);
+	$('#chk_person').prop('checked', true);
+	
+	var vacCodeData = [
+		
+		'J101'
+		,'J102'
+		,'J103'
+		,'J104'
+	];
+	
+	var vacCodeRandom = Math.floor(Math.random() * vacCodeData.length);
+	
+	$("select[id=inocl_code]").val(vacCodeData[vacCodeRandom]);
+	$("input[id=vacCode]").val(vacCodeData[vacCodeRandom]);
+	
+	var jobCodeData = [
+		
+		'I101'
+		,'I102'
+		,'I103'
+		,'I104'
+		,'I114'
+		,'I105'
+		,'I106'
+		,'I107'
+		,'I108'
+		,'I109'
+		,'I110'
+		,'I111'
+		,'I115'
+		,'I112'
+		,'I113'
+		
+	];
+	
+	var jobCodeRandom = Math.floor(Math.random() * jobCodeData.length);
+	
+	$("select[id=job_select]").val(jobCodeData[jobCodeRandom]);
+	$("input[id=jobCode]").val(jobCodeData[jobCodeRandom]);
+	
+	
+	// dquestionRegist_go();
+	
+}
 </script>
 
 </body>

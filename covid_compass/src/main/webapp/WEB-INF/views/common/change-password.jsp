@@ -8,7 +8,7 @@
 </style>
 </head>
 
-<title></title>
+<title>비밀번호 변경</title>
 
 <body>
 <div class="card card-info">

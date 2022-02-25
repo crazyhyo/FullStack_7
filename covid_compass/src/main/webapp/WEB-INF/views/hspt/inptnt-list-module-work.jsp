@@ -11,7 +11,7 @@
       <table class="table table-hover text-nowrap"
         style="text-align: center;">
         <thead>
-          <tr style="background-color: #1A4F72; color: white;">
+          <tr>
             <th style="width: 10%; "><input id="all" type="checkbox"
               onclick="checkAllBox()" name="all"></th>
             <th style="width: 10%;">이름</th>
@@ -24,10 +24,12 @@
         </thead>
         <tbody id="inptnt-list-table-tbody">
           <tr class="each-inptnt-element">
-            <td colspan="7">페이지 로딩중 입니다.</td>
+            <td colspan="7" id="initialTd">페이지 로딩중 입니다.</td>
           </tr>
         </tbody>
       </table>
+        <div id="inptnt-page-info-div" style="float: right;">
+        </div>         
     </div>
   </div>
   <div class="card-footer clearfix" style="background-color: white;">

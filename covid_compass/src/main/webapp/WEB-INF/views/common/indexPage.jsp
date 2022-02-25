@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <head>
 <style>
-.on{
+.on-submenu{
 	border-bottom : 3px solid black;
 }
 .bold{
@@ -27,21 +27,20 @@
  	</div>
 
 <script type="text/javascript">
-function goPage(menuUrl, menuNo){
+function goPage(menuUrl, menuNo, isNotice, noticeNo){
+	
 	//alert(menuUrl);
 	document.querySelector('iframe[name="ifr"]').src = menuUrl;
-	
-<%-- 	alert(menuUrl.substring('<%= request.getContextPath().length()%>')); --%>
 	
 	var submenuId = menuUrl.substring('<%= request.getContextPath().length()%>');
 	
 	var lis = $('li.subMenu');
 	
-	lis.removeClass('on');
+	lis.removeClass('on-submenu');
 	
 	var target = document.getElementById(submenuId);
 	
-	$(target).addClass('on');
+	$(target).addClass('on-submenu');
 	
 	var spans = $('li.subMenu span');
 	spans.removeClass('bold');
@@ -51,7 +50,12 @@ function goPage(menuUrl, menuNo){
 	if(typeof(history.pushState) == 'function'){
 		var renewURL = location.href;
 		renewURL = renewURL.substring(0, renewURL.indexOf('?'));
-		renewURL += "?mCode=" + menuNo;
+		
+		if(!isNotice){
+			renewURL += "?mCode=" + menuNo;
+		}else{
+			renewURL += "?mCode=" + menuNo + "&noticeNo=" + noticeNo;
+		}
 		history.pushState(menuNo, null, renewURL);
 	}else{
 		location.hash = "#"+menuNo;
@@ -76,7 +80,13 @@ function calcHeight(){
 //
 
 window.onload = function(){
-	goPage('<%=request.getContextPath()%>${menu.menuUrl}','${menu.menuNo}');
+	
+	if('${isNotice}' =='false'){
+		goPage('<%=request.getContextPath()%>${menu.menuUrl}','${menu.menuNo}');
+	}else{
+		goPage('<%=request.getContextPath()%>${menu.menuUrl}?noticeNo=' + '${noticeNo}','${menu.menuNo}', '${isNotice}', '${noticeNo}');
+	}
+	
 }
 
 

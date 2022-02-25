@@ -25,7 +25,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		String loginPwd = (String) authentication.getCredentials();
 		
 		MberVO mber = null;
-		
 		try {
 			mber = mberService.getMember(loginId);
 		}catch (Exception e) {
@@ -47,7 +46,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				}
 				throw new BadCredentialsException("계정이 비활성화 처리되어 로그인이 불가합니다.");
 			}else {
+				new LoginFailureHandler().setMeberId(loginId);
 				throw new BadCredentialsException("패스워드가 일치하지 않습니다.");
+				
 			}
 		}else {
 			throw new BadCredentialsException("존재하지 않는 아이디입니다.");

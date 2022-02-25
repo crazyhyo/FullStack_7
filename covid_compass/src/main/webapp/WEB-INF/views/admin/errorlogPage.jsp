@@ -1,167 +1,87 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
+	
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<c:set var="pageMaker" value="${dataMap.pageMaker}"/>
+<c:set var="cri" value="${dataMap.pageMaker.cri}"/>
+<c:set var="loginList" value="${dataMap.loginList}"/>
+
+<head></head>
+<title></title>
 <body>
 
 	<section class="content">
-		<div style="height: 683px;">
-			<div class="card" style="margin: 1px; margin-top: 13px;">
-
-				<div class="card-body" style="height: 70px; padding-bottom: 0px;">
-
-					<!-- search bar -->
-					<button type="button" class="btn btn-primary"
-						style="background: #1a4f72; border: 0px; width: 90px;" onclick="">다운로드</button>
-					<button type="button" class="btn btn-primary"
-						style="background: #1a4f72; border: 0px; width: 90px;" onclick="">삭제</button>
-
-					<div class="input-group  float-right" style="max-width: 600px;">
-						<!-- sort num -->
-						<select class="form-control " name="perPageNum" id="perPageNum"
-							onchange="list_go(1);">
-							<option value="10">정렬개수</option>
-							<option value="2"
-								${pageMaker.cri.perPageNum == 2 ? 'selected':''}>2개씩</option>
-							<option value="3"
-								${pageMaker.cri.perPageNum == 3 ? 'selected':''}>3개씩</option>
-							<option value="5"
-								${pageMaker.cri.perPageNum == 5 ? 'selected':''}>5개씩</option>
-						</select>
-
-						<!-- search bar -->
-						<select class="form-control " name="searchType" id="searchType">
-							<option value=""
-								${pageMaker.cri.searchType eq '' ? 'selected':''}>검색구분</option>
-							<option value="l"
-								${pageMaker.cri.searchType eq 'l' ? 'selected':''}>레벨</option>
-							<option value="d"
-								${pageMaker.cri.searchType eq 'd' ? 'selected':''}>구분</option>
-							<option value="n"
-								${pageMaker.cri.searchType eq 'n' ? 'selected':''}>파일이름</option>
-							<option value="p"
-								${pageMaker.cri.searchType eq 'p' ? 'selected':''}>IP</option>
-						</select>
-
-						<!-- keyword -->
-						<input class="form-control" type="text" name="keyword"
-							placeholder="검색어를 입력하세요." value="${pageMaker.cri.keyword }"
-							style="width: 18%; display: inline-block;" /> <span
-							class="input-group-append">
-							<button class="btn btn-primary" type="button" id="searchBtn"
-								style="background: #1a4f72; color: #ffffff; border-color: #1a4f72; display: inline-block; margin-bottom: 4px; margin-left: -7px;"
-								data-card-widget="search" onclick="">
-								<i class="fa fa-fw fa-search"></i>
-							</button>
-						</span>
-						<!-- end : search bar -->
-					</div>
-				</div>
-
-				<div class="card col-md-12"
-					style="position: relative; left: 0px; top: 0px; margin-bottom: 0px;">
-					<div class="card-header ui-sortable-handle" style="cursor: move;">
-
-
-					</div>
-					<!-- /.card-header -->
-					<div class="card-body" style="padding: 0px;">
-						<div class="table-responsive">
-							<table class="table table-hover text-nowrap"
-								style="text-align: center;">
-								<thead>
-									<tr role="row">
-										<th style="width: 5%;"><input type="checkbox"
-											id="selectAll" onclick="selectAll()"></th>
-										<th tabindex="0" aria-controls="example2" rowspan="1"
-											style="text-align: center;" colspan="1" aria-label="">레벨</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1"
-											style="text-align: center;" colspan="1" aria-label="">구분</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1"
-											style="text-align: center;" colspan="1" aria-label="">파일
-											이름</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1"
-											style="text-align: center;" colspan="1" aria-label="">클라이언트
-											IP</th>
-										<th tabindex="0" aria-controls="example2" rowspan="1"
-											style="text-align: center;" colspan="1" aria-label="">생성일
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-
-									<tr data-psti-no="${pstiNo }"
-										onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-										style="cursor: pointer;">
-										<td onclick="event.cancelBubble=true" style="cursor: default;"><input
-											type="checkbox" name="inst" onclick="cancleAll()"></td>
-										<td><span class="badge badge-primary">emerg</span></td>
-										<td>500</td>
-										<td>abc.csv</td>
-										<td>000.0.0.0</td>
-										<td>2022-01-13 13:56</td>
-									</tr>
-									<tr data-psti-no="${pstiNo }"
-										onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-										style="cursor: pointer;">
-										<td onclick="event.cancelBubble=true" style="cursor: default;"><input
-											type="checkbox" name="inst" onclick="cancleAll()"></td>
-										<td><span class="badge badge-primary">alert</span></td>
-										<td>500</td>
-										<td>abc.csv</td>
-										<td>000.0.0.0</td>
-										<td>2022-01-13 13:56</td>
-									</tr>
-									<tr data-psti-no="${pstiNo }"
-										onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-										style="cursor: pointer;">
-										<td onclick="event.cancelBubble=true" style="cursor: default;"><input
-											type="checkbox" name="inst" onclick="cancleAll()"></td>
-										<td><span class="badge badge-primary">crit</span></td>
-										<td>500</td>
-										<td>abc.csv</td>
-										<td>000.0.0.0</td>
-										<td>2022-01-13 13:56</td>
-									</tr>
-									<tr data-psti-no="${pstiNo }"
-										onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-										style="cursor: pointer;">
-										<td onclick="event.cancelBubble=true" style="cursor: default;"><input
-											type="checkbox" name="inst" onclick="cancleAll()"></td>
-										<td><span class="badge badge-primary">error</span></td>
-										<td>500</td>
-										<td>abc.csv</td>
-										<td>000.0.0.0</td>
-										<td>2022-01-13 13:56</td>
-									</tr>
-									<tr data-psti-no="${pstiNo }"
-										onclick="OpenWindow('psti-registform?pstiInnb=${pstiReadyListVO.pstiInnb}','','1200','750');"
-										style="cursor: pointer;">
-										<td onclick="event.cancelBubble=true" style="cursor: default;"><input
-											type="checkbox" name="inst" onclick="cancleAll()"></td>
-										<td><span class="badge badge-primary">warn</span></td>
-										<td>500</td>
-										<td>abc.csv</td>
-										<td>000.0.0.0</td>
-										<td>2022-01-13 13:56</td>
-									</tr>
-								</tbody>
-							</table>
-
+		<div class="row" style="margin: 1px; margin-top: 17px;">
+			<div class="col-md-12 pl-0 pr-0">
+				<div class="card-header p-0 t-1">
+					<div class="row mb-2">
+						<div class="col-md-6">
+							<button type="button" class="btn btn-primary"
+								style="background: #1a4f72; border: 0px; width: 90px;"
+								onclick="fileDown_go()">다운로드</button>
 						</div>
 					</div>
-					<div class="card-footer clearfix" style="background: white;">
-						<%@ include file="../template/list-footer.jsp"%>
-					</div>
 				</div>
-				<!-- /.card-body -->
-			</div>
-		</div>
+		   <div class="card-body pl-0 pr-0">		
+			<div class="tab-content" id="custom-tabs-three-tabContent">	
+              <div class="row" style="margin: 1px;">
+				<div class="col-md-12 pl-0 pr-0">
+					<div class="card">
+						<div class="card-body">
+							<div class="table-responsive">
+								<div class="confirm" style="height: 650px;">
+									<table class="table table-hover text-nowrap" style="text-align: center; font-size: 15px; table-layout: fixed;">
+										<thead>
+											<tr role="row">
+												<!-- <th style="width: 5%;"><input type="checkbox"
+											id="selectAll" onclick="selectAll()"></th> -->
+												<th tabindex="0" aria-controls="example2" rowspan="1"
+													style="text-align: center;" colspan="1" aria-label="">기관번호</th>
+												<th tabindex="0" aria-controls="example2" rowspan="1"
+													style="text-align: center;" colspan="1" aria-label="">회원번호</th>
 
+												<th tabindex="0" aria-controls="example2" rowspan="1"
+													style="text-align: center;" colspan="1" aria-label="">회원명</th>
+
+												<th tabindex="0" aria-controls="example2" rowspan="1"
+													style="text-align: center;" colspan="1" aria-label="">IP</th>
+												<th tabindex="0" aria-controls="example2" rowspan="1"
+													style="text-align: center;" colspan="1" aria-label="">발생일자</th>
+											</tr>
+										</thead>
+										<tbody>
+											<c:if test="${empty loginList}">
+												<td colspan="5"><strong>해당 내용이 없습니다.</strong></td>
+											</c:if>
+											<c:forEach items="${loginList}" var="login">
+												<tr>
+													<!-- <td onclick="event.cancelBubble=true" style="cursor: default;"><input
+											type="checkbox" name="inst" onclick="cancleAll()"></td> -->
+													<td style="width: 20%;">${login.instNo}</td>
+													<td style="width: 20%;">${login.mberNo}</td>
+													<td style="text-align: left; width: 20%;">${login.mberNm }</td>
+													<td style="width: 20%;">${login.userIp}</td>
+													<td style="width: 20%;">${login.userLogTime}</td>
+												</tr>
+											</c:forEach>
+										</tbody>
+									</table>
+								</div>
+
+
+								<div class="card-footer clearfix" style="background: white;">
+									<%@ include file="/resources/js/paginationFailLogin.jsp"%>
+								</div>
+							</div>
+						</div>
+					</div>
+				  </div>
+			    </div>
+			  </div>
+			</div>	
+		  </div>
+		</div>
 	</section>
 	<script>
 		function selectAll(checkBox){
@@ -182,6 +102,11 @@
 				document.getElementById('selectAll').checked=false;
 			}
 		}
+				
+		function fileDown_go(){
+			//alert("눌림");
+			location.href='<%=request.getContextPath()%>/admin/loginFailFileDownload';
+		}
+				
 </script>
 </body>
-</html>
